@@ -12,6 +12,11 @@
 .auth-btn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:48px;padding:12px 16px;border:1px solid var(--line-2);border-radius:12px;background:var(--surface-2);color:var(--text);font:600 15px/1.2 var(--f-body);cursor:pointer;transition:transform .2s var(--ease),border-color .2s,box-shadow .2s}
 .auth-btn:hover:not(:disabled){transform:translateY(-1px);border-color:var(--text-2);box-shadow:0 10px 24px -12px rgba(0,0,0,.5)}
 .auth-btn:focus-visible,.auth-out:focus-visible{outline:2px solid var(--nx-red);outline-offset:2px}
+.auth-btn{text-decoration:none}
+.auth-btn-primary{border-color:var(--nx-red);background:var(--nx-red);color:#fff}
+.auth-btn-primary:hover:not(:disabled){border-color:var(--nx-red-600);background:var(--nx-red-600);color:#fff}
+.auth-code{font-size:12px}
+.auth-code code{padding:1px 6px;border-radius:6px;background:var(--surface-3);color:var(--text);font:400 12px/1.5 var(--f-mono)}
 .auth-btn:disabled{opacity:.7;cursor:progress}
 .auth-spin{animation:auth-rotate 1s linear infinite}
 .auth-note{display:flex;gap:12px;padding:12px 16px;border:1px solid color-mix(in srgb,var(--wa-500) 40%,var(--line));border-radius:12px;background:color-mix(in srgb,var(--wa-500) 10%,transparent);color:var(--text)}

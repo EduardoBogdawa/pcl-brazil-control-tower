@@ -14,6 +14,17 @@ export function isPopupRelayPage(): boolean {
   return !isInIframe() && new URLSearchParams(window.location.search).get('msal') === 'popup-relay';
 }
 
+// Browsers open popups from a credentialless iframe (used by the Bolt preview) as "noopener": the window
+// appears but the app gets no handle to it, so MSAL fails with empty_window_error. Sign in from a tab instead.
+export function popupUnsupportedInFrame(): boolean {
+  return isInIframe() && (window as Window & { credentialless?: boolean }).credentialless === true;
+}
+
+// Same app, same origin, opened as its own top-level tab where the normal redirect sign-in works.
+export function standaloneUrl(): string {
+  return `${window.location.origin}${window.location.pathname}`;
+}
+
 function base64UrlDecode(value: string): string {
   const b64 = value.replace(/-/g, '+').replace(/_/g, '/');
   const bin = atob(b64 + '='.repeat((4 - (b64.length % 4)) % 4));

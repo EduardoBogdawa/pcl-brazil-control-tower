@@ -1,4 +1,4 @@
-import { Activity, AlertTriangle, Loader2, Settings2 } from 'lucide-react';
+import { Activity, AlertTriangle, ExternalLink, Loader2, Settings2 } from 'lucide-react';
 import { tr } from '@/control-tower/i18n';
 import '@/auth/auth.css';
 
@@ -8,6 +8,9 @@ interface Props {
   state: State;
   onSignIn?: () => void;
   missing?: string[];
+  errorCode?: string | null;
+  newTabUrl?: string | null;
+  popupAvailable?: boolean;
 }
 
 function MicrosoftMark() {
@@ -21,7 +24,7 @@ function MicrosoftMark() {
   );
 }
 
-export default function SignInScreen({ state, onSignIn, missing = [] }: Props) {
+export default function SignInScreen({ state, onSignIn, missing = [], errorCode, newTabUrl, popupAvailable = true }: Props) {
   return (
     <main className="auth-screen">
       <div className="auth-glow" aria-hidden="true" />
@@ -54,13 +57,31 @@ export default function SignInScreen({ state, onSignIn, missing = [] }: Props) {
                 <div>
                   <b>{tr('Não foi possível entrar')}</b>
                   <p>{tr('Tente novamente. Se o problema continuar, fale com o suporte de TI.')}</p>
+                  {errorCode && <p className="auth-code">{tr('Código do erro')}: <code>{errorCode}</code></p>}
                 </div>
               </div>
             )}
-            <button type="button" className="auth-btn" onClick={onSignIn} disabled={state === 'loading' || !onSignIn}>
-              {state === 'loading' ? <Loader2 size={18} className="auth-spin" /> : <MicrosoftMark />}
-              <span>{state === 'loading' ? tr('Conectando...') : tr('Entrar com Microsoft')}</span>
-            </button>
+            {newTabUrl && (
+              <div className="auth-note" role="status">
+                <ExternalLink size={18} />
+                <div>
+                  <b>{tr('Abra o app em uma aba própria')}</b>
+                  <p>{tr('A prévia embutida do Bolt bloqueia a janela de login da Microsoft. Abra esta mesma prévia em uma nova aba e entre por lá.')}</p>
+                </div>
+              </div>
+            )}
+            {newTabUrl && (
+              <a className="auth-btn auth-btn-primary" href={newTabUrl} target="_blank" rel="noopener noreferrer">
+                <ExternalLink size={18} />
+                <span>{tr('Abrir em nova aba')}</span>
+              </a>
+            )}
+            {popupAvailable && (
+              <button type="button" className="auth-btn" onClick={onSignIn} disabled={state === 'loading' || !onSignIn}>
+                {state === 'loading' ? <Loader2 size={18} className="auth-spin" /> : <MicrosoftMark />}
+                <span>{state === 'loading' ? tr('Conectando...') : tr('Entrar com Microsoft')}</span>
+              </button>
+            )}
           </>
         )}
 

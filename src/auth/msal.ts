@@ -38,6 +38,15 @@ export function pickAccount(msal: IPublicClientApplication): AccountInfo | null 
   return msal.getAllAccounts().find((a) => isAccountInfo(a) && belongsToTenant(a)) ?? null;
 }
 
+export const POPUP_BLOCKED_CODES = ['empty_window_error', 'popup_window_error', 'block_nested_popups'];
+
+// Only the MSAL error code is surfaced to the UI; messages can carry request details.
+export function authErrorCode(err: unknown): string {
+  const code = (err as { errorCode?: unknown } | null)?.errorCode;
+  return typeof code === 'string' && /^[a-z0-9_]{1,64}$/i.test(code) ? code : 'unknown_error';
+}
+
+// Must be called synchronously from the click handler: MSAL opens the popup before its first await.
 export async function signIn(msal: IPublicClientApplication): Promise<void> {
   if (!isInIframe()) return msal.loginRedirect(loginRequest);
   const result = await msal.loginPopup(loginRequest);
@@ -56,7 +65,7 @@ export async function signOut(msal: IPublicClientApplication, account: AccountIn
   window.location.reload();
 }
 
-export async function createMsal(): Promise<{ msal: PublicClientApplication; redirectFailed: boolean }> {
+export async function createMsal(): Promise<{ msal: PublicClientApplication; redirectError: string | null }> {
   const msal = new PublicClientApplication({
     auth: {
       clientId,
@@ -99,7 +108,7 @@ export async function createMsal(): Promise<{ msal: PublicClientApplication; red
     }
   });
 
-  let redirectFailed = false;
+  let redirectError: string | null = null;
   try {
     const result = await msal.handleRedirectPromise();
     const account = accountFromPayload(result);
@@ -107,12 +116,12 @@ export async function createMsal(): Promise<{ msal: PublicClientApplication; red
     else if (result) console.warn('[auth] redirect result without a usable account');
   } catch (err) {
     // A failed or cancelled redirect must not block the app; the user lands back on the sign-in screen.
-    console.warn('[auth] sign-in failed', err);
-    redirectFailed = true;
+    redirectError = authErrorCode(err);
+    console.warn('[auth] sign-in failed', redirectError);
   }
 
   const account = pickAccount(msal);
   if (account) msal.setActiveAccount(account);
 
-  return { msal, redirectFailed };
+  return { msal, redirectError };
 }
