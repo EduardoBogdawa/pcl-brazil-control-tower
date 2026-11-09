@@ -1,0 +1,335 @@
+[
+  {
+    "id": "spi",
+    "name": "Painel Controle SPI",
+    "desc": "Resumo e acompanhamento dos registros da lista Controle SPI.",
+    "category": "Packaging/SPI",
+    "status": "Disponível",
+    "url": "https://nexteerautomotive.sharepoint.com/sites/PCLBrazil/SiteAssets/Forms/AllItems.aspx?id=%2Fsites%2FPCLBrazil%2FSiteAssets%2FPainel%2DControle%2DSPI%2Ehtml&parent=%2Fsites%2FPCLBrazil%2FSiteAssets",
+    "instruction": "Adicionar um novo registro sempre que uma ideia de mudança de SPI for dada.",
+    "workshopDate": ""
+  },
+  {
+    "id": "cm-trello-bd",
+    "name": "Trello BD",
+    "desc": "Quadro Trello para acompanhamento das atividades de CM.",
+    "category": "CM",
+    "status": "Disponível",
+    "url": "https://trello.com/b/ySCLhnWf/bd",
+    "instruction": "Adicionar o antes e depois de uma melhoria implementada",
+    "workshopDate": ""
+  },
+  {
+    "id": "ecr-frete-partnumber",
+    "name": "ECR",
+    "desc": "Lista de frete por Part Number no SharePoint.",
+    "category": "ECR",
+    "status": "Disponível",
+    "url": "https://nexteerautomotive.sharepoint.com/sites/PCLBrazil/Shared%20Documents/Forms/AllItems.aspx?id=%2Fsites%2FPCLBrazil%2FShared%20Documents%2FProjetos%2FECR%2FFrete%20%2D%20PartNumber&sortField=LinkFilename&isAscending=true&viewid=e9af9673%2D1011%2D455f%2D8342%2Df951cc7e2473",
+    "instruction": "",
+    "workshopDate": ""
+  },
+  {
+    "id": "ecr-knowledge-center",
+    "name": "ECR Knowledge Center",
+    "desc": "Base pesquisável para consulta, comparação e reaproveitamento de ECRs históricos.",
+    "category": "ECR",
+    "status": "Disponível",
+    "url": "https://nexteerautomotive.sharepoint.com/sites/PCLBrazil/SiteAssets/Forms/AllItems.aspx?id=%2Fsites%2FPCLBrazil%2FSiteAssets%2FECR%2DKnowledge%2DCenter%2Ehtml&parent=%2Fsites%2FPCLBrazil%2FSiteAssets",
+    "instruction": "",
+    "workshopDate": ""
+  },
+  {
+    "id": "bom-audit-mudanca-de-estrutura-excel",
+    "name": "Mudança de Estrutura de Produto",
+    "desc": "Acesso à planilha de controle de mudança de estrutura de produto.",
+    "category": "BOM Audit",
+    "status": "Disponível",
+    "url": "https://nexteerautomotive.sharepoint.com/:x:/r/sites/EngenhariaNexteerBrasil/Shared%20Documents/Produto/PLANT%20PE/Change%20Management/Planilha%20de%20controle%20de%20mudan%C3%A7a%20de%20estrutura.xlsx?d=w4c90c1199f1f4d92a813784af93805ae&amp;csf=1&amp;web=1&amp;e=TvO19J",
+    "instruction": "",
+    "workshopDate": ""
+  },
+  {
+    "id": "copilot-studio-agent",
+    "name": "Análise SPI",
+    "desc": "Acesso ao agente de Análise SPI no Microsoft Copilot Studio.",
+    "category": "Agentes",
+    "status": "Disponível",
+    "url": "https://copilotstudio.microsoft.com/environments/cc10a308-53bd-e172-8182-e94cff82e0e4/bots/2913e208-788b-f111-8077-000d3a888ebf/overview",
+    "instruction": "",
+    "workshopDate": ""
+  },
+  {
+    "id": "power-bi-hub",
+    "name": "Power BIs",
+    "desc": "Central de acesso aos relatórios Power BI de PC&L.",
+    "category": "Acessos e Links",
+    "status": "Disponível",
+    "url": "",
+    "instruction": "",
+    "links": [
+      {
+        "name": "Inventory EMEASA",
+        "url": "https://app.powerbi.com/groups/me/reports/0c39df65-cc5e-484f-8e89-6db0bb78f562/ReportSection451598c9f6bd372c9673?ctid=21942f3d-edf7-4805-9a5b-e03d208249c5&experience=power-bi"
+      },
+      {
+        "name": "Global Inventory",
+        "url": "https://app.powerbi.com/groups/me/reports/5df8c05d-f23e-434e-8b84-be5b1dd728da/ReportSection64df95065608cb2e57af?ctid=21942f3d-edf7-4805-9a5b-e03d208249c5&experience=power-bi"
+      },
+      {
+        "name": "BI Inventory Brazil",
+        "url": "https://app.powerbi.com/groups/me/reports/8e2ea957-9e58-4f66-a3f6-12ab0b323664/4b4c5d1cb7f2d2e07f7a?experience=power-bi"
+      },
+      {
+        "name": "Delivery Supplier Performance",
+        "url": "https://app.powerbi.com/groups/me/reports/e366d2db-db7c-46d6-93c2-b30e39a1de12/ReportSectionee8d5d85bfd4ae06d881?experience=power-bi"
+      },
+      {
+        "name": "Freights per Legal Documents",
+        "url": "https://app.powerbi.com/groups/me/reports/cc4ffedf-324a-42a3-830f-b5bbd2697a7a/ReportSection650a789fad2b8b0cdc09?ctid=21942f3d-edf7-4805-9a5b-e03d208249c5&experience=power-bi"
+      },
+      {
+        "name": "Blocked Parts",
+        "url": "https://app.powerbi.com/groups/me/reports/e0255b54-a051-4e1c-b08d-bc495e0fdfa8/ReportSectionada7471000775c61ec71?experience=power-bi"
+      },
+      {
+        "name": "Global PC&L",
+        "url": "https://app.powerbi.com/groups/me/reports/5c1f8cc9-83b7-46ed-9fb8-140dd369a5c3/3be967f407972b55e7c9?experience=power-bi"
+      },
+      {
+        "name": "PC&L TIER 2 e 3",
+        "url": "https://app.powerbi.com/reportEmbed?reportId=3116773a-af0f-418a-900a-157ac390798f&autoAuth=true&ctid=21942f3d-edf7-4805-9a5b-e03d208249c5"
+      }
+    ],
+    "workshopDate": ""
+  },
+  {
+    "id": "tito-processos",
+    "name": "Tito — Controle de Processos",
+    "desc": "Site Tito para controle e acompanhamento de processos.",
+    "category": "Acessos e Links",
+    "status": "Disponível",
+    "url": "https://gv2.tito.com.br/processos",
+    "instruction": "",
+    "workshopDate": ""
+  },
+  {
+    "id": "bsc-balanced-scorecard",
+    "name": "Indicadores BSC - Balanced Scorecard",
+    "desc": "Acesso aos indicadores do Balanced Scorecard.",
+    "category": "Acessos e Links",
+    "status": "Disponível",
+    "url": "https://bsc.nexteer.app/#/home/BSC",
+    "instruction": "",
+    "workshopDate": ""
+  },
+  {
+    "id": "pcl-alert",
+    "name": "PC&L Alert",
+    "desc": "Acesso ao aplicativo PC&L Alert no Microsoft Power Apps.",
+    "category": "Acessos e Links",
+    "status": "Disponível",
+    "url": "https://apps.powerapps.com/play/e/c8348670-a2af-4ca4-a0b0-94abba1f33bc/a/d5bb7649-448b-49da-a0e3-5f38785f5681?tenantId=21942f3d-edf7-4805-9a5b-e03d208249c5#",
+    "instruction": "",
+    "workshopDate": ""
+  },
+  {
+    "id": "tools-pcl-advanced",
+    "name": "Tools PC&L Advanced",
+    "desc": "Central de acesso às principais ferramentas avançadas de PC&L.",
+    "category": "Acessos e Links",
+    "status": "Disponível",
+    "url": "",
+    "instruction": "",
+    "links": [
+      {
+        "name": "Intelex",
+        "url": "https://clients.intelex.com/Login/?returnUrl=%2FLogin%2Foauth%2FNexteer%2Fauthorize%3Fresponse_type%3Dcode%26client_id%3DV6%26redirect_uri%3Dhttps%253a%252f%252fclients.intelex.com%252fLogin%252fNexteer%252fUser%252fSignIn%253freturnUrl%253d%25252FLogin%25252FNexteer%25252FApplication%25252FMyTasksSummary%26state%3DGJkirLEiK6IDZZuvKIUY1A%253d%253d%26tzName%3DHor%25C3%25A1rio%2520Padr%25C3%25A3o%2520de%2520Bras%25C3%25ADlia%26tzOffSet%3D-03%253A00%253A00"
+      },
+      {
+        "name": "NCAS",
+        "url": "https://ncas.nexteer.app/Dashboard/ActiveCostStudies/367298f8-3b86-4e47-a9fe-c2131ed368ab"
+      },
+      {
+        "name": "CPI Program Management",
+        "url": "https://nexteerautomotive.sharepoint.com/sites/intranet/cpi/Pages/Home.aspx?xsdata=MDV8MDJ8fGM4MDNhZjI1OWJjNzRkZWZlYjJjMDhkZTQyMWY5ODE5fDIxOTQyZjNkZWRmNzQ4MDU5YTViZTAzZDIwODI0OWM1fDB8MHw2MzkwMjA5MDA1OTY0NDM5NDh8VW5rbm93bnxWR1ZoYlhOVFpXTjFjbWwwZVZObGNuWnBZMlY4ZXlKRFFTSTZJbFJsWVcxelgwRlVVRk5sY25acFkyVmZVMUJQVEU5R0lpd2lWaUk2SWpBdU1DNHdNREF3SWl3aVVDSTZJbGRwYmpNeUlpd2lRVTRpT2lKUGRHaGxjaUlzSWxkVUlqb3hNWDA9fDF8TDJOb1lYUnpMekU1T2pNMk56STVPR1k0TFROaU9EWXROR1UwTnkxaE9XWmxMV015TVRNeFpXUXpOamhoWWw4NU5HRm1abVExTnkwMU1tUXpMVFF3TkdZdE9ERTFZeTFpTnpGbU1UZG1NMlJqTURWQWRXNXhMbWRpYkM1emNHRmpaWE12YldWemMyRm5aWE12TVRjMk5qUTVNekkxT0RRMU1RPT18MTg5OWU1N2IyODVhNDIzMzNkOGYwOGRlNDIxZjk4MTl8YjgyMzBhYmE4ZTU1NDk3NGFkNzdhYTQxNGJmNmQxZGM%3D&sdata=YllKc2d0RTFiSHpFaU9RRFY2L2FwZlFGN290T3Y3TVRsWXowcm1uQjZjST0%3D&ovuser=21942f3d-edf7-4805-9a5b-e03d208249c5%2Ceduardo.bogdawa%40nexteer.com&OR=Teams-HL&CT=1766493425329&clickparams=eyJBcHBOYW1lIjoiVGVhbXMtRGVza3RvcCIsIkFwcFZlcnNpb24iOiI0OS8yNTExMzAwMTMxMiIsIkhhc0ZlZGVyYXRlZFVzZXIiOmZhbHNlfQ%3D%3D"
+      },
+      {
+        "name": "DocuSign",
+        "url": "https://account.docusign.com/oauth/auth?response_type=code&scope=all&client_id=e63ccab8-ed38-489b-93e5-5607430af035&redirect_uri=https%3A%2F%2Fapps.docusign.com%2Fauthenticate&state=%7B%22widgetId%22%3A%22%40ds%2Fsend%22%2C%22xsrfToken%22%3A%22Ch7TZ2pD8p5GbrQ%2FVCTmYwS3Bo1nj36W%2BMWSK9Ub2eK4ygHGg3JYxEp1h7X%2BU%2BMI9q8tEb%2FSKlxAvQIJF6kCh8nJXi9eV6kubmSgUruaWybWdQa6swgCPlbv8m11pdnjoYyAa6iwgqHxuvkmhyKaWFSmEe5sWJxi2nkBaCUMlXQ%3D%22%2C%22redirectUri%22%3A%22%2Fsend%2Fhome%22%2C%22authTxnId%22%3A%22511a1094-46bd-4841-b6dd-6ae5c1ffb27e%22%7D"
+      }
+    ],
+    "workshopDate": ""
+  },
+  {
+    "id": "workshop-masterdata",
+    "name": "Workshop Masterdata",
+    "desc": "Materiais, decisões e ações do workshop Masterdata.",
+    "category": "Workshops",
+    "status": "Disponível",
+    "url": "https://nexteerautomotive.sharepoint.com/sites/PCLBrazil/Shared%20Documents/Forms/AllItems.aspx?id=%2Fsites%2FPCLBrazil%2FShared%20Documents%2FProjetos%2FWorkshop%2FWorkshop%20Masterdata",
+    "instruction": "",
+    "workshopDate": "2026-09-25"
+  },
+  {
+    "id": "best-practice-2025",
+    "name": "Best practices - Brazil 2025",
+    "desc": "Apresentação de melhores práticas do Brasil — 2025.",
+    "category": "Best Practice",
+    "status": "Disponível",
+    "url": "https://nexteerautomotive.sharepoint.com/sites/PCLBrazil/_layouts/15/Doc.aspx?sourcedoc=%7B9E44C2CD-6B04-4909-B421-FE55864B9184%7D",
+    "workshopDate": "",
+    "instruction": ""
+  },
+  {
+    "id": "best-practice-2026",
+    "name": "Best practices - Brazil 2026",
+    "desc": "Apresentação de melhores práticas do Brasil — 2026.",
+    "category": "Best Practice",
+    "status": "Disponível",
+    "url": "https://nexteerautomotive.sharepoint.com/sites/PCLBrazil/_layouts/15/Doc.aspx?sourcedoc=%7B6C490B81-8516-4935-9ECB-C6A5C1824C9D%7D",
+    "workshopDate": "",
+    "instruction": ""
+  },
+  {
+    "id": "best-practice-2024",
+    "name": "Best practices - Brazil 2024",
+    "desc": "Apresentação de melhores práticas do Brasil — 2024.",
+    "category": "Best Practice",
+    "status": "Disponível",
+    "url": "https://nexteerautomotive.sharepoint.com/sites/PCLBrazil/_layouts/15/Doc.aspx?sourcedoc=%7B305554E7-6EF2-4902-A178-1C0DE3C39314%7D",
+    "workshopDate": "",
+    "instruction": ""
+  },
+  {
+    "id": "invoice-packing-list-agent",
+    "name": "Invoice/Packing List",
+    "desc": "Agente para suporte a Invoice e Packing List.",
+    "category": "Agentes",
+    "status": "Disponível",
+    "url": "",
+    "instruction": "Importar do QAD a PO em PDF e adicionar no agente junto com a invoice e o packing list. O agente irá verificar o que está correto e o que precisa ser revisado.",
+    "workshopDate": ""
+  },
+  {
+    "id": "tracker-items",
+    "name": "Tracker Items",
+    "desc": "Acompanhamento de itens de Packaging/SPI.",
+    "category": "Packaging/SPI",
+    "status": "Disponível",
+    "url": "https://nexteerautomotive.sharepoint.com/:x:/r/sites/PCLBrazil/Shared%20Documents/Cobertura%20itens/TRACKER%20ITEMS/Tracker_Items_CEPS_SPEPS.xlsx?d=wfb12e0b764e54a97b3aff0b95919a07a&csf=1&web=1&e=nx20kf",
+    "instruction": "",
+    "workshopDate": ""
+  },
+  {
+    "id": "bp-tracking-items-instruction",
+    "name": "Instrução Tracking Itens BP",
+    "desc": "Instrução para acompanhamento de itens BreakPoint.",
+    "category": "CM",
+    "status": "Disponível",
+    "url": "https://nexteerautomotive.sharepoint.com/:p:/r/sites/PCLBrazil/Shared%20Documents/Projetos/Change%20Management%20-%20CM/Instru%C3%A7%C3%A3o_Horizontal_Item_BreakPoint%20.pptx?d=w8602240820d24b7dbbb39bb8e91ef6c9&csf=1&web=1&e=2tqO6v",
+    "instruction": "Adicionar o antes e depois de uma melhoria implementada",
+    "workshopDate": ""
+  },
+  {
+    "id": "cm-bearing-38025507-38235940",
+    "name": "CM — Substituição de rolamento",
+    "desc": "Troca e padronização do rolamento de 47 mm para os programas 281, 341 e 265.",
+    "category": "CM",
+    "status": "Disponível",
+    "url": "",
+    "instruction": "PN atual: 38025507 – BEARING ASM, BALL\nNovo PN: 38235940 – BEARING ASM, BALL\nMudança: substituição do rolamento de 38025507 para 38235940.\nProgramas afetados: 281 / 341 / 265\nPlanta: 89 – Brazil\nMotivo: comunizar/padronizar o PN do rolamento de 47 mm utilizado no novo programa CEPS F1H com os demais programas. O objetivo explicitamente indicado é evitar mistura de peças na linha de montagem, já que os programas compartilham a mesma máquina.\n\nAdicionar o antes e depois de uma melhoria implementada",
+    "changeType": "bearing",
+    "workshopDate": ""
+  },
+  {
+    "id": "cm-itr-38239109-38211878",
+    "name": "CM — Troca de fonte ITR",
+    "desc": "Alteração de fornecedor do ITR para redução de custo (MCIP).",
+    "category": "CM",
+    "status": "Disponível",
+    "url": "",
+    "instruction": "PN atual: 38239109 – ROD ASM, INNER TIE (ITR).\nNovo PN: 38211878 – ROD ASM, INNER TIE (ITR).\nMudança: troca da fonte de fornecimento do ITR, de CTR México para CTR China.\nPlanta afetada: Nexteer Porto Real – Plant 88.\nImplementação: Running Change.\nMotivo: redução de custo (MCIP)\n\nAdicionar o antes e depois de uma melhoria implementada",
+    "changeType": "itr",
+    "workshopDate": ""
+  },
+  {
+    "id": "cm-harness-38363140-wzr152001",
+    "name": "CM — Novo lote BP de chicote",
+    "desc": "Acompanhamento do lote BP WZR152001 para correção do problema no PN 38363140.",
+    "category": "CM",
+    "status": "Em revisão",
+    "url": "",
+    "instruction": "PN: 38363140 – Chicote.\nMudança: novo lote BP indicado nos registros de Gestão de Mudanças como o lote que deve corrigir o problema identificado no componente.\nPacking List / Invoice: WZR152001.\nStatus em 29/09/2026: Em andamento. O material estava no entreposto (PSN) e havia uma fila de 3 mil peças antes da entrada do novo lote.\nMaterial já recebido em Porto Real no acompanhamento: lote WZR151172 — diferente do lote BP WZR152001.\nPonto importante: os registros não apresentam a descrição técnica da alteração no chicote. Eles informam apenas que o lote BP deve corrigir o problema, sem especificar a mudança física ou de especificação do PN 38363140.\n\nAdicionar o antes e depois de uma melhoria implementada",
+    "changeType": "harness",
+    "workshopDate": ""
+  },
+  {
+    "id": "cm-upper-bearing-26141865-38280788",
+    "name": "CM — Alteração de fornecedor Upper Bearing",
+    "desc": "Validação do novo rolamento superior C&U com foco em redução de custo.",
+    "category": "CM",
+    "status": "Disponível",
+    "url": "",
+    "instruction": "PN atual: 26141865 – Upper Bearing, Rev. 07.\nNovo PN: 38280788 – Upper Bearing, Rev. 02.\nMudança: alteração de fornecedor do rolamento superior, de Schaeffler para C&U, com validação do novo PN 38280788.\nMotivo: redução de custo / commercial saving.\nPlantas envolvidas: 77 e 89.\nProgramas indicados no Cost Study: 332, 1397, 358, 359, 363, 376 e 327. Também há menção de validação para aplicações Stellantis adicionais, incluindo 281.\nCost Study: 3027472005 – STLA 363/376/327/358/359 CIS - UPPER BEARING SCHAFFLER TO C&U.\n\nAdicionar o antes e depois de uma melhoria implementada",
+    "changeType": "upper-bearing",
+    "workshopDate": ""
+  },
+  {
+    "id": "prompt-library-pcl",
+    "name": "Biblioteca de Prompts PC&L",
+    "desc": "Biblioteca moderna para consultar e copiar prompts operacionais com titulo e objetivo de uso.",
+    "category": "Prompt",
+    "status": "Disponível",
+    "url": "",
+    "instruction": "",
+    "links": [
+      {
+        "name": "Inventory Optimization",
+        "purpose": "Analisa desvios de inventario versus a meta JNI e recomenda acoes para melhorar DIO e controle de estoque.",
+        "prompt": "Act as an experienced PC&L Material Planner. I am working to improve DIO and achieve JNI inventory targets. Explain possible reasons for a gap between current inventory performance and JNI target, identify inventory risks, and recommend actions related to planning, supplier management, inventory control, forecast accuracy, and order policies."
+      },
+      {
+        "name": "Template Painel HTML",
+        "purpose": "Gera um template Control Tower responsivo e pronto para personalizar em sites do SharePoint.",
+        "prompt": "Crie um arquivo HTML único, responsivo e pronto para ser usado em qualquer site do SharePoint como um painel de navegação operacional.\n\nObjetivo:\n- Criar um template genérico de “Control Tower” que possa ser personalizado por qualquer área.\n- Não usar dependências externas, CDN, imagens externas ou bibliotecas.\n- Incluir todo CSS e JavaScript no próprio arquivo HTML.\n- Usar textos em português e campos de exemplo fáceis de substituir.\n\nLayout:\n- Barra lateral esquerda azul-escura, recolhida por padrão, exibindo uma sigla.\n- Ao passar o mouse, expandir a barra lateral e mostrar:\n  - Nome da empresa\n  - Nome da área/setor\n  - Menu “Navegação”\n  - Botões “Visão geral” e “Categoria”\n  - Rodapé “Template padrão / Control Tower”\n- Área principal com:\n  - Título do painel\n  - Descrição curta\n  - Botão “+ Adicionar item”\n  - Quatro cards de indicadores com rótulo, valor e texto auxiliar\n  - Banner principal com resumo da operação e campo para sigla\n  - Seção “Itens em destaque” com cards para recursos, links ou orientações\n  - Seção “Categoria” com cabeçalho, descrição e cards de recursos\n- Os botões do menu devem alternar entre as seções “Visão geral” e “Categoria”, ocultando a seção não selecionada.\n- Os botões e cards podem ser visuais, sem necessidade de persistência de dados.\n\nEstilo:\n- Visual corporativo, limpo e moderno.\n- Paleta: azul-marinho, azul-petróleo, vermelho como cor de destaque, branco e cinza-claro.\n- Cards com bordas arredondadas, sombra leve e boa legibilidade.\n- Layout responsivo:\n  - Desktop: barra lateral fixa e cards em grade.\n  - Tablet: indicadores e cards em duas colunas.\n  - Celular: uma coluna, barra lateral expandida e sem efeito de recolhimento.\n- Usar fonte Segoe UI, com alternativas seguras.\n- Incluir comentários no HTML indicando quais textos, cores, indicadores, categorias e links podem ser alterados.\n\nEntregue somente o conteúdo completo do arquivo HTML, iniciado por ."
+      },
+      {
+        "name": "Apresentação Gerencial Nexteer",
+        "purpose": "Cria uma apresentação gerencial em PowerPoint com pesquisa restrita às fontes internas autorizadas e identidade visual Nexteer.",
+        "prompt": "Objetivo e público\nObjetivo: [O QUE QUERO INFORMAR OU QUAL DECISÃO PRECISO APOIAR].\nPúblico: [EQUIPE, GESTÃO, DIRETORIA OU CLIENTE].\nIdioma: [PORTUGUÊS OU INGLÊS].\nQuantidade total de slides: [NÚMERO].\nTópicos obrigatórios: [LISTAR OS ASSUNTOS].\nPeríodo das informações: [DATA INICIAL E FINAL].\n\nPesquisa nas fontes internas\nPesquise informações às quais tenho acesso, limitando o conteúdo às seguintes fontes:\nTeams: equipe [NOME], canal ou chat [NOME E LINK].\nE-mails: mensagens de/para [PESSOAS OU GRUPO], sobre [ASSUNTOS E PALAVRAS-CHAVE].\nSharePoint: site [LINK], biblioteca ou pasta [NOME/LINK], arquivos prioritários [NOMES OU LINKS].\nConfirme que os resultados pertencem aos locais indicados. Não use informações de outros grupos ou projetos apenas porque têm nomes semelhantes. Se não conseguir acessar ou identificar uma fonte, informe a limitação e peça orientação antes de ampliar a pesquisa.\nPriorize documentos oficiais e atualizações recentes. Cruze as fontes para identificar resultados, indicadores, decisões, riscos e pendências. Diferencie propostas de decisões aprovadas. Não invente números, prazos ou responsáveis. Destaque divergências e informações não encontradas. Registre as fontes e suas datas nas notas dos slides correspondentes.\n\nIdentidade visual e imagens\nUse o PPT aberto/anexado como referência de composição e qualidade visual. Preserve o padrão Nexteer presente no material, incluindo cores, tipografia, logotipo e rodapés. Se houver um template oficial nas fontes indicadas, use-o como referência principal da marca.\nCrie slides com imagens bem desenvolvidas, relevantes para cada tópico e integradas ao layout. Priorize fotos e materiais corporativos disponíveis nas fontes autorizadas. Quando necessário, use imagens geradas como ilustrações, sem apresentá-las como registros reais de instalações, equipamentos ou operações da Nexteer.\nEvite imagens genéricas, distorções, excesso de texto e elementos sobrepostos. Mantenha textos, tabelas e gráficos editáveis, com boa legibilidade.\n\nOrganização do conteúdo\nDistribua os tópicos em uma narrativa clara: contexto, situação atual, evidências, pontos de atenção e próximos passos. Adapte essa estrutura ao tema e à quantidade de slides. Inclua responsáveis e prazos somente quando as fontes os confirmarem.\nAntes de criar os slides, apresente um roteiro curto com os títulos propostos e as fontes encontradas para eu aprovar. Pergunte apenas o que estiver faltando e afetar o resultado."
+      }
+    ],
+    "workshopDate": ""
+  },
+  {
+    "id": "cpi-program-management-panel",
+    "name": "CPI Program Management",
+    "desc": "Acesso ao programa CPI.",
+    "category": "CPI",
+    "status": "Disponível",
+    "url": "https://nexteerautomotive.sharepoint.com/sites/intranet/cpi/Pages/Home.aspx",
+    "instruction": "",
+    "workshopDate": ""
+  },
+  {
+    "id": "embedded-agent-690293c3",
+    "name": "Conversor BOM para Excel",
+    "desc": "Acesso ao agente Conversor BOM para Excel no Microsoft 365 Copilot.",
+    "category": "Agentes",
+    "status": "Disponível",
+    "url": "https://m365.cloud.microsoft/chat/?titleId=T_690293c3-b290-2137-2005-34411316fc73&source=embedded-builder",
+    "instruction": "",
+    "workshopDate": ""
+  },
+  {
+    "id": "cm-ring-retaining-38297611-38356680",
+    "name": "CM — Resourcing Ring Retainings",
+    "desc": "ECR 3054264: resourcing dos anéis de retenção para CEPS 358, 359, 363, 376, F1H, F2U, F2X e XBP.",
+    "category": "CM",
+    "status": "Disponível",
+    "url": "",
+    "instruction": "ECR 3054264. PNs: 38014398 para 38297611 e 38222410 para 38356680. Fornecedor: Rotor Clip para Shanghai Nate Automobile Fastener Co., Ltd. Estratégia global aprovada na Polônia (ECR 3053048), com redução de custo e padronização entre Brasil, China e Polônia. Planta 89. Programas CEPS 358, 359, 363, 376, F1H, F2U, F2X e XBP. Benefícios: menor custo de matéria-prima, cadeia simplificada e maior competitividade.\n\nAdicionar o antes e depois de uma melhoria implementada",
+    "changeType": "ring-retaining"
+  }
+]

@@ -1,0 +1,107 @@
+<div class="bg-fx" aria-hidden="true"><span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span></div>
+<div class="shell">
+<aside class="side">
+ <div class="brand"><div class="mark"><img class="nexteer-logo" src="/nexteer-logo.png" alt="Nexteer Automotive"></div><div class="brand-id"><b>PC&L BRAZIL</b><small>CONTROL TOWER</small></div></div>
+ <button type="button" class="side-search" id="paletteBtn"><span data-icon="search"></span><span>Buscar</span><kbd>Ctrl K</kbd></button>
+ <div class="nav-label">NAVEGAÇÃO</div><nav class="nav nav-flat" aria-label="Categorias"></nav>
+ <button type="button" class="nav-add" id="addCategoryBtn"><span data-icon="plus"></span><span class="nav-txt">Nova categoria</span></button>
+ <button type="button" class="side-toggle" id="sideToggle" aria-expanded="true" title="Recolher menu"><span data-icon="chevronLeft"></span><span class="nav-txt">Recolher menu</span></button>
+ <div class="side-foot"><span class="live-dot" aria-hidden="true"></span><div><b>CENTRAL OPERACIONAL</b><small>Links e painéis em um único cockpit</small></div></div>
+</aside>
+<main class="main">
+ <header class="top"><div class="top-id"><span class="top-badge" data-icon="activity"></span><div><div class="top-line"><h1>PC&L Brasil</h1><span class="eyebrow">Control Tower</span></div><div class="sub">Centralize, organize e acesse seus painéis operacionais.</div></div><div class="clock" id="clock"></div></div><div class="actions"><div class="lang-switch" role="group" aria-label="Idioma"><button type="button" data-lang="pt" title="Português">PT</button><button type="button" data-lang="en" title="English">EN</button></div><div class="lang-switch theme-switch" role="group" aria-label="Tema"><button type="button" data-theme-set="light" title="Fundo claro"><span data-icon="sun"></span><span>Claro</span></button><button type="button" data-theme-set="dark" title="Fundo escuro"><span data-icon="moon"></span><span>Escuro</span></button><button type="button" data-theme-set="nexteer" title="Paleta padrão Nexteer"><span data-icon="palette"></span><span>Padrão</span></button></div><button type="button" class="btn" id="exportBtn" title="Exportar configuração"><span data-icon="download"></span><span>Exportar configuração</span></button><button type="button" class="btn primary" id="addBtn"><span data-icon="plus"></span><span>Adicionar painel</span></button></div></header>
+ <section id="accessLinksHeader"><span class="access-icon" id="accessIcon" aria-hidden="true"></span><div class="access-copy"><div class="access-eyebrow" id="accessEyebrow"></div><h2 class="access-title" id="accessTitle"></h2><p class="access-description" id="accessDescription"></p></div><div class="access-count"><strong id="accessCount">0</strong><span id="accessCountLabel">recursos</span></div></section>
+ <div class="section-head"><h2 id="sectionTitle">Painéis de controle</h2><div class="tools"><input class="search" id="search" placeholder="Buscar painel..." aria-label="Buscar painel"><div class="view-toggle" id="viewToggle" role="group" aria-label="Modo de visualização"><button type="button" data-view-mode="grid" title="Visualizar em grade" aria-label="Visualizar em grade"><span data-icon="grid"></span></button><button type="button" data-view-mode="list" title="Visualizar em lista" aria-label="Visualizar em lista"><span data-icon="list"></span></button></div><button type="button" class="btn btn-danger-soft" id="deleteCategoryBtn" hidden>Excluir categoria</button></div></div>
+ <section class="grid" id="grid"></section>
+ <div class="note"><span data-icon="info"></span><div>Use <b>Adicionar painel</b> para cadastrar URLs de Power BI, SharePoint, Lists, Excel ou páginas HTML. As alterações ficam salvas e aparecem para todos que acessam o painel.</div></div>
+</main>
+</div>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+ <div class="dialog"><h2 id="modalTitle">Adicionar painel</h2><form id="form" class="form">
+  <input type="hidden" id="editId">
+  <label>Nome do painel ou link<input id="name" required maxlength="80" placeholder="Ex.: Portal de consultas"></label>
+  <label>Descrição<input id="desc" maxlength="140" placeholder="Objetivo ou escopo do painel"></label>
+  <label>Descrição em inglês (opcional)<input id="descEn" maxlength="140" placeholder="Exibida quando a página estiver em inglês"></label>
+  <div class="form-row"><label>Categoria<select id="category" required></select></label><input type="hidden" id="status"></div>
+  <label>URL<input id="url" type="url" placeholder="https://..."></label><label>Data do workshop<input id="workshopDate" type="date"></label>
+  <label>Instrução<textarea id="instruction" maxlength="600" placeholder="Digite a orientação específica para este painel"></textarea></label>
+  <div class="dialog-actions"><button class="btn btn-danger-soft dialog-delete" type="button" id="deletePanelBtn" hidden>Excluir painel</button><button class="btn" type="button" id="cancelBtn">Cancelar</button><button class="btn primary" type="submit">Salvar painel</button></div>
+ </form></div>
+</div>
+<div class="modal" id="instructionModal" role="dialog" aria-modal="true" aria-labelledby="instructionTitle">
+ <div class="dialog" id="instructionDialog"><h2 id="instructionTitle">Instrução</h2><form id="instructionForm" class="form">
+  <input type="hidden" id="instructionPanel">
+  <div class="note" id="instructionPanelName"></div>
+  <label>Instrução<textarea id="instructionOnly" required maxlength="600" placeholder="Digite a instrução deste painel"></textarea></label>
+  <div class="dialog-actions"><button class="btn" type="button" id="instructionCancel">Cancelar</button><button class="btn primary" type="submit">Salvar instrução</button></div>
+ </form></div>
+</div>
+<div class="modal" id="linksModal" role="dialog" aria-modal="true" aria-labelledby="linksTitle"><div class="dialog"><h2 id="linksTitle">Power BIs</h2><div id="linksList" class="form"></div><div class="dialog-actions"><button class="btn" type="button" id="linksClose">Fechar</button></div></div></div>
+<div class="modal" id="categoryModal" role="dialog" aria-modal="true" aria-labelledby="categoryTitle">
+ <div class="dialog"><h2 id="categoryTitle">Nova categoria</h2><form id="categoryForm" class="form" novalidate>
+  <label>Nome da categoria<input id="catName" required maxlength="40" placeholder="Ex.: Logística"></label>
+  <label>Descrição<input id="catDesc" maxlength="140" placeholder="Aparece no cartão da visão geral"></label>
+  <label>Cor de destaque<input id="catColor" type="color" value="#c8102e"></label>
+  <p class="form-error" id="categoryError" role="alert"></p>
+  <div class="dialog-actions"><button class="btn" type="button" id="categoryCancel">Cancelar</button><button class="btn primary" type="submit">Criar categoria</button></div>
+ </form></div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="modal" id="taskModal" role="dialog" aria-modal="true" aria-labelledby="taskTitle">
+ <div class="dialog"><h2 id="taskTitle">Nova atividade</h2><form id="taskForm" class="form" novalidate>
+  <input type="hidden" id="taskPeriod">
+  <label>Atividade<input id="taskName" required maxlength="100" placeholder="Ex.: Reunião de prioridades"></label>
+  <label>Frequência / dia<input id="taskDay" maxlength="60"></label>
+  <fieldset class="owner-pick"><legend>Responsável</legend>
+   <label class="eduardo"><input type="radio" name="taskOwner" value="Eduardo" required><i class="tb-av">E</i><span>Eduardo</span></label>
+   <label class="amanda"><input type="radio" name="taskOwner" value="Amanda"><i class="tb-av">A</i><span>Amanda</span></label>
+   <label class="both"><input type="radio" name="taskOwner" value="Amanda e Eduardo"><i class="tb-av">A+E</i><span>Ambos</span></label>
+  </fieldset>
+  <p class="form-error" id="taskError" role="alert"></p>
+  <div class="dialog-actions"><button class="btn" type="button" id="taskCancel">Cancelar</button><button class="btn primary" type="submit">Adicionar atividade</button></div>
+ </form></div>
+</div>
+<div class="modal" id="eventModal" role="dialog" aria-modal="true" aria-labelledby="eventFormTitle">
+ <div class="dialog event-dialog"><h2 id="eventFormTitle">Novo evento</h2><form id="eventForm" class="form" novalidate>
+  <input type="hidden" id="evId">
+  <label>Título<input id="evTitle" required maxlength="120" placeholder="Ex.: Reunião de fechamento"></label>
+  <div class="ev-row">
+   <label>Data<input id="evDate" type="date" required></label>
+   <label>Início<input id="evStart" type="time"></label>
+   <label>Fim<input id="evEnd" type="time"></label>
+  </div>
+  <label class="ev-check"><input id="evAllDay" type="checkbox" checked><span>Dia inteiro</span></label>
+  <div class="ev-row">
+   <label>Recorrência<select id="evRecurrence"><option value="none">Não se repete</option><option value="daily">Diariamente</option><option value="weekly">Semanalmente</option><option value="monthly">Mensalmente</option><option value="yearly">Anualmente</option></select></label>
+   <label id="evUntilWrap">Repetir até<input id="evUntil" type="date"></label>
+  </div>
+  <div class="ev-field"><span class="ev-label" id="evOwnersLabel">Owners</span><div class="tag-input" id="evOwners" data-placeholder="Digite um nome e pressione Enter" aria-labelledby="evOwnersLabel"></div></div>
+  <div class="ev-field"><span class="ev-label" id="evPartsLabel">Participantes</span><div class="tag-input" id="evParticipants" data-placeholder="Digite um nome e pressione Enter" aria-labelledby="evPartsLabel"></div></div>
+  <fieldset class="ev-colors"><legend>Cor</legend><div id="evColors"></div></fieldset>
+  <label>Descrição<textarea id="evDesc" maxlength="2000" rows="3" placeholder="Pauta, links ou observações"></textarea></label>
+  <datalist id="peopleList"></datalist>
+  <p class="form-error" id="eventError" role="alert"></p>
+  <div class="dialog-actions"><button class="btn" type="button" id="eventCancel">Cancelar</button><button class="btn primary" type="submit" id="eventSubmit">Salvar evento</button></div>
+ </form></div>
+</div>
+<div class="modal" id="eventView" role="dialog" aria-modal="true" aria-labelledby="evViewTitle">
+ <div class="dialog event-view"><div id="evViewBody"></div>
+  <div class="dialog-actions"><button class="btn btn-danger" type="button" id="evViewDelete">Excluir</button><span class="spacer"></span><button class="btn" type="button" id="evViewClose">Fechar</button><button class="btn primary" type="button" id="evViewEdit">Editar</button></div>
+ </div>
+</div>
+<div class="modal" id="dayModal" role="dialog" aria-modal="true" aria-labelledby="dayModalTitle">
+ <div class="dialog day-dialog"><h2 id="dayModalTitle"></h2><div id="dayModalList" class="day-list"></div>
+  <div class="dialog-actions"><button class="btn" type="button" id="dayModalClose">Fechar</button><button class="btn primary" type="button" id="dayModalAdd">Novo evento</button></div>
+ </div>
+</div>
+<div class="modal" id="confirmModal" role="alertdialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmMessage">
+ <div class="dialog confirm-dialog"><h2 id="confirmTitle">Confirmar exclusão</h2><p id="confirmMessage"></p>
+  <div class="dialog-actions"><button class="btn" type="button" id="confirmCancel">Cancelar</button><button class="btn btn-danger" type="button" id="confirmOk">Excluir</button></div>
+ </div>
+</div>
+<div class="palette" id="palette" role="dialog" aria-modal="true" aria-label="Busca rápida">
+ <div class="palette-box"><div class="palette-input"><span data-icon="search"></span><input id="paletteInput" autocomplete="off" placeholder="Buscar painéis, categorias e ações..." aria-label="Buscar painéis, categorias e ações..." aria-controls="paletteList"><kbd>Esc</kbd></div>
+  <div class="palette-list" id="paletteList" role="listbox"></div>
+  <div class="palette-foot"><span><kbd>↑</kbd><kbd>↓</kbd> navegar</span><span><kbd>Enter</kbd> abrir</span><span><kbd>Esc</kbd> fechar</span></div>
+ </div>
+</div>
