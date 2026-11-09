@@ -1,12 +1,10 @@
 import { EventType, LogLevel, PublicClientApplication, type AccountInfo, type EventMessage, type IPublicClientApplication } from '@azure/msal-browser';
 import { POPUP_RELAY_URI, isInIframe } from '@/auth/popupBridge';
+import { appConfig } from '@/config/appConfig';
 
-const tenantId = import.meta.env.VITE_ENTRA_TENANT_ID?.trim();
-const clientId = import.meta.env.VITE_ENTRA_CLIENT_ID?.trim();
-const apiScope = import.meta.env.VITE_ENTRA_API_SCOPE?.trim();
-const authority = import.meta.env.VITE_ENTRA_AUTHORITY?.trim() || (tenantId ? `https://login.microsoftonline.com/${tenantId}` : '');
+const { entraTenantId: tenantId, entraClientId: clientId, entraApiScope: apiScope, entraAuthority: authority } = appConfig;
 
-export const authDevMode = import.meta.env.VITE_DEV_MODE === 'true';
+export const authDevMode = appConfig.devMode;
 export const authConfigured = Boolean(clientId && authority);
 
 export const loginRequest = { scopes: ['openid', 'profile', 'email', 'User.Read', ...(apiScope ? [apiScope] : [])] };
@@ -61,7 +59,7 @@ export async function signOut(msal: IPublicClientApplication, account: AccountIn
 export async function createMsal(): Promise<{ msal: PublicClientApplication; redirectFailed: boolean }> {
   const msal = new PublicClientApplication({
     auth: {
-      clientId: clientId!,
+      clientId,
       authority,
       redirectUri: window.location.origin,
       postLogoutRedirectUri: window.location.origin,

@@ -32,6 +32,47 @@ const SECURITY_HEADERS = {
   'X-Frame-Options': 'SAMEORIGIN',
 };
 
+// Allowlist of public browser settings. Each entry lists accepted env names in priority order;
+// nothing outside this list is ever read, so SQL_* credentials and secrets cannot leak.
+const PUBLIC_CONFIG = {
+  VITE_SUPABASE_URL: ['VITE_SUPABASE_URL', 'SUPABASE_URL'],
+  VITE_SUPABASE_ANON_KEY: ['VITE_SUPABASE_ANON_KEY', 'SUPABASE_ANON_KEY'],
+  VITE_ENTRA_CLIENT_ID: ['VITE_ENTRA_CLIENT_ID', 'ENTRA_CLIENT_ID'],
+  VITE_ENTRA_TENANT_ID: ['VITE_ENTRA_TENANT_ID', 'ENTRA_TENANT_ID'],
+  VITE_ENTRA_AUTHORITY: ['VITE_ENTRA_AUTHORITY', 'ENTRA_AUTHORITY'],
+  VITE_ENTRA_API_SCOPE: ['VITE_ENTRA_API_SCOPE', 'ENTRA_API_SCOPE'],
+  VITE_DEV_MODE: ['VITE_DEV_MODE'],
+};
+const REQUIRED = ['VITE_SUPABASE_URL', 'VITE_SUPABASE_ANON_KEY', 'VITE_ENTRA_CLIENT_ID', 'VITE_ENTRA_TENANT_ID'];
+
+function jwtRole(token) {
+  try {
+    return JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString('utf8')).role;
+  } catch {
+    return undefined;
+  }
+}
+
+function buildPublicConfig() {
+  const config = {};
+  for (const [key, names] of Object.entries(PUBLIC_CONFIG)) {
+    const name = names.find((n) => typeof process.env[n] === 'string' && process.env[n].trim() !== '');
+    if (name) config[key] = process.env[name].trim();
+  }
+  // A service_role key bypasses all row security; never hand it to browsers.
+  const anon = config.VITE_SUPABASE_ANON_KEY;
+  if (anon && (anon.startsWith('sb_secret_') || jwtRole(anon) === 'service_role')) {
+    console.warn('[config] VITE_SUPABASE_ANON_KEY is not an anon key; it was withheld from the browser');
+    delete config.VITE_SUPABASE_ANON_KEY;
+  }
+  if (config.VITE_DEV_MODE && config.VITE_DEV_MODE !== 'true') config.VITE_DEV_MODE = 'false';
+  return config;
+}
+
+const PUBLIC_CONFIG_VALUES = buildPublicConfig();
+// Escape "<" so a value can never close the script context.
+const RUNTIME_CONFIG_JS = `window.__APP_CONFIG__ = ${JSON.stringify(PUBLIC_CONFIG_VALUES).replace(/</g, '\\u003c')};\n`;
+
 function sendJson(res, status, body) {
   res.writeHead(status, { ...SECURITY_HEADERS, 'Content-Type': 'application/json; charset=utf-8' });
   res.end(JSON.stringify(body));
@@ -69,6 +110,16 @@ const server = createServer(async (req, res) => {
 
   if (pathname === '/healthz') return sendJson(res, 200, { status: 'ok' });
 
+  if (pathname === '/runtime-config.js') {
+    res.writeHead(200, {
+      ...SECURITY_HEADERS,
+      'Content-Type': 'text/javascript; charset=utf-8',
+      'Content-Length': Buffer.byteLength(RUNTIME_CONFIG_JS),
+      'Cache-Control': 'no-store',
+    });
+    return res.end(req.method === 'HEAD' ? undefined : RUNTIME_CONFIG_JS);
+  }
+
   // Resolve inside dist only; anything that escapes the folder is rejected.
   const target = normalize(join(ROOT, pathname));
   if (target !== ROOT && !target.startsWith(ROOT + sep)) return sendJson(res, 400, { error: 'bad_request' });
@@ -88,7 +139,12 @@ const server = createServer(async (req, res) => {
   return sendFile(res, INDEX, index.size, 'no-cache', head);
 });
 
-server.listen(PORT, () => console.log(`[server] listening on :${PORT}`));
+server.listen(PORT, () => {
+  console.log(`[server] listening on :${PORT}`);
+  console.log(`[config] provided: ${Object.keys(PUBLIC_CONFIG_VALUES).join(', ') || 'none'}`);
+  const missing = REQUIRED.filter((k) => !PUBLIC_CONFIG_VALUES[k]);
+  if (missing.length) console.warn(`[config] missing (build-time values will be used if present): ${missing.join(', ')}`);
+});
 
 for (const signal of ['SIGTERM', 'SIGINT']) {
   process.on(signal, () => server.close(() => process.exit(0)));

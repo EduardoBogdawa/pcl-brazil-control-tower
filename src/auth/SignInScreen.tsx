@@ -7,6 +7,7 @@ type State = 'ready' | 'loading' | 'error' | 'missing-config';
 interface Props {
   state: State;
   onSignIn?: () => void;
+  missing?: string[];
 }
 
 function MicrosoftMark() {
@@ -20,7 +21,7 @@ function MicrosoftMark() {
   );
 }
 
-export default function SignInScreen({ state, onSignIn }: Props) {
+export default function SignInScreen({ state, onSignIn, missing = [] }: Props) {
   return (
     <main className="auth-screen">
       <div className="auth-glow" aria-hidden="true" />
@@ -37,8 +38,11 @@ export default function SignInScreen({ state, onSignIn }: Props) {
           <div className="auth-note" role="alert">
             <Settings2 size={18} />
             <div>
-              <b>{tr('Login não configurado')}</b>
-              <p>{tr('Defina o Tenant ID e o Client ID do Microsoft Entra para habilitar o acesso.')}</p>
+              <b>{tr('Configuração incompleta')}</b>
+              <p>{tr('O servidor não forneceu as configurações abaixo. Defina-as no ambiente do aplicativo e reinicie.')}</p>
+              {missing.length > 0 && (
+                <ul className="auth-missing">{missing.map((name) => <li key={name}><code>{name}</code></li>)}</ul>
+              )}
             </div>
           </div>
         ) : (

@@ -10,7 +10,7 @@ const DEV_USER: AppUser = { name: 'Dev Mode', email: 'dev@localhost', devMode: t
 
 export default function AuthGate() {
   if (authDevMode) return <App user={DEV_USER} />;
-  if (!authConfigured) return <SignInScreen state="missing-config" />;
+  if (!authConfigured) return <SignInScreen state="missing-config" missing={['VITE_ENTRA_CLIENT_ID', 'VITE_ENTRA_TENANT_ID']} />;
   return <MsalBoot />;
 }
 
