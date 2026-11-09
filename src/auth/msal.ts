@@ -2,17 +2,19 @@ import { EventType, LogLevel, PublicClientApplication, type AuthenticationResult
 
 const tenantId = import.meta.env.VITE_ENTRA_TENANT_ID?.trim();
 const clientId = import.meta.env.VITE_ENTRA_CLIENT_ID?.trim();
+const apiScope = import.meta.env.VITE_ENTRA_API_SCOPE?.trim();
+const authority = import.meta.env.VITE_ENTRA_AUTHORITY?.trim() || (tenantId ? `https://login.microsoftonline.com/${tenantId}` : '');
 
-export const authDevMode = import.meta.env.VITE_AUTH_DEV_MODE === 'true';
-export const authConfigured = Boolean(tenantId && clientId);
+export const authDevMode = import.meta.env.VITE_DEV_MODE === 'true';
+export const authConfigured = Boolean(clientId && authority);
 
-export const loginRequest = { scopes: ['openid', 'profile', 'email', 'User.Read'] };
+export const loginRequest = { scopes: ['openid', 'profile', 'email', 'User.Read', ...(apiScope ? [apiScope] : [])] };
 
 export async function createMsal(): Promise<PublicClientApplication> {
   const msal = new PublicClientApplication({
     auth: {
       clientId: clientId!,
-      authority: `https://login.microsoftonline.com/${tenantId}`,
+      authority,
       redirectUri: window.location.origin,
       postLogoutRedirectUri: window.location.origin,
     },
