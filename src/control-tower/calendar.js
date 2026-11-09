@@ -1,8 +1,11 @@
 import { tr, getLang } from '@/control-tower/i18n';
-import { icon } from '@/control-tower/icons.js';
+import { icon, portalIcon } from '@/control-tower/icons.js';
 import { fetchEvents, saveEvent, deleteEvent } from '@/control-tower/store';
 
 export const CALENDAR_CATEGORY = 'Calendário';
+
+// TODO: colar aqui o link de compartilhamento do SharePoint para Férias_PC&L.xlsx.
+const VACATION_FILE = { name: 'Férias_PC&L.xlsx', url: '' };
 
 const COLORS = ['#E4002B', '#8F0B22', '#F5A524', '#0F9D8A', '#0078D4', '#34383D'];
 const RECURRENCE = { none: 'Não se repete', daily: 'Diariamente', weekly: 'Semanalmente', monthly: 'Mensalmente', yearly: 'Anualmente' };
@@ -84,13 +87,20 @@ export function createCalendar({ esc, showToast, confirmAction, onChange }) {
         + (more > 0 ? '<button type="button" class="cal-more" data-more="' + iso(day) + '">' + tr('+{0} mais', more) + '</button>' : '') + '</div>'
         + '<span class="cal-num">' + day.getDate() + '</span></div>';
     }
-    return '<section class="calendar">'
+    return linksHtml() + '<section class="calendar">'
       + headHtml(cap(fmtMonth), tr(monthCount === 1 ? '{0} evento no mês' : '{0} eventos no mês', monthCount))
       + '<div class="cal-grid" role="grid"><div class="cal-week" role="row">' + weekdays.map((w, i) => '<span class="' + (i === 0 || i === 6 ? 'weekend' : '') + '">' + esc(w.charAt(0).toUpperCase() + w.slice(1)) + '</span>').join('') + '</div>'
       + '<div class="cal-days">' + cells + '</div></div></section>';
   }
 
   function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+  function linksHtml() {
+    const f = VACATION_FILE;
+    const body = portalIcon({ name: f.name, url: f.name }) + '<span class="cal-file-txt"><b>' + tr('Calendário de férias') + '</b><small>' + esc(f.name) + ' · SharePoint</small></span>';
+    if (!f.url) return '<div class="cal-links"><span class="cal-file off" aria-disabled="true">' + body + '<em>' + tr('Link pendente') + '</em></span></div>';
+    return '<div class="cal-links"><a class="cal-file" href="' + esc(f.url) + '" target="_blank" rel="noopener noreferrer">' + body + '<span class="cal-file-go">' + tr('Abrir planilha') + icon('external') + '</span></a></div>';
+  }
 
   function headHtml(title, sub) {
     const year = mode === 'year';
@@ -125,7 +135,7 @@ export function createCalendar({ esc, showToast, confirmAction, onChange }) {
       months += '<article class="yr-month' + (y === new Date().getFullYear() && m === new Date().getMonth() ? ' current' : '') + '" style="--i:' + m + '"><button type="button" class="yr-head" data-month="' + m + '" title="' + tr('Abrir mês') + '"><b>' + esc(cap(name)) + '</b>' + (monthCount ? '<em>' + monthCount + '</em>' : '') + '</button>'
         + '<div class="yr-week">' + initials.map((w) => '<span>' + esc(w.toUpperCase()) + '</span>').join('') + '</div><div class="yr-days">' + cells + '</div></article>';
     }
-    return '<section class="calendar">' + headHtml(String(y), tr(yearCount === 1 ? '{0} evento no ano' : '{0} eventos no ano', yearCount)) + '<div class="yr-grid">' + months + '</div></section>';
+    return linksHtml() + '<section class="calendar">' + headHtml(String(y), tr(yearCount === 1 ? '{0} evento no ano' : '{0} eventos no ano', yearCount)) + '<div class="yr-grid">' + months + '</div></section>';
   }
 
   function render(target) {

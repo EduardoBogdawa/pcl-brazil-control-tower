@@ -628,6 +628,19 @@ kbd{display:inline-grid;place-items:center;min-width:22px;height:20px;padding:0 
   .prompt-grid,.prompt-toolbar,.prompt-footer{padding-left:16px;padding-right:16px}
 }
 /* ===== Calendar: month grid, solid colored event blocks, faded neighbour-month days ===== */
+.cal-links{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:12px;animation:rise .35s var(--ease) both}
+.cal-file{display:flex;align-items:center;gap:12px;min-width:0;max-width:100%;padding:10px 12px 10px 10px;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:var(--shadow-sm);color:var(--text);text-decoration:none;transition:transform .2s var(--ease),border-color .2s,box-shadow .2s}
+a.cal-file:hover{transform:translateY(-2px);border-color:color-mix(in srgb,#21A366 45%,var(--line-2));box-shadow:0 10px 24px -12px rgba(33,163,102,.55)}
+a.cal-file:focus-visible{outline:2px solid var(--nx-red);outline-offset:2px}
+.cal-file .portal-logo{width:38px;height:38px;flex:0 0 38px;border-radius:11px}
+.cal-file-txt{display:flex;flex-direction:column;gap:2px;min-width:0}
+.cal-file-txt b{font:600 14px/1.2 var(--f-display)}
+.cal-file-txt small{overflow:hidden;color:var(--muted);font:400 11px/1.4 var(--f-mono);text-overflow:ellipsis;white-space:nowrap}
+.cal-file-go{display:inline-flex;align-items:center;gap:6px;margin-left:12px;padding:6px 10px;border-radius:8px;background:color-mix(in srgb,#21A366 14%,transparent);color:#4ADE80;font-size:12px;font-weight:600;white-space:nowrap}
+[data-theme=light] .cal-file-go{color:#157347}
+.cal-file-go .ico{width:14px;height:14px}
+.cal-file.off{opacity:.75;cursor:not-allowed}
+.cal-file.off em{margin-left:12px;padding:4px 8px;border-radius:6px;background:var(--surface-3);color:var(--muted);font-size:11px;font-style:normal;font-weight:600}
 .calendar{grid-column:1/-1;overflow:hidden;border:1px solid var(--line);border-radius:var(--r-xl);background:var(--surface);box-shadow:var(--shadow-sm);animation:rise .4s var(--ease) both}
 .cal-head{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:16px 24px;background:linear-gradient(100deg,var(--nx-red),var(--nx-red-600));color:#fff}
 .cal-title{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-right:auto}
