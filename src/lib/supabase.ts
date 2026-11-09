@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
-import { appConfig } from '@/config/appConfig';
 
-// main.tsx only loads the app after missingConfig() is empty, so both values are present here.
-export const supabase = createClient(appConfig.supabaseUrl, appConfig.supabaseAnonKey);
+export const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY,
+);

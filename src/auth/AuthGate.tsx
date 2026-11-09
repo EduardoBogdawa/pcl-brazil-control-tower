@@ -1,36 +1,27 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { InteractionStatus, type PublicClientApplication } from '@azure/msal-browser';
 import { MsalProvider, useIsAuthenticated, useMsal } from '@azure/msal-react';
 import App from '@/App';
 import SignInScreen from '@/auth/SignInScreen';
-import { POPUP_BLOCKED_CODES, authConfigured, authDevMode, authErrorCode, createMsal, pickAccount, signIn, signOut } from '@/auth/msal';
-import { popupUnsupportedInFrame, standaloneUrl } from '@/auth/popupBridge';
+import { authConfigured, authDevMode, createMsal, loginRequest } from '@/auth/msal';
 import type { AppUser } from '@/auth/types';
 
 const DEV_USER: AppUser = { name: 'Dev Mode', email: 'dev@localhost', devMode: true };
 
 export default function AuthGate() {
   if (authDevMode) return <App user={DEV_USER} />;
-  if (!authConfigured) return <SignInScreen state="missing-config" missing={['VITE_ENTRA_CLIENT_ID', 'VITE_ENTRA_TENANT_ID']} />;
+  if (!authConfigured) return <SignInScreen state="missing-config" />;
   return <MsalBoot />;
 }
 
 function MsalBoot() {
   const [msal, setMsal] = useState<PublicClientApplication | null>(null);
-  const [redirectError, setRedirectError] = useState<string | null>(null);
   const [failed, setFailed] = useState(false);
-  // One MSAL instance per page: a second one would race the first for the redirect response.
-  const boot = useRef<ReturnType<typeof createMsal> | null>(null);
 
   useEffect(() => {
     let alive = true;
-    boot.current ??= createMsal();
-    boot.current
-      .then((r) => {
-        if (!alive) return;
-        setRedirectError(r.redirectError);
-        setMsal(r.msal);
-      })
+    createMsal()
+      .then((m) => alive && setMsal(m))
       .catch((err) => {
         console.error('[auth] init failed', err);
         if (alive) setFailed(true);
@@ -42,46 +33,30 @@ function MsalBoot() {
   if (!msal) return <SignInScreen state="loading" />;
   return (
     <MsalProvider instance={msal}>
-      <Protected redirectError={redirectError} />
+      <Protected />
     </MsalProvider>
   );
 }
 
-// Checked once: the frame type cannot change while the page is open.
-const frameBlocksPopup = popupUnsupportedInFrame();
-
-function Protected({ redirectError }: { redirectError: string | null }) {
+function Protected() {
   const { instance, inProgress, accounts } = useMsal();
   const isAuthenticated = useIsAuthenticated();
-  const [errorCode, setErrorCode] = useState<string | null>(redirectError);
-  // `accounts` is read so this re-renders when MSAL's account list changes.
-  const account = accounts.length ? pickAccount(instance) : null;
+  const [error, setError] = useState(false);
+  const account = instance.getActiveAccount() ?? accounts[0];
 
   if (isAuthenticated && account) {
     const user: AppUser = { name: account.name || account.username, email: account.username };
-    return <App user={user} onSignOut={() => { signOut(instance, account).catch((err) => console.warn('[auth] sign-out failed', authErrorCode(err))); }} />;
+    return <App user={user} onSignOut={() => instance.logoutRedirect({ account })} />;
   }
 
   const busy = inProgress !== InteractionStatus.None;
-  // MSAL is already initialized here, so loginPopup opens its window synchronously inside this click.
-  const handleSignIn = () => {
-    setErrorCode(null);
-    signIn(instance).catch((err: unknown) => {
-      const code = authErrorCode(err);
-      console.warn('[auth] sign-in failed', code);
-      // Closing the Microsoft window is a choice, not a failure.
-      if (code !== 'user_cancelled') setErrorCode(code);
+  const signIn = () => {
+    setError(false);
+    instance.loginRedirect(loginRequest).catch((err) => {
+      console.warn('[auth] sign-in failed', err);
+      setError(true);
     });
   };
 
-  const popupBlocked = frameBlocksPopup || (errorCode !== null && POPUP_BLOCKED_CODES.includes(errorCode));
-  return (
-    <SignInScreen
-      state={busy ? 'loading' : errorCode ? 'error' : 'ready'}
-      onSignIn={handleSignIn}
-      errorCode={errorCode}
-      newTabUrl={popupBlocked ? standaloneUrl() : null}
-      popupAvailable={!frameBlocksPopup}
-    />
-  );
+  return <SignInScreen state={busy ? 'loading' : error ? 'error' : 'ready'} onSignIn={signIn} />;
 }
