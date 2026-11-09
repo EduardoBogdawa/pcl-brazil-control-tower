@@ -6,7 +6,7 @@ export const CALENDAR_CATEGORY = 'Calendário';
 
 const VACATION_FILE = {
   name: 'Férias_PC&L.xlsx',
-  url: 'https://nexteerautomotive.sharepoint.com/sites/PCLBrazil/Shared%20Documents/Calend%C3%A1rio_F%C3%A9rias_PC%26L/F%C3%A9rias_PC%26L.xlsx?web=1',
+  url: 'https://nexteerautomotive.sharepoint.com/:x:/r/sites/PCLBrazil/_layouts/15/Doc.aspx?sourcedoc=%7BCC231491-D902-4DEB-96E8-99E9231F3350%7D&file=F%C3%A9rias_PC%26L.xlsx&action=default&mobileredirect=true&wdwpf=doclib-c',
 };
 
 const COLORS = ['#E4002B', '#8F0B22', '#F5A524', '#0F9D8A', '#0078D4', '#34383D'];
