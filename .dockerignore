@@ -1,9 +1,0 @@
-node_modules
-dist
-.git
-.bolt
-.v3
-.npmrc
-*.log
-Dockerfile
-.dockerignore
