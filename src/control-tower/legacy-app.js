@@ -122,8 +122,8 @@ function laneOf(t){if(t.period==='Mensal')return 'mensal';for(var i=0;i<WEEKDAYS
 function taskBoardHtml(){
   var rank={eduardo:0,amanda:1,both:2},today=new Date().getDay();
   function visible(t){return taskOwnerFilter==='all'||ownerKey(t.owner)===taskOwnerFilter;}
-  function labels(k){return (k==='both'?['eduardo','amanda']:[k]).map(function(p){return '<span class="tc-label '+p+'">'+OWNERS[p].name+'</span>';}).join('');}
-  function card(t,i,showDay){var k=ownerKey(t.owner);return '<article class="task-card '+k+'" style="--i:'+i+'"><div class="tc-labels">'+labels(k)+'</div><h4>'+esc(t.name)+'</h4>'+(showDay&&t.day?'<footer><span class="tc-day">'+icon('calendar')+esc(tr(t.day))+'</span></footer>':'')+'<button type="button" class="task-del" data-task-del="'+esc(t.id)+'" aria-label="'+tr('Excluir atividade')+' '+esc(t.name)+'" title="'+tr('Excluir atividade')+'">'+icon('trash')+'</button></article>';}
+  function ownerChip(k){return '<span class="tc-owner '+k+'">'+(k==='both'?OWNERS.eduardo.name+' + '+OWNERS.amanda.name:OWNERS[k].name)+'</span>';}
+  function card(t,i,showDay){var k=ownerKey(t.owner);return '<article class="task-card '+k+'" style="--i:'+i+'"><h4 title="'+esc(t.name)+'">'+esc(t.name)+'</h4><footer>'+ownerChip(k)+(showDay&&t.day?'<span class="tc-day" title="'+esc(tr(t.day))+'">'+icon('calendar')+'<span>'+esc(tr(t.day))+'</span></span>':'')+'</footer><button type="button" class="task-del" data-task-del="'+esc(t.id)+'" aria-label="'+tr('Excluir atividade')+' '+esc(t.name)+'" title="'+tr('Excluir atividade')+'">'+icon('trash')+'</button></article>';}
   function laneTasks(key){return tasks.filter(function(t){return laneOf(t)===key&&visible(t);}).sort(function(a,b){return rank[ownerKey(a.owner)]-rank[ownerKey(b.owner)]||a.name.localeCompare(b.name,'pt-BR',{sensitivity:'base'});});}
   function cardsHtml(list,showDay){return list.length?list.map(function(t,i){return card(t,i,showDay);}).join(''):'<div class="task-empty">'+tr('Sem atividades')+'</div>';}
   function addBtn(period,day){return '<button type="button" class="tb-add" data-task="'+period+'" data-task-day="'+esc(day)+'">'+icon('plus')+tr('Adicionar cartão')+'</button>';}
