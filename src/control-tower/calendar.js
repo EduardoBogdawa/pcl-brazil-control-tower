@@ -4,8 +4,10 @@ import { fetchEvents, saveEvent, deleteEvent } from '@/control-tower/store';
 
 export const CALENDAR_CATEGORY = 'Calendário';
 
-// TODO: colar aqui o link de compartilhamento do SharePoint para Férias_PC&L.xlsx.
-const VACATION_FILE = { name: 'Férias_PC&L.xlsx', url: '' };
+const VACATION_FILE = {
+  name: 'Férias_PC&L.xlsx',
+  url: 'https://nexteerautomotive.sharepoint.com/sites/PCLBrazil/Shared%20Documents/Calend%C3%A1rio_F%C3%A9rias_PC%26L/F%C3%A9rias_PC%26L.xlsx?web=1',
+};
 
 const COLORS = ['#E4002B', '#8F0B22', '#F5A524', '#0F9D8A', '#0078D4', '#34383D'];
 const RECURRENCE = { none: 'Não se repete', daily: 'Diariamente', weekly: 'Semanalmente', monthly: 'Mensalmente', yearly: 'Anualmente' };
