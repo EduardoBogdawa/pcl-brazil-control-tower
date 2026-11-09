@@ -1,4 +1,5 @@
-import { EventType, LogLevel, PublicClientApplication, type AuthenticationResult } from '@azure/msal-browser';
+import { EventType, LogLevel, PublicClientApplication, type AccountInfo, type AuthenticationResult, type IPublicClientApplication } from '@azure/msal-browser';
+import { POPUP_RELAY_URI, isInIframe } from '@/auth/popupBridge';
 
 const tenantId = import.meta.env.VITE_ENTRA_TENANT_ID?.trim();
 const clientId = import.meta.env.VITE_ENTRA_CLIENT_ID?.trim();
@@ -10,6 +11,25 @@ export const authConfigured = Boolean(clientId && authority);
 
 export const loginRequest = { scopes: ['openid', 'profile', 'email', 'User.Read', ...(apiScope ? [apiScope] : [])] };
 
+export function authorityOrigin(): string {
+  return new URL(authority).origin;
+}
+
+export function signIn(msal: IPublicClientApplication): Promise<unknown> {
+  if (!isInIframe()) return msal.loginRedirect(loginRequest);
+  return msal.loginPopup(loginRequest).then((result) => msal.setActiveAccount(result.account));
+}
+
+export async function signOut(msal: IPublicClientApplication, account: AccountInfo): Promise<void> {
+  if (!isInIframe()) return msal.logoutRedirect({ account });
+  // If the sign-out popup is blocked or closed, still end the session inside this app.
+  await msal.logoutPopup({ account }).catch((err) => {
+    console.warn('[auth] sign-out popup failed, clearing local session', err);
+    return msal.clearCache({ account });
+  });
+  window.location.reload();
+}
+
 export async function createMsal(): Promise<PublicClientApplication> {
   const msal = new PublicClientApplication({
     auth: {
@@ -17,6 +37,7 @@ export async function createMsal(): Promise<PublicClientApplication> {
       authority,
       redirectUri: window.location.origin,
       postLogoutRedirectUri: window.location.origin,
+      ...(isInIframe() ? { popupRelayUri: POPUP_RELAY_URI } : {}),
     },
     // sessionStorage keeps tokens scoped to the tab and cleared when it closes.
     cache: { cacheLocation: 'sessionStorage' },
