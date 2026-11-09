@@ -441,6 +441,8 @@ kbd{display:inline-grid;place-items:center;min-width:22px;height:20px;padding:0 
 .today-ico .ico{width:19px;height:19px}
 .today-head{flex:1;min-width:0}
 .today-head b{display:block;font:700 15px/1.2 var(--f-display)}
+.today-scope{display:inline-flex;align-items:center;margin-left:8px;padding:3px 8px;border:1px solid color-mix(in srgb,var(--nx-red) 45%,transparent);border-radius:999px;background:color-mix(in srgb,var(--nx-red) 12%,transparent);color:var(--nx-red-300);font:600 10px/1.2 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;vertical-align:middle;white-space:nowrap}
+[data-theme=light] .today-scope{color:var(--nx-red-600)}
 .today-head small{display:block;margin-top:4px;color:var(--muted);font:600 11px/1 var(--f-mono);letter-spacing:.06em;text-transform:uppercase}
 .today-go{display:grid;place-items:center;width:32px;height:32px;border:1px solid var(--line-2);border-radius:9px;background:transparent;color:var(--muted);transition:all .2s var(--ease)}
 .today-go .ico{width:15px;height:15px}
