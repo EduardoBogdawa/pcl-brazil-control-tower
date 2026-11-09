@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { InteractionStatus, type PublicClientApplication } from '@azure/msal-browser';
 import { MsalProvider, useIsAuthenticated, useMsal } from '@azure/msal-react';
 import App from '@/App';
 import SignInScreen from '@/auth/SignInScreen';
-import { authConfigured, authDevMode, createMsal, signIn, signOut } from '@/auth/msal';
+import { authConfigured, authDevMode, createMsal, pickAccount, signIn, signOut } from '@/auth/msal';
 import type { AppUser } from '@/auth/types';
 
 const DEV_USER: AppUser = { name: 'Dev Mode', email: 'dev@localhost', devMode: true };
@@ -16,12 +16,20 @@ export default function AuthGate() {
 
 function MsalBoot() {
   const [msal, setMsal] = useState<PublicClientApplication | null>(null);
+  const [redirectFailed, setRedirectFailed] = useState(false);
   const [failed, setFailed] = useState(false);
+  // One MSAL instance per page: a second one would race the first for the redirect response.
+  const boot = useRef<ReturnType<typeof createMsal> | null>(null);
 
   useEffect(() => {
     let alive = true;
-    createMsal()
-      .then((m) => alive && setMsal(m))
+    boot.current ??= createMsal();
+    boot.current
+      .then((r) => {
+        if (!alive) return;
+        setRedirectFailed(r.redirectFailed);
+        setMsal(r.msal);
+      })
       .catch((err) => {
         console.error('[auth] init failed', err);
         if (alive) setFailed(true);
@@ -33,16 +41,17 @@ function MsalBoot() {
   if (!msal) return <SignInScreen state="loading" />;
   return (
     <MsalProvider instance={msal}>
-      <Protected />
+      <Protected redirectFailed={redirectFailed} />
     </MsalProvider>
   );
 }
 
-function Protected() {
+function Protected({ redirectFailed }: { redirectFailed: boolean }) {
   const { instance, inProgress, accounts } = useMsal();
   const isAuthenticated = useIsAuthenticated();
-  const [error, setError] = useState(false);
-  const account = instance.getActiveAccount() ?? accounts[0];
+  const [error, setError] = useState(redirectFailed);
+  // `accounts` is read so this re-renders when MSAL's account list changes.
+  const account = accounts.length ? pickAccount(instance) : null;
 
   if (isAuthenticated && account) {
     const user: AppUser = { name: account.name || account.username, email: account.username };

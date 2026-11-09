@@ -1,4 +1,4 @@
-import { EventType, LogLevel, PublicClientApplication, type AccountInfo, type AuthenticationResult, type IPublicClientApplication } from '@azure/msal-browser';
+import { EventType, LogLevel, PublicClientApplication, type AccountInfo, type EventMessage, type IPublicClientApplication } from '@azure/msal-browser';
 import { POPUP_RELAY_URI, isInIframe } from '@/auth/popupBridge';
 
 const tenantId = import.meta.env.VITE_ENTRA_TENANT_ID?.trim();
@@ -15,9 +15,37 @@ export function authorityOrigin(): string {
   return new URL(authority).origin;
 }
 
-export function signIn(msal: IPublicClientApplication): Promise<unknown> {
+function isAccountInfo(value: unknown): value is AccountInfo {
+  const v = value as Partial<AccountInfo> | null;
+  return typeof v === 'object' && v !== null && typeof v.homeAccountId === 'string' && v.homeAccountId !== ''
+    && typeof v.username === 'string' && v.username !== '';
+}
+
+// Event payloads vary by event and version: LOGIN_SUCCESS carries the account itself,
+// ACQUIRE_TOKEN_SUCCESS carries a result object that holds it.
+function accountFromPayload(payload: unknown): AccountInfo | null {
+  if (isAccountInfo(payload)) return payload;
+  const nested = (payload as { account?: unknown } | null)?.account;
+  return isAccountInfo(nested) ? nested : null;
+}
+
+// Only accounts issued by the configured tenant can unlock the app.
+function belongsToTenant(account: AccountInfo): boolean {
+  return !tenantId || account.tenantId === tenantId;
+}
+
+export function pickAccount(msal: IPublicClientApplication): AccountInfo | null {
+  const active = msal.getActiveAccount();
+  if (isAccountInfo(active) && belongsToTenant(active)) return active;
+  return msal.getAllAccounts().find((a) => isAccountInfo(a) && belongsToTenant(a)) ?? null;
+}
+
+export async function signIn(msal: IPublicClientApplication): Promise<void> {
   if (!isInIframe()) return msal.loginRedirect(loginRequest);
-  return msal.loginPopup(loginRequest).then((result) => msal.setActiveAccount(result.account));
+  const result = await msal.loginPopup(loginRequest);
+  const account = accountFromPayload(result);
+  if (!account || !belongsToTenant(account)) throw new Error('Sign-in returned no account for this tenant');
+  msal.setActiveAccount(account);
 }
 
 export async function signOut(msal: IPublicClientApplication, account: AccountInfo): Promise<void> {
@@ -30,7 +58,7 @@ export async function signOut(msal: IPublicClientApplication, account: AccountIn
   window.location.reload();
 }
 
-export async function createMsal(): Promise<PublicClientApplication> {
+export async function createMsal(): Promise<{ msal: PublicClientApplication; redirectFailed: boolean }> {
   const msal = new PublicClientApplication({
     auth: {
       clientId: clientId!,
@@ -55,22 +83,38 @@ export async function createMsal(): Promise<PublicClientApplication> {
 
   await msal.initialize();
 
-  msal.addEventCallback((event) => {
-    if (event.eventType === EventType.LOGIN_SUCCESS && event.payload) {
-      const { account } = event.payload as AuthenticationResult;
-      msal.setActiveAccount(account);
-      console.info('[auth] sign-in', account.username);
+  msal.addEventCallback((event: EventMessage) => {
+    // Callbacks run inside MSAL's own flow; a throw here would abort the redirect handling.
+    try {
+      if (event.eventType === EventType.LOGIN_SUCCESS || event.eventType === EventType.ACQUIRE_TOKEN_SUCCESS) {
+        const account = accountFromPayload(event.payload);
+        if (account && belongsToTenant(account)) {
+          msal.setActiveAccount(account);
+          if (event.eventType === EventType.LOGIN_SUCCESS) console.info('[auth] sign-in', account.username);
+        } else if (event.eventType === EventType.LOGIN_SUCCESS) {
+          console.warn('[auth] sign-in event without a usable account');
+        }
+      }
+      if (event.eventType === EventType.LOGOUT_START) console.info('[auth] sign-out');
+    } catch (err) {
+      console.warn('[auth] event handling failed', err);
     }
-    if (event.eventType === EventType.LOGOUT_START) console.info('[auth] sign-out');
   });
 
-  // A failed or cancelled redirect must not block the app; the user just lands back on the sign-in screen.
-  const result = await msal.handleRedirectPromise().catch((err) => {
+  let redirectFailed = false;
+  try {
+    const result = await msal.handleRedirectPromise();
+    const account = accountFromPayload(result);
+    if (account && belongsToTenant(account)) msal.setActiveAccount(account);
+    else if (result) console.warn('[auth] redirect result without a usable account');
+  } catch (err) {
+    // A failed or cancelled redirect must not block the app; the user lands back on the sign-in screen.
     console.warn('[auth] sign-in failed', err);
-    return null;
-  });
-  if (result?.account) msal.setActiveAccount(result.account);
-  else if (!msal.getActiveAccount() && msal.getAllAccounts().length) msal.setActiveAccount(msal.getAllAccounts()[0]);
+    redirectFailed = true;
+  }
 
-  return msal;
+  const account = pickAccount(msal);
+  if (account) msal.setActiveAccount(account);
+
+  return { msal, redirectFailed };
 }
