@@ -195,15 +195,17 @@ export function createPresentation({ getSlides, getSeconds }) {
   return { start, stop };
 }
 
-export function presentSlides(s, { stats, dashboards, categoryLabel, timeLabel }) {
+export function presentSlides(s, { stats, dashboards, categoryLabel, timeLabel, agendaToday, pcpStages }) {
   const big = (v, l) => '<div class="present-big"><b>' + v + '</b><span>' + esc(l) + '</span></div>';
   const list = (rows, empty) => rows.length ? '<ul class="present-list">' + rows.join('') + '</ul>' : '<p class="present-empty">' + esc(empty) + '</p>';
   const byId = new Map(dashboards.map((d) => [d.id, d]));
   const date = new Date().toLocaleDateString(locale(), { weekday: 'long', day: '2-digit', month: 'long' });
   return [
-    { kicker: date, title: tr('Indicadores da central'), body: '<div class="present-grid">' + big(s.ready, tr('painéis prontos')) + big(s.eventsToday.length, tr('eventos hoje')) + big(s.todayTasks.length, tr('atividades hoje')) + big(s.workshops.length, tr('workshops em 30 dias')) + '</div>' },
+    { kicker: date, title: tr('Indicadores da central'), body: '<div class="present-grid">' + big(s.ready, tr('painéis prontos')) + big(s.pending.length, tr('links pendentes')) + big(s.eventsToday.length, tr('eventos hoje')) + big(agendaToday.length, tr('temas na agenda de hoje')) + '</div>' },
     { kicker: tr('Agenda'), title: tr('Próximos eventos'), body: list(s.eventsWeek.slice(0, 6).map(({ ev, offset }) => '<li><span class="present-when">' + esc(offset === 0 ? tr('Hoje') : offset === 1 ? tr('Amanhã') : tr('Em {0} dias', offset)) + '</span><b>' + esc(ev.title) + '</b><small>' + esc(timeLabel(ev)) + '</small></li>'), tr('Nenhum evento nos próximos 7 dias.')) },
-    { kicker: tr('Rotina'), title: tr('Atividades de hoje'), body: list(s.todayTasks.slice(0, 6).map((t) => '<li><span class="present-when">' + esc(t.owner) + '</span><b>' + esc(t.name) + '</b><small>' + esc(tr(t.period)) + '</small></li>'), tr('Nenhuma atividade programada para hoje.')) },
+    { kicker: 'PC&L Team', title: tr('Agenda do dia'), body: list(agendaToday.slice(0, 6).map((x, i) => '<li><span class="present-when">' + String(i + 1).padStart(2, '0') + '</span><b>' + esc(x.title) + '</b></li>'), tr('Nada na agenda de hoje')) },
+    { kicker: 'PC&L Advanced', title: tr('Rotina de hoje'), body: list(s.todayTasks.slice(0, 6).map((t) => '<li><span class="present-when">' + esc(t.owner) + '</span><b>' + esc(t.name) + '</b><small>' + esc(tr(t.period)) + '</small></li>'), tr('Nenhuma atividade programada para hoje.')) },
+    { kicker: 'PCP', title: tr('Fluxo de planejamento'), body: list(pcpStages.map((x, i) => '<li><span class="present-when">' + String(i + 1).padStart(2, '0') + '</span><b>' + esc(x.title) + ' <small>· ' + esc(x.horizon) + '</small></b><small>' + esc(x.state) + '</small></li>'), tr('Nenhum painel ainda')) },
     { kicker: tr('Equipe'), title: tr('Mais acessados'), body: list(stats.map((x) => byId.get(x.panel_id)).filter(Boolean).slice(0, 6).map((d, i) => '<li><span class="present-when">' + String(i + 1).padStart(2, '0') + '</span>' + portalIcon(d) + '<b>' + esc(d.name) + '</b><small>' + esc(categoryLabel(d.category)) + '</small></li>'), tr('O ranking aparece assim que a equipe começar a abrir os painéis.')) },
   ];
 }

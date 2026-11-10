@@ -58,7 +58,7 @@ export function groupHead(category, d, prev) {
   const id = groupOf(cfg, d);
   if (prev && groupOf(cfg, prev) === id) return '';
   const g = cfg.groups.find((x) => x.id === id);
-  return '<div class="panel-group-head" data-group="' + id + '" style="--gh:' + categoryTint(category) + '"><span class="panel-group-ico">' + icon(g.glyph) + '</span><div><h4>' + esc(tr(g.title)) + '</h4><small>' + esc(tr(g.hint)) + '</small></div></div>';
+  return '<div class="panel-group-head" style="--gh:' + categoryTint(category) + '"><span class="panel-group-ico">' + icon(g.glyph) + '</span><div><h4>' + esc(tr(g.title)) + '</h4><small>' + esc(tr(g.hint)) + '</small></div></div>';
 }
 
 // The section picker in the panel form follows the chosen category; the current pick survives a category round-trip.
