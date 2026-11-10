@@ -334,15 +334,6 @@ kbd{display:inline-grid;place-items:center;min-width:22px;height:20px;padding:0 
 .form .owner-pick label:hover{border-color:var(--c)}
 .form .owner-pick label:has(input:checked){border-color:var(--c);background:color-mix(in srgb,var(--c) 12%,var(--input));box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 20%,transparent)}
 .form .owner-pick label:has(input:focus-visible){outline:2px solid var(--nx-red);outline-offset:2px}
-.nav-group{display:flex;flex-direction:column;gap:2px}
-.nav-sub{position:relative;display:none;flex-direction:column;gap:2px;margin:2px 0 4px 23px;padding-left:10px;border-left:1px dashed rgba(255,255,255,.14)}
-.nav-group.open .nav-sub,.nav-group:hover .nav-sub,.nav-group:focus-within .nav-sub{display:flex}
-.nav .nav-child{min-height:32px;padding:4px 8px;font-size:12px}
-.nav .nav-child .nav-ico{width:22px;height:22px;flex-basis:22px}
-.nav .nav-child .nav-ico .ico{width:13px;height:13px}
-.nav .nav-child.active:before{display:none}
-.nav-group.open .nav-parent:not(.active){color:#fff}
-.nav-group.open .nav-parent:not(.active) .nav-ico{background:rgba(228,0,43,.25);color:#fff}
 .area-subs{display:flex;gap:4px;flex-wrap:wrap;margin-top:-2px}
 .area-subs i{padding:2px 7px;border:1px solid var(--line-2);border-radius:6px;background:var(--surface-2);color:var(--text-2);font:600 10px/1.4 var(--f-mono);font-style:normal}
 
@@ -618,7 +609,6 @@ kbd{display:inline-grid;place-items:center;min-width:22px;height:20px;padding:0 
   .tb-head,.tb-block{padding:16px}
   .tb-members{width:100%}
   .tb-member{flex:1 1 auto;justify-content:center}
-  .nav-sub{display:contents}
   .adv-tab.on:after{display:none}
 }
 @media (max-width:600px){
