@@ -42,6 +42,8 @@
 
 /* Favorites and recents side by side */
 .pins{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:16px}
+.pins>.fav-strip:first-child{grid-column:1/-1}
+.added-strip .fav-head span .ico{fill:none;color:var(--wa-400)}
 .pins .fav-list{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
 .recent-strip .fav-head span .ico{fill:none;color:var(--in-400)}
 
