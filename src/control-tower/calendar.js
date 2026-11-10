@@ -38,7 +38,7 @@ function byTime(a, b) {
   return (a.start_time || '').localeCompare(b.start_time || '') || a.title.localeCompare(b.title, 'pt-BR', { sensitivity: 'base' });
 }
 
-export function createCalendar({ esc, showToast, confirmAction, onChange }) {
+export function createCalendar({ esc, showToast, confirmAction, onChange, openAgenda }) {
   let events = null;
   let loadFailed = false;
   let loading = false;
@@ -100,8 +100,11 @@ export function createCalendar({ esc, showToast, confirmAction, onChange }) {
   function linksHtml() {
     const f = VACATION_FILE;
     const body = portalIcon({ name: f.name, url: f.name }) + '<span class="cal-file-txt"><b>' + tr('Calendário de férias') + '</b><small>' + esc(f.name) + ' · SharePoint</small></span>';
-    if (!f.url) return '<div class="cal-links"><span class="cal-file off" aria-disabled="true">' + body + '<em>' + tr('Link pendente') + '</em></span></div>';
-    return '<div class="cal-links"><a class="cal-file" href="' + esc(f.url) + '" target="_blank" rel="noopener noreferrer">' + body + '<span class="cal-file-go">' + tr('Abrir planilha') + icon('external') + '</span></a></div>';
+    const agenda = '<button type="button" class="cal-file cal-agenda" data-cal="agenda"><span class="cal-agenda-ico">' + icon('list') + '</span><span class="cal-file-txt"><b>' + tr('Agenda semanal') + '</b><small>PC&L Team · ' + tr('seg a dom') + '</small></span><span class="cal-file-go">' + tr('Abrir agenda') + icon('arrow') + '</span></button>';
+    const vacation = f.url
+      ? '<a class="cal-file" href="' + esc(f.url) + '" target="_blank" rel="noopener noreferrer">' + body + '<span class="cal-file-go">' + tr('Abrir planilha') + icon('external') + '</span></a>'
+      : '<span class="cal-file off" aria-disabled="true">' + body + '<em>' + tr('Link pendente') + '</em></span>';
+    return '<div class="cal-links">' + vacation + agenda + '</div>';
   }
 
   function headHtml(title, sub) {
@@ -160,6 +163,7 @@ export function createCalendar({ esc, showToast, confirmAction, onChange }) {
       b.onclick = () => {
         const a = b.getAttribute('data-cal');
         if (a === 'add') return openForm(null, iso(new Date()));
+        if (a === 'agenda') return openAgenda();
         const step = (a === 'next' ? 1 : -1) * (mode === 'year' ? 12 : 1);
         cursor = a === 'today' ? new Date(new Date().getFullYear(), new Date().getMonth(), 1) : new Date(cursor.getFullYear(), cursor.getMonth() + step, 1);
         render();

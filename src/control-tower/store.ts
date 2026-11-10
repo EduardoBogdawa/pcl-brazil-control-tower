@@ -156,6 +156,38 @@ export async function deleteEvent(id: string): Promise<void> {
   if (error) throw error;
 }
 
+export interface AgendaItem {
+  id: string;
+  weekday: number;
+  title: string;
+  position: number;
+}
+
+const AGENDA_COLUMNS = 'id, weekday, title, position';
+
+export async function fetchAgenda(): Promise<AgendaItem[]> {
+  const { data, error } = await supabase
+    .from('ct_agenda_items')
+    .select(AGENDA_COLUMNS)
+    .is('deleted_at', null)
+    .order('weekday', { ascending: true })
+    .order('position', { ascending: true });
+  if (error) throw error;
+  return (data ?? []) as AgendaItem[];
+}
+
+export async function addAgendaItem(input: Omit<AgendaItem, 'id'>): Promise<AgendaItem> {
+  const { data, error } = await supabase.from('ct_agenda_items').insert(input).select(AGENDA_COLUMNS).maybeSingle();
+  if (error) throw error;
+  if (!data) throw new Error('Item da agenda não foi salvo.');
+  return data as AgendaItem;
+}
+
+export async function removeAgendaItem(id: string): Promise<void> {
+  const { error } = await supabase.from('ct_agenda_items').update(deletedNow()).eq('id', id);
+  if (error) throw error;
+}
+
 export interface PanelStat {
   panel_id: string;
   open_count: number;

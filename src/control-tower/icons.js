@@ -5,6 +5,8 @@ const PATHS = {
   layers: '<path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/>',
   search: '<circle cx="11" cy="11" r="7.5"/><path d="m21 21-4.3-4.3"/>',
   plus: '<path d="M5 12h14M12 5v14"/>',
+  mail: '<rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+  phone: '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>',
   star: '<path d="M12 2.5l2.94 5.96 6.56.95-4.75 4.63 1.12 6.54L12 17.5l-5.87 3.08 1.12-6.54L2.5 9.41l6.56-.95z"/>',
   download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5M12 15V3"/>',
   sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>',
@@ -103,7 +105,6 @@ const BRAND = {
   trello: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3.5" fill="#0C66E4"/><rect x="6" y="6" width="5" height="11" rx="1.2" fill="#fff"/><rect x="13" y="6" width="5" height="7" rx="1.2" fill="#fff"/></svg>',
   copilot: '<svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="cpg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2DD4BF"/><stop offset=".55" stop-color="#0EA5E9"/><stop offset="1" stop-color="#F59E0B"/></linearGradient></defs><path d="M12 2.5l2.4 6.1 6.1 2.4-6.1 2.4L12 19.5l-2.4-6.1L3.5 11l6.1-2.4z" fill="url(#cpg)"/><circle cx="18.5" cy="18.5" r="2" fill="#0EA5E9"/></svg>',
   bsc: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.5" fill="#E4002B"/><circle cx="12" cy="12" r="6.2" fill="#fff"/><circle cx="12" cy="12" r="3.4" fill="#E4002B"/><path d="M12 12 19.5 4.5" stroke="#1B222C" stroke-width="1.8" stroke-linecap="round"/><path d="M16.5 3.5h4v4z" fill="#1B222C"/></svg>',
-  tito: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4.5" fill="#F2F5F8"/><path d="M7 8h10M12 8v9" stroke="#1B222C" stroke-width="2.6" stroke-linecap="round" fill="none"/><circle cx="17" cy="16.5" r="2" fill="#E4002B"/></svg>',
   powerpoint: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="14.5" cy="12" r="7.5" fill="#ED6C47"/><path d="M14.5 4.5a7.5 7.5 0 0 1 7.5 7.5h-7.5z" fill="#FF8F6B"/><rect x="3" y="7" width="10" height="10" rx="1.4" fill="#C43E1C"/><path d="M6.4 9.4h2.2c1.3 0 2 .7 2 1.8s-.8 1.8-2 1.8h-.9v1.6H6.4zm1.3 1.1v1.4h.8c.5 0 .8-.3.8-.7s-.3-.7-.8-.7z" fill="#fff"/></svg>',
   word: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h9.5A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5H9z" fill="#2B7CD3"/><path d="M9 4h9.5A1.5 1.5 0 0 1 20 5.5V9H9z" fill="#41A5EE"/><path d="M9 15h11v3.5a1.5 1.5 0 0 1-1.5 1.5H9z" fill="#103F91"/><rect x="3" y="7" width="10" height="10" rx="1.4" fill="#185ABD"/><path d="m5.3 9.4 1 5.2h1.1l.8-3.3.8 3.3h1.1l1-5.2h-1.1l-.5 3.2-.8-3.2H8l-.8 3.2-.5-3.2z" fill="#fff"/></svg>',
   prompt: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4" width="19" height="16" rx="3" fill="#334155"/><rect x="2.5" y="4" width="19" height="4" rx="2" fill="#64748B"/><path d="m6.5 11.5 2.5 2-2.5 2" stroke="#2DD4BF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M11 15.5h6" stroke="#F2F5F8" stroke-width="1.8" stroke-linecap="round"/></svg>',
@@ -111,7 +112,7 @@ const BRAND = {
 
 const BRAND_LABEL = {
   powerbi: 'Power BI', excel: 'Excel', sharepoint: 'SharePoint', powerapps: 'Power Apps', trello: 'Trello',
-  copilot: 'Microsoft Copilot', bsc: 'Balanced Scorecard', tito: 'Tito', powerpoint: 'PowerPoint', word: 'Word',
+  copilot: 'Microsoft Copilot', bsc: 'Balanced Scorecard', powerpoint: 'PowerPoint', word: 'Word',
   prompt: 'Biblioteca de prompts', web: 'Portal',
 };
 
@@ -121,14 +122,13 @@ function brandOf(d) {
   if (d.id === 'bsc-balanced-scorecard' || u.includes('bsc.nexteer.app')) return 'bsc';
   if (u.includes('apps.powerapps.com')) return 'powerapps';
   if (d.id === 'power-bi-hub' || u.includes('powerbi.com') || n.includes('power bi')) return 'powerbi';
-  if (u.includes('tito.com.br') || n.includes('tito')) return 'tito';
   if (u.includes('trello.com')) return 'trello';
   if (d.id === 'prompt-library-pcl') return 'prompt';
   if (/excel|xlsx|:x:\//.test(u + n)) return 'excel';
   if (/\.pptx?\b|:p:\//.test(u)) return 'powerpoint';
   if (/\.docx?\b|:w:\//.test(u)) return 'word';
   if (u.includes('sharepoint.com')) return 'sharepoint';
-  if (u.includes('copilotstudio.microsoft.com') || u.includes('m365.cloud.microsoft')) return 'copilot';
+  if (u.includes('copilotstudio.microsoft.com') || u.includes('m365.cloud.microsoft') || n.includes('copilot')) return 'copilot';
   return 'web';
 }
 
@@ -157,9 +157,14 @@ function monogram(d) {
   return '<span class="portal-mono" aria-hidden="true">' + text + '</span>';
 }
 
+// The drawn sparkle only shows if Microsoft's own Copilot logo cannot be loaded.
+function copilotHost(d) {
+  return (d.url || '').toLowerCase().includes('copilotstudio.microsoft.com') ? 'copilotstudio.microsoft.com' : 'copilot.microsoft.com';
+}
+
 export function portalIcon(d) {
   const b = brandOf(d);
   const label = b === 'web' ? (hostOf(d.url) || BRAND_LABEL.web) : BRAND_LABEL[b];
-  const body = b === 'web' ? monogram(d) + faviconImg(hostOf(d.url)) : BRAND[b];
+  const body = b === 'web' ? monogram(d) + faviconImg(hostOf(d.url)) : BRAND[b] + (b === 'copilot' ? faviconImg(copilotHost(d)) : '');
   return '<span class="portal-logo ' + b + '" role="img" aria-label="' + label + '" title="' + label + '" style="--mono:' + categoryTint(d.category) + '">' + body + '</span>';
 }

@@ -3,13 +3,6 @@ import { icon } from '@/control-tower/icons.js';
 
 export const COMEX_CATEGORY = 'Comex';
 
-const GROUPS = [
-  { id: 'agentes', title: 'Agentes de carga e courier', hint: 'Cotações, coletas e rastreio de remessas aéreas e expressas', glyph: 'layers' },
-  { id: 'processos', title: 'Processos e desembaraço', hint: 'Acompanhamento de importação, exportação e documentos', glyph: 'folder' },
-  { id: 'rastreio', title: 'Rastreamento marítimo e de cargas', hint: 'Navios, contêineres e status de embarque', glyph: 'globe' },
-  { id: 'outros', title: 'Outros portais', hint: 'Demais acessos do time de comércio exterior', glyph: 'link' },
-];
-
 // Business hours (08h-18h, Mon-Fri) tell whether a partner site is likely reachable right now.
 const CLOCKS = [
   { city: 'Porto Real', country: 'Brasil', tz: 'America/Sao_Paulo' },
@@ -35,22 +28,6 @@ const INCOTERMS = [
 
 function esc(s) {
   return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
-
-function groupOf(d) {
-  return GROUPS.some((g) => g.id === d.comexGroup) ? d.comexGroup : 'outros';
-}
-
-export function sortComexRows(rows, byName) {
-  const order = (d) => GROUPS.findIndex((g) => g.id === groupOf(d));
-  return rows.slice().sort((a, b) => order(a) - order(b) || byName(a, b));
-}
-
-export function comexGroupHead(d, prev) {
-  const id = groupOf(d);
-  if (prev && groupOf(prev) === id) return '';
-  const g = GROUPS.find((x) => x.id === id);
-  return '<div class="cx-group-head"><span class="cx-group-ico">' + icon(g.glyph) + '</span><div><h4>' + esc(tr(g.title)) + '</h4><small>' + esc(tr(g.hint)) + '</small></div></div>';
 }
 
 function clockState(tz, now) {
@@ -101,16 +78,79 @@ export function startComexClocks(root) {
   }, 30000);
 }
 
-export function syncComexFields() {
-  document.getElementById('comexGroupField').hidden = document.getElementById('category').value !== COMEX_CATEGORY;
+const MAX_CONTACTS = 12;
+const EMAIL_RE = /^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/;
+
+function cleanContact(c) {
+  const pick = (v, n) => String(v == null ? '' : v).trim().slice(0, n);
+  const email = pick(c && c.email, 120);
+  const phone = pick(c && c.phone, 30).replace(/[^\d+()\s.-]/g, '');
+  return { name: pick(c && c.name, 80), role: pick(c && c.role, 80), email: EMAIL_RE.test(email) ? email : '', phone };
 }
 
-export function fillComexFields(d) {
-  document.getElementById('comexGroup').value = d && d.comexGroup ? groupOf(d) : 'agentes';
-  syncComexFields();
+export function contactsOf(d) {
+  return Array.isArray(d && d.contacts) ? d.contacts.map(cleanContact).filter((c) => c.name) : [];
 }
 
-export function readComexGroup() {
-  const v = document.getElementById('comexGroup').value;
-  return GROUPS.some((g) => g.id === v) ? v : 'outros';
+export function contactsCardHtml(d) {
+  if (d.category !== COMEX_CATEGORY) return '';
+  const list = contactsOf(d);
+  const manage = '<button type="button" class="cx-contacts-edit" data-edit="' + esc(d.id) + '">' + icon(list.length ? 'pencil' : 'plus') + esc(tr(list.length ? 'Editar contatos' : 'Adicionar contato')) + '</button>';
+  if (!list.length) return '<div class="cx-contacts empty"><span>' + icon('users') + esc(tr('Nenhum contato cadastrado')) + '</span>' + manage + '</div>';
+  const rows = list.map((c) => '<li><span class="cx-contact-av" aria-hidden="true">' + esc(c.name.charAt(0).toUpperCase()) + '</span><div class="cx-contact-id"><b>' + esc(c.name) + '</b>' + (c.role ? '<small>' + esc(c.role) + '</small>' : '') + '</div>'
+    + '<div class="cx-contact-acts">'
+    + (c.email ? '<a href="mailto:' + esc(c.email) + '" title="' + esc(c.email) + '" aria-label="' + esc(tr('E-mail para {0}', c.name)) + '">' + icon('mail') + '</a>' : '')
+    + (c.phone ? '<a href="tel:' + esc(c.phone.replace(/[^\d+]/g, '')) + '" title="' + esc(c.phone) + '" aria-label="' + esc(tr('Ligar para {0}', c.name)) + '">' + icon('phone') + '</a>' : '')
+    + '</div></li>').join('');
+  return '<details class="cx-contacts"><summary>' + icon('users') + '<span>' + esc(tr(list.length === 1 ? '{0} contato' : '{0} contatos', list.length)) + '</span>' + icon('chevronDown') + '</summary><ul>' + rows + '</ul>' + manage + '</details>';
+}
+
+function contactRowHtml(c) {
+  const f = (key, label, type, max, ph) => '<label>' + esc(tr(label)) + '<input data-contact="' + key + '" type="' + type + '" maxlength="' + max + '" value="' + esc(c[key]) + '" placeholder="' + esc(tr(ph)) + '"></label>';
+  return '<div class="contact-row">'
+    + '<div class="form-row">' + f('name', 'Nome', 'text', 80, 'Ex.: Maria Souza') + f('role', 'Função / empresa', 'text', 80, 'Ex.: Atendimento DHL') + '</div>'
+    + '<div class="form-row">' + f('email', 'E-mail', 'email', 120, 'nome@empresa.com') + f('phone', 'Telefone', 'tel', 30, '+55 24 99999-0000') + '</div>'
+    + '<button type="button" class="contact-remove" data-contact-remove aria-label="' + esc(tr('Remover contato')) + '" title="' + esc(tr('Remover contato')) + '">' + icon('trash') + '</button></div>';
+}
+
+function syncContactsAdd() {
+  document.getElementById('addContactBtn').disabled = document.querySelectorAll('#contactsList .contact-row').length >= MAX_CONTACTS;
+}
+
+export function syncContactsField() {
+  document.getElementById('contactsField').hidden = document.getElementById('category').value !== COMEX_CATEGORY;
+}
+
+export function fillContactsField(d) {
+  document.getElementById('contactsList').innerHTML = contactsOf(d).map(contactRowHtml).join('');
+  syncContactsField();
+  syncContactsAdd();
+}
+
+export function bindContactsField() {
+  const list = document.getElementById('contactsList');
+  document.getElementById('addContactBtn').onclick = () => {
+    list.insertAdjacentHTML('beforeend', contactRowHtml(cleanContact({})));
+    list.lastElementChild.querySelector('input').focus();
+    syncContactsAdd();
+  };
+  list.onclick = (e) => {
+    const b = e.target.closest('[data-contact-remove]');
+    if (!b) return;
+    b.closest('.contact-row').remove();
+    syncContactsAdd();
+  };
+}
+
+// Returns an error message for the first invalid row so the form can stay open, or the cleaned list.
+export function readContactsField() {
+  const rows = Array.from(document.querySelectorAll('#contactsList .contact-row')).map((row) => {
+    const v = (k) => row.querySelector('[data-contact="' + k + '"]').value.trim();
+    return { name: v('name'), role: v('role'), email: v('email'), phone: v('phone') };
+  }).filter((c) => c.name || c.role || c.email || c.phone);
+  for (const c of rows) {
+    if (!c.name) return { error: tr('Informe o nome de cada contato.') };
+    if (c.email && !EMAIL_RE.test(c.email)) return { error: tr('E-mail inválido para {0}.', c.name) };
+  }
+  return { contacts: rows.slice(0, MAX_CONTACTS).map(cleanContact) };
 }

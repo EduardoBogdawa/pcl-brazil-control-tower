@@ -25,7 +25,12 @@
   <label>Descrição em inglês (opcional)<input id="descEn" maxlength="140" placeholder="Exibida quando a página estiver em inglês"></label>
   <div class="form-row"><label>Categoria<select id="category" required></select></label><input type="hidden" id="status"></div>
   <label>URL<input id="url" type="url" placeholder="https://..."></label><label>Data do workshop<input id="workshopDate" type="date"></label>
-  <label id="comexGroupField" hidden>Grupo na Central Comex<select id="comexGroup"><option value="agentes">Agentes de carga e courier</option><option value="processos">Processos e desembaraço</option><option value="rastreio">Rastreamento marítimo e de cargas</option><option value="outros">Outros portais</option></select></label>
+  <label id="panelGroupField" hidden><span id="panelGroupLabel">Grupo</span><select id="panelGroup"></select></label>
+  <fieldset class="contacts-field" id="contactsField" hidden>
+   <legend>Contatos</legend>
+   <div id="contactsList" class="contacts-list"></div>
+   <button type="button" class="btn contact-add" id="addContactBtn"><span data-icon="plus"></span><span>Adicionar contato</span></button>
+  </fieldset>
   <fieldset class="cm-fields" id="cmFields" hidden>
    <legend>Dados da mudança (CM)</legend>
    <label>Tipo da mudança<input id="cmHead" maxlength="80" placeholder="Ex.: ALTERAÇÃO DE PART NUMBER · ECR 3054264"></label>
@@ -111,6 +116,11 @@
 <div class="modal" id="dayModal" role="dialog" aria-modal="true" aria-labelledby="dayModalTitle">
  <div class="dialog day-dialog"><h2 id="dayModalTitle"></h2><div id="dayModalList" class="day-list"></div>
   <div class="dialog-actions"><button class="btn" type="button" id="dayModalClose">Fechar</button><button class="btn primary" type="button" id="dayModalAdd">Novo evento</button></div>
+ </div>
+</div>
+<div class="modal" id="agendaModal" role="dialog" aria-modal="true" aria-labelledby="agendaTitle">
+ <div class="dialog agenda-dialog"><div class="agenda-top"><div><h2 id="agendaTitle">Agenda semanal · PC&L Team</h2><p>Temas fixos de cada dia. O dia de hoje aparece no Resumo do dia da visão geral.</p></div><button type="button" class="icon-btn" id="agendaClose" aria-label="Fechar" title="Fechar"><span data-icon="x"></span></button></div>
+  <div class="agenda-board" id="agendaBoard"></div>
  </div>
 </div>
 <div class="modal" id="confirmModal" role="alertdialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmMessage">
