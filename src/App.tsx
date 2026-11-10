@@ -3,6 +3,7 @@ import markup from '@/control-tower/markup.html?raw';
 import { initControlTower } from '@/control-tower/legacy-app.js';
 import '@/control-tower/control-tower.css';
 import '@/control-tower/control-tower-fx.css';
+import '@/control-tower/control-tower-next.css';
 
 function App() {
   const root = useRef<HTMLDivElement>(null);

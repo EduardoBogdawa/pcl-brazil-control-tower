@@ -155,3 +155,70 @@ export async function deleteEvent(id: string): Promise<void> {
   const { error } = await supabase.from('ct_events').update(deletedNow()).eq('id', id);
   if (error) throw error;
 }
+
+export interface PanelStat {
+  panel_id: string;
+  open_count: number;
+  last_opened_at: string;
+}
+
+export async function fetchPanelStats(): Promise<PanelStat[]> {
+  const { data, error } = await supabase
+    .from('ct_panel_stats')
+    .select('panel_id, open_count, last_opened_at')
+    .order('open_count', { ascending: false })
+    .limit(50);
+  if (error) throw error;
+  return (data ?? []) as PanelStat[];
+}
+
+export async function trackOpen(panelId: string): Promise<void> {
+  const { error } = await supabase.rpc('ct_track_open', { p_panel_id: panelId });
+  if (error) throw error;
+}
+
+export type TrashKind = 'panel' | 'task' | 'event' | 'category';
+
+export interface TrashItem {
+  kind: TrashKind;
+  id: string;
+  title: string;
+  detail: string;
+  deleted_at: string;
+}
+
+const TRASH_TABLE: Record<TrashKind, string> = {
+  panel: 'ct_panels',
+  task: 'ct_tasks',
+  event: 'ct_events',
+  category: 'ct_categories',
+};
+
+export const TRASH_DAYS = 30;
+
+export async function fetchTrash(): Promise<TrashItem[]> {
+  const since = new Date(Date.now() - TRASH_DAYS * 86400000).toISOString();
+  const [panels, tasks, events, cats] = await Promise.all([
+    supabase.from('ct_panels').select('id, category, data, deleted_at').gte('deleted_at', since),
+    supabase.from('ct_tasks').select('id, name, owner, deleted_at').gte('deleted_at', since),
+    supabase.from('ct_events').select('id, title, start_date, deleted_at').gte('deleted_at', since),
+    supabase.from('ct_categories').select('id, label, deleted_at').gte('deleted_at', since),
+  ]);
+  const failed = [panels, tasks, events, cats].find((r) => r.error);
+  if (failed?.error) throw failed.error;
+  const items: TrashItem[] = [
+    ...(panels.data ?? []).map((r) => ({
+      kind: 'panel' as const, id: r.id, deleted_at: r.deleted_at,
+      title: String((r.data as Panel | null)?.name ?? r.id), detail: r.category,
+    })),
+    ...(tasks.data ?? []).map((r) => ({ kind: 'task' as const, id: r.id, title: r.name, detail: r.owner, deleted_at: r.deleted_at })),
+    ...(events.data ?? []).map((r) => ({ kind: 'event' as const, id: r.id, title: r.title, detail: r.start_date, deleted_at: r.deleted_at })),
+    ...(cats.data ?? []).map((r) => ({ kind: 'category' as const, id: r.id, title: r.label, detail: '', deleted_at: r.deleted_at })),
+  ];
+  return items.sort((a, b) => b.deleted_at.localeCompare(a.deleted_at));
+}
+
+export async function restoreItem(kind: TrashKind, id: string): Promise<void> {
+  const { error } = await supabase.from(TRASH_TABLE[kind]).update({ deleted_at: null }).eq('id', id);
+  if (error) throw error;
+}

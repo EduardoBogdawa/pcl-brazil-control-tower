@@ -314,6 +314,20 @@ export function createCalendar({ esc, showToast, confirmAction, onChange }) {
       return eventsOn(new Date());
     },
     timeLabel: (ev) => timeRange(ev),
+    // Occurrences from today onward, one entry per day an event happens; empty until events have loaded.
+    upcoming: (days) => {
+      if (!events) { if (!loadFailed) load(); return []; }
+      const out = [];
+      const base = new Date();
+      for (let i = 0; i < days; i++) {
+        const day = new Date(base.getFullYear(), base.getMonth(), base.getDate() + i);
+        eventsOn(day).forEach((ev) => out.push({ ev, day: iso(day), offset: i }));
+      }
+      return out;
+    },
+    all: () => (events || []).slice(),
+    openEvent: (id, day) => openView(id, day),
+    reload: () => { events = null; loadFailed = false; load(); },
   };
 }
 
