@@ -319,3 +319,9 @@ body{font-variant-numeric:tabular-nums}
 @media (max-width:720px){
   .access-list.list-view .card{grid-template-columns:minmax(0,1fr) auto}
 }
+
+.note[hidden]{display:none}
+.menu-pop button.is-active{background:color-mix(in srgb,var(--nx-red) 10%,transparent)}
+.menu-pop button.is-active .menu-ico{color:var(--nx-red)}
+.menu-check{margin-left:auto;display:grid;place-items:center;color:var(--nx-red)}
+.menu-check .ico{width:16px;height:16px}

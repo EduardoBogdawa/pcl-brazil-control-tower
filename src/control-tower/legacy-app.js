@@ -122,7 +122,7 @@ function readCache(){try{var c=JSON.parse(localStorage.getItem(CACHE_KEY)||'null
 function openPanel(d){pushRecent(d.id);if(d.links&&d.links.length)openLinks(d.id);else if(safeUrl(d.url))window.open(safeUrl(d.url),'_blank','noopener');else openForm(d.id);}
 function goTo(n){setView(n);bulkMode=false;bulkSel.clear();try{localStorage.setItem('ct-last-area',n);}catch(e){}document.getElementById('search').value='';syncNav();render();}
 function currentTheme(){var r=document.documentElement;return r.getAttribute('data-palette')==='nexteer'?'nexteer':r.getAttribute('data-theme')==='light'?'light':'dark';}
-function setTheme(t){var r=document.documentElement;r.setAttribute('data-theme',t==='dark'?'dark':'light');if(t==='nexteer')r.setAttribute('data-palette','nexteer');else r.removeAttribute('data-palette');try{localStorage.setItem('ct-theme',t);}catch(e){}document.querySelectorAll('[data-theme-set]').forEach(function(b){b.setAttribute('aria-pressed',String(b.getAttribute('data-theme-set')===t));});}
+function setTheme(t){var r=document.documentElement;r.setAttribute('data-theme',t==='dark'?'dark':'light');if(t==='nexteer')r.setAttribute('data-palette','nexteer');else r.removeAttribute('data-palette');try{localStorage.setItem('ct-theme',t);}catch(e){}}
 function toggleTheme(){var c=currentTheme();setTheme(c==='dark'?'light':c==='light'?'nexteer':'dark');}
 // Parent categories split into tabs; the home tab shows the parent's own panels (plus the task board for PC&L Advanced).
 var TASK_CATEGORY='PC&L Advanced',GROUPS={'PC&L Advanced':{subs:['CM','CPI','ECR'],home:'rotina',homeIcon:icon('calendar'),homeTitle:'Rotina operacional',homeDesc:'Atividades semanais e mensais',head:'FRENTES DO PC&L ADVANCED',hint:'Escolha uma frente para ver a rotina ou os painéis dela',chip:'Rotina'},'Agentes':{subs:['IA','Prompt'],home:'agentes',homeIcon:categoryIcon('Agentes'),homeTitle:'Agentes',homeDesc:'Assistentes inteligentes e automações',head:'FRENTES DE AGENTES & IA',hint:'Escolha uma frente para ver os painéis dela',chip:'Agentes'}},advTab='rotina';
@@ -179,7 +179,7 @@ function todayTasksList(){var dow=new Date().getDay(),wd=WEEKDAYS.filter(functio
 function insights(){return computeInsights({dashboards:dashboards,tasks:tasks,todayTasks:todayTasksList(),upcoming:calendar.upcoming(7),safeUrl:safeUrl});}
 function ovBlocks(){var b=prefs.get().blocks;return (b.kpi?kpiHtml(insights()):'')+(b.today?todayHtml():'')+(b.pins?favStripHtml():'')+(b.top?topUsedHtml(panelStats,dashboards,categoryLabel):'');}
 
-function render(){Array.prototype.forEach.call(nav.querySelectorAll('button[data-filter]'),function(b){var c=b.querySelector('.nav-count'),f=b.getAttribute('data-filter');if(c)c.textContent=f==='Todos'?dashboards.length:navCount(f);});if(filter==='Todos'){document.body.classList.remove('access-links-mode');grid.classList.remove('list-view');renderOverview();countUp();afterRender();return;}document.body.classList.add('access-links-mode');document.querySelector('.section-head').classList.remove('hidden');
+function render(){Array.prototype.forEach.call(nav.querySelectorAll('button[data-filter]'),function(b){var c=b.querySelector('.nav-count'),f=b.getAttribute('data-filter');if(c)c.textContent=f==='Todos'?dashboards.length:navCount(f);});if(filter==='Todos'){document.querySelector('.note').hidden=true;document.body.classList.remove('access-links-mode');grid.classList.remove('list-view');renderOverview();countUp();afterRender();return;}document.body.classList.add('access-links-mode');document.querySelector('.section-head').classList.remove('hidden');
   var q=document.getElementById('search').value.trim().toLowerCase();
   var viewCat=navKey(),rows=dashboards.filter(function(d){var ok=filter==='Todos'||(filter==='Instrução'&&hasInstruction(d))||d.category===viewCat;var text=(d.name+' '+d.desc+' '+d.descEn+' '+d.category+' '+d.instruction).toLowerCase();return ok&&(!q||text.indexOf(q)>-1);}).sort(function(a,b){return a.name.localeCompare(b.name,'pt-BR',{sensitivity:'base'});});rows=applySort(rows);rows=sortGroupedRows(filter,rows);
   document.getElementById('sectionTitle').textContent=filter==='Todos'?tr('Painéis de controle'):categoryLabel(filter);document.getElementById('deleteCategoryBtn').hidden=filter==='Instrução'||viewCat!==filter||!categories.some(function(c){return c.name===filter;});
@@ -193,7 +193,7 @@ function render(){Array.prototype.forEach.call(nav.querySelectorAll('button[data
   Array.prototype.forEach.call(document.querySelectorAll('[data-instruction]'),function(b){b.onclick=function(){openInstruction(b.getAttribute('data-instruction'));};});
   Array.prototype.forEach.call(document.querySelectorAll('[data-links]'),function(b){b.onclick=function(){pushRecent(b.getAttribute('data-links'));openLinks(b.getAttribute('data-links'));};});
   Array.prototype.forEach.call(grid.querySelectorAll('[data-open]'),function(a){a.onclick=function(){pushRecent(a.getAttribute('data-open'));};});
-  var listable=!isCal&&!isPrompt,viewMode=viewModes[viewSlot()];grid.classList.toggle('list-view',listable&&viewMode==='list');grid.classList.toggle('access-list',filter===ACCESS_CATEGORY);document.getElementById('viewToggle').hidden=!listable;Array.prototype.forEach.call(document.querySelectorAll('[data-view-mode]'),function(b){b.setAttribute('aria-pressed',String(b.getAttribute('data-view-mode')===viewMode));});
+  var listable=!isCal&&!isPrompt,viewMode=viewModes[viewSlot()];document.querySelector('.note').hidden=!(listable&&!GROUPS[filter]&&!q&&rows.length===0);grid.classList.toggle('list-view',listable&&viewMode==='list');grid.classList.toggle('access-list',filter===ACCESS_CATEGORY);document.getElementById('viewToggle').hidden=!listable;Array.prototype.forEach.call(document.querySelectorAll('[data-view-mode]'),function(b){b.setAttribute('aria-pressed',String(b.getAttribute('data-view-mode')===viewMode));});
   countUp();afterRender(listable&&rows.length>0);
  }
  function afterRender(bulkable){var cr=document.getElementById('crumbs');if(filter==='Todos'){cr.innerHTML='';}else{var p=groupOf(navKey())||(GROUPS[filter]?filter:null),parts=['<button type="button" data-crumb="Todos">'+icon('home')+'<span>'+tr('Visão geral')+'</span></button>'];if(p&&navKey()!==p){parts.push('<button type="button" data-crumb="'+esc(p)+'">'+esc(categoryLabel(p))+'</button>');parts.push('<b aria-current="page">'+esc(categoryLabel(navKey()))+'</b>');}else parts.push('<b aria-current="page">'+esc(categoryLabel(filter))+'</b>');cr.innerHTML=parts.join(icon('chevronRight','crumb-sep'));Array.prototype.forEach.call(cr.querySelectorAll('[data-crumb]'),function(b){b.onclick=function(){goTo(b.getAttribute('data-crumb'));};});}
@@ -275,8 +275,10 @@ function render(){Array.prototype.forEach.call(nav.querySelectorAll('button[data
  var exporter=bindExportMenu(document.getElementById('exportBtn'),{getDashboards:function(){return dashboards;},getTasks:function(){return tasks;},getEvents:function(){return calendar.all();},categoryLabel:categoryLabel,safeUrl:safeUrl,exportJson:exportJson,showToast:showToast});
  function tick(){document.getElementById('clock').textContent=new Date().toLocaleString(getLang()==='en'?'en-US':'pt-BR',{weekday:'short',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});}tick();setInterval(tick,1000);
  // Fixed page text is swapped in place; the generated parts (menu, cards, lists) are redrawn through tr().
- function applyLanguage(){document.body.classList.toggle('lang-en',getLang()==='en');translateStatic(document.body);if(sideBtn)setSide(document.body.classList.contains('side-collapsed'));document.querySelectorAll('[data-lang]').forEach(function(b){b.setAttribute('aria-pressed',String(b.getAttribute('data-lang')===getLang()));});tick();}
- document.querySelectorAll('[data-lang]').forEach(function(b){b.onclick=function(){if(b.getAttribute('data-lang')===getLang())return;setLang(b.getAttribute('data-lang'));applyLanguage();if(categories.length){renderNav();render();}};});
+ function applyLanguage(){document.body.classList.toggle('lang-en',getLang()==='en');translateStatic(document.body);if(sideBtn)setSide(document.body.classList.contains('side-collapsed'));tick();}
+ function switchLang(l){if(l===getLang())return;setLang(l);applyLanguage();if(categories.length){renderNav();render();}}
+ bindMenu(document.getElementById('langBtn'),[['pt','globe','Português','Português (Brasil)'],['en','globe','English','English (US)']],switchLang,function(k){return k===getLang();});
+ document.getElementById('homeLogo').onclick=function(){goTo('Todos');};
  document.querySelectorAll('[data-icon]').forEach(function(el){var n=el.getAttribute('data-icon');if(el.tagName==='I')el.innerHTML=icon(n);else el.outerHTML=icon(n,el.className);});
  // Entries are rebuilt on every open so the list reflects what others saved since the page loaded.
  function paletteEntries(){var e=[];
@@ -286,7 +288,7 @@ function render(){Array.prototype.forEach.call(nav.querySelectorAll('button[data
   e.push({group:tr('Ações'),title:tr('Adicionar painel'),hint:tr('Cadastrar um novo painel ou link'),iconHtml:icon('plus'),run:function(){openForm();}});
   e.push({group:tr('Ações'),title:tr('Nova categoria'),hint:tr('Criar uma área no menu'),iconHtml:icon('folder'),run:function(){document.getElementById('addCategoryBtn').click();}});
   e.push({group:tr('Ações'),title:tr('Alternar tema (claro, escuro, padrão)'),hint:tr('Muda a aparência do painel'),iconHtml:icon('sun'),keywords:'theme dark light nexteer padrao standard',run:toggleTheme});
-  e.push({group:tr('Ações'),title:tr(getLang()==='en'?'Mudar para português':'Mudar para inglês'),hint:'PT / EN',iconHtml:icon('globe'),keywords:'language idioma',run:function(){document.querySelector('[data-lang="'+(getLang()==='en'?'pt':'en')+'"]').click();}});
+  e.push({group:tr('Ações'),title:tr(getLang()==='en'?'Mudar para português':'Mudar para inglês'),hint:'PT / EN',iconHtml:icon('globe'),keywords:'language idioma',run:function(){switchLang(getLang()==='en'?'pt':'en');}});
   e.push({group:tr('Ações'),title:tr('Exportar configuração'),hint:tr('Baixar um arquivo com todos os painéis'),iconHtml:icon('download'),run:function(){exportJson();}});
   e.push({group:tr('Ações'),title:tr('Exportar painéis para Excel'),hint:tr('Planilha com todos os painéis e links'),iconHtml:icon('sheet'),keywords:'csv excel',run:function(){exporter.run('panels');}});
   e.push({group:tr('Ações'),title:tr('Exportar atividades para Excel'),hint:tr('Rotina semanal e mensal'),iconHtml:icon('sheet'),keywords:'csv excel',run:function(){exporter.run('tasks');}});
@@ -303,7 +305,7 @@ function render(){Array.prototype.forEach.call(nav.querySelectorAll('button[data
   return e;}
  var palette=createCommandPalette(paletteEntries);
  document.getElementById('paletteBtn').onclick=function(){palette.open();};
- document.querySelectorAll('[data-theme-set]').forEach(function(b){b.onclick=function(){prefs.disableAutoTheme();setTheme(b.getAttribute('data-theme-set'));};});
+ bindMenu(document.getElementById('themeBtn'),[['light','sun','Claro','Fundo claro'],['dark','moon','Escuro','Fundo escuro'],['nexteer','palette','Padrão','Paleta padrão Nexteer']],function(t){prefs.disableAutoTheme();setTheme(t);},function(k){return k===currentTheme();});
  setTheme(prefs.get().autoTheme?autoThemeNow():currentTheme());
  setInterval(function(){if(prefs.get().autoTheme&&currentTheme()!==autoThemeNow())setTheme(autoThemeNow());},300000);
  sheet=createSheet();

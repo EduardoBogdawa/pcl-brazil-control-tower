@@ -67,8 +67,8 @@
   .side-collapsed .side{padding:0 12px 16px;overflow-x:hidden}
   .side-collapsed .side:before{margin:0 -12px}
   .side-collapsed .brand{padding:16px 0}
-  .side-collapsed .mark{justify-content:center;padding:8px 0 0}
-  .side-collapsed .brand-id,.side-collapsed .nav-label,.side-collapsed .nav-txt,.side-collapsed .nav-count,.side-collapsed .side-search span,.side-collapsed .side-search kbd,.side-collapsed .side-foot{display:none}
+  .side-collapsed .mark{margin-top:8px;padding:10px 6px;border-radius:var(--r-md)}
+  .side-collapsed .nav-label,.side-collapsed .nav-txt,.side-collapsed .nav-count,.side-collapsed .side-search span,.side-collapsed .side-search kbd{display:none}
   .side-collapsed .side-search,.side-collapsed .nav-add,.side-collapsed .side-toggle,.side-collapsed .nav button{justify-content:center;gap:0;padding-left:0;padding-right:0}
   .side-collapsed .nav button:hover{transform:none}
   .side-collapsed .nav button.active:before{left:-12px}
@@ -124,5 +124,4 @@
 [data-palette=nexteer] .orb.o3{background:rgba(228,0,43,.06)}
 [data-palette=nexteer] .side{background:linear-gradient(180deg,rgba(47,52,56,.92),rgba(38,42,46,.94) 45%,rgba(30,34,38,.96))}
 [data-palette=nexteer] .fav.on,[data-palette=nexteer] .fav:hover,[data-palette=nexteer] .fav-head span .ico,[data-palette=nexteer] .fav-empty .ico,[data-palette=nexteer] .recent-strip .fav-head span .ico{color:var(--nx-red)}
-[data-palette=nexteer] .live-dot{background:var(--nx-red);animation:none}
 .pins>.recent-strip .fav-chip .portal-mono,.pins>.added-strip .fav-chip .portal-mono{font-size:11px}

@@ -50,14 +50,18 @@ function downloadCsv(name, header, rows) {
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
 
-// items: [[key, icon, title, subtitle]]; onPick receives the chosen key.
-export function bindMenu(button, items, onPick) {
+// items: [[key, icon, title, subtitle]]; onPick receives the chosen key. isActive marks the current choice.
+export function bindMenu(button, items, onPick, isActive) {
   const menu = document.createElement('div');
   menu.className = 'menu-pop';
   menu.setAttribute('role', 'menu');
   document.body.appendChild(menu);
   function draw() {
-    menu.innerHTML = items.map(([k, ico, t, s]) => '<button type="button" role="menuitem" data-menu-key="' + k + '"><span class="menu-ico">' + icon(ico) + '</span><span><b>' + esc(tr(t)) + '</b><small>' + esc(tr(s)) + '</small></span></button>').join('');
+    menu.innerHTML = items.map(([k, ico, t, s]) => {
+      const on = isActive ? isActive(k) : false;
+      const role = isActive ? 'menuitemradio" aria-checked="' + on : 'menuitem';
+      return '<button type="button" role="' + role + '" data-menu-key="' + k + '"' + (on ? ' class="is-active"' : '') + '><span class="menu-ico">' + icon(ico) + '</span><span><b>' + esc(tr(t)) + '</b><small>' + esc(tr(s)) + '</small></span>' + (on ? '<span class="menu-check">' + icon('check') + '</span>' : '') + '</button>';
+    }).join('');
   }
   function close() { menu.classList.remove('on'); button.setAttribute('aria-expanded', 'false'); }
   button.setAttribute('aria-haspopup', 'menu');

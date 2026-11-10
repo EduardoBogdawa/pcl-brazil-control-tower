@@ -61,11 +61,15 @@ kbd{display:inline-grid;place-items:center;min-width:22px;height:20px;padding:0 
 .side:before{content:'';position:sticky;top:0;display:block;height:2px;margin:0 -16px;background:linear-gradient(90deg,transparent,var(--nx-red),transparent);z-index:2}
 .brand{display:flex;flex-direction:column;gap:12px;padding:16px 4px 16px;border-bottom:1px solid var(--side-line)}
 /* Full-bleed white band: the official red logo needs a light ground to stay legible on the dark sidebar. */
-.mark{display:flex;align-items:center;justify-content:flex-start;padding:24px 8px 4px}
-.nexteer-logo{display:block;width:100%;max-width:156px;height:auto;filter:drop-shadow(0 4px 14px rgba(228,0,43,.28))}
-.brand-id{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.brand-id b{font:700 13px/1.2 var(--f-display);letter-spacing:.08em}
-.brand-id small{font:600 10px/1 var(--f-body);letter-spacing:.12em;color:var(--side-muted);padding:4px 8px;border:1px solid var(--side-line);border-radius:999px}
+.mark{position:relative;isolation:isolate;display:flex;align-items:center;justify-content:center;width:100%;margin-top:20px;padding:16px 20px;border:0;border-radius:var(--r-lg);background:linear-gradient(180deg,#FFFFFF,#EEF1F5);box-shadow:inset 0 1px 0 #fff,inset 0 -2px 0 rgba(16,24,40,.08),0 0 0 1px rgba(255,255,255,.16),0 12px 28px -12px rgba(0,0,0,.7),0 0 28px -10px rgba(228,0,43,.45);overflow:hidden;cursor:pointer;transition:transform .3s var(--ease),box-shadow .3s var(--ease)}
+.mark:before{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.85) 50%,transparent 65%);transform:translateX(-120%);transition:transform .8s var(--ease);pointer-events:none}
+.mark:after{content:'';position:absolute;left:22%;right:22%;bottom:0;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,#E4002B,transparent);transition:left .3s var(--ease),right .3s var(--ease)}
+.mark:hover{transform:translateY(-2px);box-shadow:inset 0 1px 0 #fff,inset 0 -2px 0 rgba(16,24,40,.08),0 0 0 1px rgba(255,255,255,.24),0 16px 32px -12px rgba(0,0,0,.75),0 0 36px -8px rgba(228,0,43,.6)}
+.mark:hover:before{transform:translateX(120%)}
+.mark:hover:after{left:8%;right:8%}
+.mark:active{transform:translateY(0) scale(.98)}
+.mark:focus-visible{outline:2px solid #E4002B;outline-offset:3px}
+.nexteer-logo{display:block;width:100%;max-width:148px;height:auto}
 .side-search{display:flex;align-items:center;gap:8px;width:100%;padding:10px 12px;border:1px solid var(--side-line);border-radius:var(--r-sm);background:rgba(255,255,255,.03);color:var(--side-muted);text-align:left;transition:border-color .2s,background .2s,color .2s}
 .side-search span{flex:1;font-size:13px}
 .side-search kbd{background:#141A21;border-color:#29313B;color:#8D99A7}
@@ -88,9 +92,6 @@ kbd{display:inline-grid;place-items:center;min-width:22px;height:20px;padding:0 
 .nav-divider:after{content:'';flex:1;height:1px;background:var(--side-line)}
 .nav-add{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:10px 12px;border:1px dashed rgba(255,255,255,.18);border-radius:var(--r-sm);background:transparent;color:#C3CCD6;font-size:13px;font-weight:600;transition:all .2s var(--ease)}
 .nav-add:hover{border-color:var(--nx-red);border-style:solid;background:rgba(228,0,43,.1);color:#fff}
-.side-foot{display:flex;gap:12px;align-items:flex-start;margin-top:auto;padding:12px;border:1px solid var(--side-line);border-radius:var(--r-md);background:rgba(255,255,255,.025)}
-.side-foot b{display:block;font:600 10px/1.4 var(--f-body);letter-spacing:.14em;color:#fff}
-.side-foot small{display:block;margin-top:4px;color:var(--side-muted);font-size:12px;line-height:1.4}
 /* Light theme: Nexteer graphite gray side menu instead of near-black, matching the legacy cockpit */
 [data-theme=light] .side{--side-text:#F1F3F5;--side-muted:#B4BBC3;--side-line:rgba(255,255,255,.12);--side-hover:rgba(255,255,255,.08);background:linear-gradient(180deg,#3D4248,#34383D 45%,#2C3035);scrollbar-color:#5B6168 transparent}
 [data-theme=light] .side .nav button,[data-theme=light] .side .nav-add{color:#DDE2E7}
@@ -102,7 +103,6 @@ kbd{display:inline-grid;place-items:center;min-width:22px;height:20px;padding:0 
 /* Category identity: each menu item keeps a soft tint of its category color; the active item stays Nexteer red */
 .side .nav button[style] .nav-ico{background:color-mix(in srgb,var(--tint) 18%,transparent);color:color-mix(in srgb,var(--tint) 70%,#fff)}
 .side .nav button.active[style] .nav-ico{background:var(--nx-red);color:#fff}
-.live-dot{position:relative;width:8px;height:8px;margin-top:4px;flex:0 0 8px;border-radius:50%;background:var(--ok-500);box-shadow:0 0 0 0 rgba(34,197,94,.6);animation:pulse 2s infinite}
 @keyframes pulse{70%{box-shadow:0 0 0 8px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
 
 /* ===== Header ===== */
@@ -119,13 +119,6 @@ kbd{display:inline-grid;place-items:center;min-width:22px;height:20px;padding:0 
 .clock:before{content:'';width:6px;height:6px;border-radius:50%;background:var(--ok-500);box-shadow:0 0 8px var(--ok-500);animation:blink 1.6s infinite}
 @keyframes blink{50%{opacity:.3}}
 .actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.lang-switch{display:inline-flex;padding:3px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface-2);box-shadow:inset 0 1px 3px rgba(0,0,0,.3)}
-.lang-switch button{min-width:36px;min-height:30px;padding:4px 10px;border:0;border-radius:var(--r-sm);background:transparent;color:var(--muted);font:600 11px/1 var(--f-body);transition:all .2s}
-.lang-switch button:hover{color:var(--text)}
-.lang-switch button[aria-pressed=true]{background:linear-gradient(180deg,var(--surface-3),var(--surface));color:var(--text);box-shadow:0 2px 6px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.08)}
-.theme-switch button{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-body)}
-.theme-switch .ico{width:14px;height:14px}
-.theme-switch button[aria-pressed=true] .ico{color:var(--nx-red)}
 .btn,.icon-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:38px;padding:8px 14px;border:1px solid var(--line-2);border-radius:var(--r-md);background:linear-gradient(180deg,var(--surface-3),var(--surface));color:var(--text);font-size:13px;font-weight:600;text-decoration:none;box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 -2px 0 rgba(0,0,0,.25) inset,0 4px 10px rgba(0,0,0,.2);transition:transform .15s var(--ease),border-color .2s,box-shadow .2s}
 .btn .ico{width:16px;height:16px}
 .btn:hover,.icon-btn:hover{border-color:var(--text-2);transform:translateY(-1px)}
@@ -138,8 +131,7 @@ kbd{display:inline-grid;place-items:center;min-width:22px;height:20px;padding:0 
 [data-theme=light] .btn-danger-soft{color:#B91C1C}
 .btn-danger-soft:hover{border-color:var(--er-500);background:rgba(239,68,68,.14)}
 [data-theme=light] .btn,[data-theme=light] .icon-btn{box-shadow:inset 0 -2px 0 rgba(12,20,30,.08),0 2px 6px rgba(16,24,40,.08)}
-[data-theme=light] .lang-switch,[data-theme=light] .clock{box-shadow:inset 0 1px 2px rgba(12,20,30,.08)}
-[data-theme=light] .lang-switch button[aria-pressed=true]{background:#fff;box-shadow:0 1px 4px rgba(16,24,40,.15)}
+[data-theme=light] .clock{box-shadow:inset 0 1px 2px rgba(12,20,30,.08)}
 
 /* ===== Category header (every category) ===== */
 #accessLinksHeader{display:none}
@@ -600,12 +592,12 @@ kbd{display:inline-grid;place-items:center;min-width:22px;height:20px;padding:0 
   .shell{grid-template-columns:1fr}
   .side{position:relative;height:auto;padding-bottom:12px;border-right:0;border-bottom:1px solid var(--side-line)}
   .brand{flex-direction:row;align-items:center;justify-content:space-between}
-  .mark{padding:8px 0}
-  .nexteer-logo{max-width:120px}
+  .mark{width:auto;margin-top:0;padding:8px 14px}
+  .nexteer-logo{max-width:104px}
   .nav{flex-direction:row;overflow-x:auto;gap:6px;padding-bottom:4px;scrollbar-width:none}
   .nav button,.nav button.nav-home{flex:0 0 auto;width:auto;min-height:40px;margin:0}
   .nav button:hover{transform:none}
-  .nav button.active:before,.nav-divider,.nav-count,.side-foot,.nav-label{display:none}
+  .nav button.active:before,.nav-divider,.nav-count,.nav-label{display:none}
   .main{padding:24px 20px 40px}
   .overview-bottom{grid-template-columns:1fr}
   .tb-head,.tb-block{padding:16px}
