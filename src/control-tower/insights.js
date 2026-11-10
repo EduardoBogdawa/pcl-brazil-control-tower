@@ -47,13 +47,11 @@ function kpi(cls, ico, value, label, sub, go, ratio) {
 
 export function kpiHtml(s, { calendarCategory, taskCategory }) {
   const ready = s.panels ? s.ready / s.panels : 0;
-  const nextWs = s.workshops[0];
   return '<section class="kpi-strip" aria-label="' + esc(tr('Indicadores')) + '">'
     + kpi('k-ready', 'activity', s.ready, tr('Painéis prontos'), tr('{0}% com link configurado', Math.round(ready * 100)), '', ready)
     + kpi('k-events', 'calendar', s.eventsToday.length, tr('Eventos hoje'), tr('{0} nos próximos 7 dias', s.eventsWeek.length), calendarCategory)
     + kpi('k-tasks', 'check', s.todayTasks.length, tr('Atividades hoje'), tr('{0} na rotina da equipe', s.tasks), taskCategory)
     + kpi('k-pending', 'alert', s.pending.length, tr('Links pendentes'), s.pending.length ? tr('Toque para revisar') : tr('Tudo configurado'), s.pending.length ? '#pending' : '')
-    + kpi('k-ws', 'users', s.workshops.length, tr('Workshops em 30 dias'), nextWs ? (nextWs.in === 0 ? tr('Hoje: {0}', nextWs.d.name) : tr('Próximo em {0} dias', nextWs.in)) : tr('Nenhum agendado'), 'Workshops')
     + '</section>';
 }
 
