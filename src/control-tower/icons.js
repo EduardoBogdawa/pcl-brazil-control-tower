@@ -114,7 +114,25 @@ function brandOf(d) {
   return 'web';
 }
 
+function hostOf(url) {
+  try {
+    const u = new URL(url);
+    return /^https?:$/.test(u.protocol) ? u.hostname : '';
+  } catch {
+    return '';
+  }
+}
+
+// Google's favicon service answers unknown sites with a generic 16px globe, so tiny results fall back to our own icon.
+function faviconImg(host) {
+  if (!/^[a-z0-9.-]+$/i.test(host)) return '';
+  return '<img class="portal-fav" src="https://www.google.com/s2/favicons?sz=64&domain=' + host + '" alt="" loading="lazy" referrerpolicy="no-referrer"'
+    + ' onload="if(this.naturalWidth<=16)this.remove();else this.parentNode.classList.add(\'has-fav\')" onerror="this.remove()">';
+}
+
 export function portalIcon(d) {
   const b = brandOf(d);
-  return '<span class="portal-logo ' + b + '" role="img" aria-label="' + BRAND_LABEL[b] + '" title="' + BRAND_LABEL[b] + '">' + BRAND[b] + '</span>';
+  const label = b === 'web' ? (hostOf(d.url) || BRAND_LABEL.web) : BRAND_LABEL[b];
+  const fav = b === 'web' ? faviconImg(hostOf(d.url)) : '';
+  return '<span class="portal-logo ' + b + '" role="img" aria-label="' + label + '" title="' + label + '">' + BRAND[b] + fav + '</span>';
 }

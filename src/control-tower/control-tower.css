@@ -223,6 +223,8 @@ kbd{display:inline-grid;place-items:center;min-width:22px;height:20px;padding:0 
 .portal-logo.trello{--glow:rgba(12,102,228,.5)}
 .portal-logo.copilot{--glow:rgba(14,165,233,.45)}
 .portal-logo.tito{--glow:rgba(228,0,43,.35)}
+.portal-fav{position:absolute;inset:18%;width:64%;height:64%;object-fit:contain;border-radius:22%}
+.portal-logo.has-fav>svg{visibility:hidden}
 
 /* CM change cards */
 .cm-change-card{border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface-2);overflow:hidden;font-size:12px}
