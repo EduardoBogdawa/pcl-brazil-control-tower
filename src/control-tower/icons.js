@@ -102,14 +102,17 @@ const BRAND = {
   powerapps: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 21 12l-9 9z" fill="#E04F8E"/><path d="M12 3 3 12l9 9z" fill="#B0185F"/><path d="M8 12 12 8l4 4-4 4z" fill="#fff" opacity=".9"/></svg>',
   trello: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3.5" fill="#0C66E4"/><rect x="6" y="6" width="5" height="11" rx="1.2" fill="#fff"/><rect x="13" y="6" width="5" height="7" rx="1.2" fill="#fff"/></svg>',
   copilot: '<svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="cpg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2DD4BF"/><stop offset=".55" stop-color="#0EA5E9"/><stop offset="1" stop-color="#F59E0B"/></linearGradient></defs><path d="M12 2.5l2.4 6.1 6.1 2.4-6.1 2.4L12 19.5l-2.4-6.1L3.5 11l6.1-2.4z" fill="url(#cpg)"/><circle cx="18.5" cy="18.5" r="2" fill="#0EA5E9"/></svg>',
-  bsc: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1.2" fill="#fff"/><path d="M12 12 19 5M16 5h3v3"/></svg>',
-  tito: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h14M12 6v13" stroke="#fff" stroke-width="2.6" stroke-linecap="round" fill="none"/><circle cx="18" cy="18" r="2" fill="#E4002B"/></svg>',
-  web: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a13.5 13.5 0 0 0 0 18 13.5 13.5 0 0 0 0-18M3 12h18"/></svg>',
+  bsc: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.5" fill="#E4002B"/><circle cx="12" cy="12" r="6.2" fill="#fff"/><circle cx="12" cy="12" r="3.4" fill="#E4002B"/><path d="M12 12 19.5 4.5" stroke="#1B222C" stroke-width="1.8" stroke-linecap="round"/><path d="M16.5 3.5h4v4z" fill="#1B222C"/></svg>',
+  tito: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4.5" fill="#F2F5F8"/><path d="M7 8h10M12 8v9" stroke="#1B222C" stroke-width="2.6" stroke-linecap="round" fill="none"/><circle cx="17" cy="16.5" r="2" fill="#E4002B"/></svg>',
+  powerpoint: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="14.5" cy="12" r="7.5" fill="#ED6C47"/><path d="M14.5 4.5a7.5 7.5 0 0 1 7.5 7.5h-7.5z" fill="#FF8F6B"/><rect x="3" y="7" width="10" height="10" rx="1.4" fill="#C43E1C"/><path d="M6.4 9.4h2.2c1.3 0 2 .7 2 1.8s-.8 1.8-2 1.8h-.9v1.6H6.4zm1.3 1.1v1.4h.8c.5 0 .8-.3.8-.7s-.3-.7-.8-.7z" fill="#fff"/></svg>',
+  word: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h9.5A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5H9z" fill="#2B7CD3"/><path d="M9 4h9.5A1.5 1.5 0 0 1 20 5.5V9H9z" fill="#41A5EE"/><path d="M9 15h11v3.5a1.5 1.5 0 0 1-1.5 1.5H9z" fill="#103F91"/><rect x="3" y="7" width="10" height="10" rx="1.4" fill="#185ABD"/><path d="m5.3 9.4 1 5.2h1.1l.8-3.3.8 3.3h1.1l1-5.2h-1.1l-.5 3.2-.8-3.2H8l-.8 3.2-.5-3.2z" fill="#fff"/></svg>',
+  prompt: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4" width="19" height="16" rx="3" fill="#334155"/><rect x="2.5" y="4" width="19" height="4" rx="2" fill="#64748B"/><path d="m6.5 11.5 2.5 2-2.5 2" stroke="#2DD4BF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M11 15.5h6" stroke="#F2F5F8" stroke-width="1.8" stroke-linecap="round"/></svg>',
 };
 
 const BRAND_LABEL = {
   powerbi: 'Power BI', excel: 'Excel', sharepoint: 'SharePoint', powerapps: 'Power Apps', trello: 'Trello',
-  copilot: 'Copilot Studio', bsc: 'Balanced Scorecard', tito: 'Tito', web: 'Portal',
+  copilot: 'Microsoft Copilot', bsc: 'Balanced Scorecard', tito: 'Tito', powerpoint: 'PowerPoint', word: 'Word',
+  prompt: 'Biblioteca de prompts', web: 'Portal',
 };
 
 function brandOf(d) {
@@ -120,9 +123,12 @@ function brandOf(d) {
   if (d.id === 'power-bi-hub' || u.includes('powerbi.com') || n.includes('power bi')) return 'powerbi';
   if (u.includes('tito.com.br') || n.includes('tito')) return 'tito';
   if (u.includes('trello.com')) return 'trello';
-  if (/excel|xlsx/.test(u + n)) return 'excel';
+  if (d.id === 'prompt-library-pcl') return 'prompt';
+  if (/excel|xlsx|:x:\//.test(u + n)) return 'excel';
+  if (/\.pptx?\b|:p:\//.test(u)) return 'powerpoint';
+  if (/\.docx?\b|:w:\//.test(u)) return 'word';
   if (u.includes('sharepoint.com')) return 'sharepoint';
-  if (u.includes('copilotstudio.microsoft.com')) return 'copilot';
+  if (u.includes('copilotstudio.microsoft.com') || u.includes('m365.cloud.microsoft')) return 'copilot';
   return 'web';
 }
 
@@ -142,9 +148,18 @@ function faviconImg(host) {
     + ' onload="if(this.naturalWidth<=16)this.remove();else this.parentNode.classList.add(\'has-fav\')" onerror="this.remove()">';
 }
 
+const MINOR_WORDS = new Set(['de', 'da', 'do', 'das', 'dos', 'e', 'em', 'para', 'the', 'of', 'and']);
+
+// Panels without a known brand get a filled monogram in their category color, so no tile is left looking empty.
+function monogram(d) {
+  const words = String(d.name || '').split(/[\s\-—|/]+/).map((w) => w.replace(/[^0-9A-Za-zÀ-ÿ]/g, '')).filter((w) => w && !MINOR_WORDS.has(w.toLowerCase()));
+  const text = (words.length > 1 ? words[0][0] + words[1][0] : (words[0] || '?').slice(0, 2)).toUpperCase();
+  return '<span class="portal-mono" aria-hidden="true">' + text + '</span>';
+}
+
 export function portalIcon(d) {
   const b = brandOf(d);
   const label = b === 'web' ? (hostOf(d.url) || BRAND_LABEL.web) : BRAND_LABEL[b];
-  const fav = b === 'web' ? faviconImg(hostOf(d.url)) : '';
-  return '<span class="portal-logo ' + b + '" role="img" aria-label="' + label + '" title="' + label + '">' + BRAND[b] + fav + '</span>';
+  const body = b === 'web' ? monogram(d) + faviconImg(hostOf(d.url)) : BRAND[b];
+  return '<span class="portal-logo ' + b + '" role="img" aria-label="' + label + '" title="' + label + '" style="--mono:' + categoryTint(d.category) + '">' + body + '</span>';
 }

@@ -223,8 +223,15 @@ kbd{display:inline-grid;place-items:center;min-width:22px;height:20px;padding:0 
 .portal-logo.trello{--glow:rgba(12,102,228,.5)}
 .portal-logo.copilot{--glow:rgba(14,165,233,.45)}
 .portal-logo.tito{--glow:rgba(228,0,43,.35)}
-.portal-fav{position:absolute;inset:18%;width:64%;height:64%;object-fit:contain;border-radius:22%}
-.portal-logo.has-fav>svg{visibility:hidden}
+.portal-logo.powerpoint{--glow:rgba(237,108,71,.45)}
+.portal-logo.word{--glow:rgba(43,124,211,.5)}
+.portal-logo.prompt{--glow:rgba(45,212,191,.4)}
+.portal-logo.web{--glow:color-mix(in srgb,var(--mono) 55%,transparent);background:radial-gradient(120% 90% at 30% 0%,color-mix(in srgb,var(--mono) 70%,#fff),transparent 60%),linear-gradient(150deg,var(--mono),color-mix(in srgb,var(--mono) 55%,#07090C))}
+.portal-mono{font:700 15px/1 var(--f-display);letter-spacing:-.02em;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.28)}
+.today-link .portal-mono{font-size:11px}.fav-chip .portal-mono,.report-link .portal-mono,.palette-ico .portal-mono,.pending-list .portal-mono,.top-list .portal-mono,.cal-file .portal-mono{font-size:13px}
+.portal-fav{position:absolute;inset:14%;width:72%;height:72%;object-fit:contain;border-radius:18%}
+.portal-logo.has-fav{background:#fff}
+.portal-logo.has-fav>.portal-mono{visibility:hidden}
 
 /* CM change cards */
 .cm-change-card{border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface-2);overflow:hidden;font-size:12px}
