@@ -20,7 +20,7 @@ const EN = {
   'Buscar painel...': 'Search panels...', 'Buscar painel': 'Search panels', 'Idioma': 'Language',
   // Panel form
   'Editar painel': 'Edit panel', 'Nome do painel ou link': 'Panel or link name', 'Descrição': 'Description', 'Categoria': 'Category',
-  'Status': 'Status', 'URL': 'URL', 'Data do workshop': 'Workshop date', 'Instrução': 'Instruction', 'Excluir painel': 'Delete panel',
+  'Status': 'Status', 'URL': 'URL', 'Data do workshop': 'Workshop date', 'Instrução': 'Instruction', 'Conhecimento': 'Knowledge', 'Salvar conhecimento': 'Save knowledge', 'Dados da mudança (CM)': 'Change data (CM)', 'Tipo da mudança': 'Change type', 'Part Number': 'Part Number', 'Segundo Part Number (opcional)': 'Second Part Number (optional)', 'PN atual': 'Current PN', 'Novo PN': 'New PN', 'Descrição do PN atual': 'Current PN description', 'Descrição do novo PN': 'New PN description', 'Informação 1 (título)': 'Info 1 (title)', 'Informação 1 (valor)': 'Info 1 (value)', 'Informação 2 (título)': 'Info 2 (title)', 'Informação 2 (valor)': 'Info 2 (value)', 'Motivo e contexto': 'Reason and context', 'Destaques e pendências': 'Highlights and pending items', 'Uma informação por linha. O texto antes de ":" ou "?" aparece em negrito.': 'One item per line. Text before ":" or "?" is shown in bold.', 'Aparece no quadro amarelo do cartão.': 'Shown in the yellow box on the card.', 'Excluir painel': 'Delete panel',
   'Cancelar': 'Cancel', 'Salvar painel': 'Save panel', 'Salvar instrução': 'Save instruction', 'Fechar': 'Close',
   'Ex.: Portal de consultas': 'E.g.: Lookup portal', 'Objetivo ou escopo do painel': 'Purpose or scope of the panel',
   'Digite a orientação específica para este painel': 'Type the specific guidance for this panel',

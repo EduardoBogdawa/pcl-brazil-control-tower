@@ -24,7 +24,23 @@
   <label>Descrição em inglês (opcional)<input id="descEn" maxlength="140" placeholder="Exibida quando a página estiver em inglês"></label>
   <div class="form-row"><label>Categoria<select id="category" required></select></label><input type="hidden" id="status"></div>
   <label>URL<input id="url" type="url" placeholder="https://..."></label><label>Data do workshop<input id="workshopDate" type="date"></label>
-  <label>Instrução<textarea id="instruction" maxlength="600" placeholder="Digite a orientação específica para este painel"></textarea></label>
+  <fieldset class="cm-fields" id="cmFields" hidden>
+   <legend>Dados da mudança (CM)</legend>
+   <label>Tipo da mudança<input id="cmHead" maxlength="80" placeholder="Ex.: ALTERAÇÃO DE PART NUMBER · ECR 3054264"></label>
+   <div class="cm-fields-pair"><span class="cm-fields-sub">Part Number</span>
+    <div class="form-row"><label>PN atual<input id="cmPair0_from" maxlength="40" placeholder="Ex.: 38014398"></label><label>Novo PN<input id="cmPair0_to" maxlength="40" placeholder="Ex.: 38297611"></label></div>
+    <div class="form-row"><label>Descrição do PN atual<input id="cmPair0_fromDesc" maxlength="60" placeholder="Ex.: RING RETAINING"></label><label>Descrição do novo PN<input id="cmPair0_toDesc" maxlength="60" placeholder="Ex.: RING RETAINING"></label></div>
+   </div>
+   <div class="cm-fields-pair"><span class="cm-fields-sub">Segundo Part Number (opcional)</span>
+    <div class="form-row"><label>PN atual<input id="cmPair1_from" maxlength="40"></label><label>Novo PN<input id="cmPair1_to" maxlength="40"></label></div>
+    <div class="form-row"><label>Descrição do PN atual<input id="cmPair1_fromDesc" maxlength="60"></label><label>Descrição do novo PN<input id="cmPair1_toDesc" maxlength="60"></label></div>
+   </div>
+   <div class="form-row"><label>Informação 1 (título)<input id="cmMeta0_label" maxlength="30" placeholder="Ex.: FORNECEDOR"></label><label>Informação 1 (valor)<input id="cmMeta0_value" maxlength="60" placeholder="Ex.: Rotor Clip → Shanghai Nate"></label></div>
+   <div class="form-row"><label>Informação 2 (título)<input id="cmMeta1_label" maxlength="30" placeholder="Ex.: PLANTA"></label><label>Informação 2 (valor)<input id="cmMeta1_value" maxlength="60" placeholder="Ex.: 89 — Brazil"></label></div>
+   <label>Motivo e contexto<textarea id="cmReason" maxlength="500" placeholder="Por quê? Redução de custo e padronização.&#10;Implementação: Running Change."></textarea><small class="cm-fields-hint">Uma informação por linha. O texto antes de ":" ou "?" aparece em negrito.</small></label>
+   <label>Destaques e pendências<textarea id="cmNote" maxlength="500" placeholder="Programas: CEPS 358, 359 e 363.&#10;⚠ Ponto importante: aguardando assinatura."></textarea><small class="cm-fields-hint">Aparece no quadro amarelo do cartão.</small></label>
+  </fieldset>
+  <label><span id="instructionLabel">Instrução</span><textarea id="instruction" maxlength="600" placeholder="Digite a orientação específica para este painel"></textarea></label>
   <div class="dialog-actions"><button class="btn btn-danger-soft dialog-delete" type="button" id="deletePanelBtn" hidden>Excluir painel</button><button class="btn" type="button" id="cancelBtn">Cancelar</button><button class="btn primary" type="submit">Salvar painel</button></div>
  </form></div>
 </div>
@@ -32,8 +48,8 @@
  <div class="dialog" id="instructionDialog"><h2 id="instructionTitle">Instrução</h2><form id="instructionForm" class="form">
   <input type="hidden" id="instructionPanel">
   <div class="note" id="instructionPanelName"></div>
-  <label>Instrução<textarea id="instructionOnly" required maxlength="600" placeholder="Digite a instrução deste painel"></textarea></label>
-  <div class="dialog-actions"><button class="btn" type="button" id="instructionCancel">Cancelar</button><button class="btn primary" type="submit">Salvar instrução</button></div>
+  <label><span id="instructionOnlyLabel">Instrução</span><textarea id="instructionOnly" required maxlength="600" placeholder="Digite a instrução deste painel"></textarea></label>
+  <div class="dialog-actions"><button class="btn" type="button" id="instructionCancel">Cancelar</button><button class="btn primary" type="submit" id="instructionSave">Salvar instrução</button></div>
  </form></div>
 </div>
 <div class="modal" id="linksModal" role="dialog" aria-modal="true" aria-labelledby="linksTitle"><div class="dialog"><h2 id="linksTitle">Power BIs</h2><div id="linksList" class="form"></div><div class="dialog-actions"><button class="btn" type="button" id="linksClose">Fechar</button></div></div></div>
