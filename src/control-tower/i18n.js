@@ -254,6 +254,8 @@ const EN = {
   '{0} não lido': '{0} unread',
   '{0} não lidos': '{0} unread',
   'Ajustes': 'Settings',
+  '{0} prompt': '{0} prompt',
+  '{0} prompts': '{0} prompts',
 };
 
 const LANG_KEY = 'pcl-lang';
