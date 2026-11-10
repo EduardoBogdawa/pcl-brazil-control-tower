@@ -77,13 +77,9 @@ function incotermHtml(t) {
     + '<strong>' + esc(t[1]) + '</strong><p>' + esc(tr(t[2])) + '</p></div>';
 }
 
-export function comexHubHtml(stats) {
+export function comexHubHtml() {
   const now = new Date();
-  const stat = (value, label, mod) => '<div class="cx-stat' + (mod ? ' ' + mod : '') + '"><b>' + value + '</b><span>' + esc(tr(label)) + '</span></div>';
   return '<section class="cx-hub">'
-    + '<div class="cx-hero"><div class="cx-hero-copy"><span class="cx-eyebrow">' + esc(tr('COMÉRCIO EXTERIOR · PC&L BRASIL')) + '</span>'
-    + '<h3>' + esc(tr('Central Comex')) + '</h3><p>' + esc(tr('Agentes de carga, processos de importação e rastreamento de embarques em um só lugar.')) + '</p></div>'
-    + '<div class="cx-stats">' + stat(stats.total, stats.total === 1 ? 'portal' : 'portais') + stat(stats.pending, stats.pending === 1 ? 'link pendente' : 'links pendentes', stats.pending ? 'warn' : '') + '</div></div>'
     + '<div class="cx-block-head"><span>' + icon('clock') + esc(tr('Fusos das plantas e parceiros')) + '</span><small>' + esc(tr('Expediente considerado: 08h às 18h, segunda a sexta')) + '</small></div>'
     + '<div class="cx-clocks" role="list">' + CLOCKS.map((c) => clockHtml(c, now)).join('') + '</div>'
     + '<details class="cx-inco"><summary><span>' + icon('book') + esc(tr('Incoterms 2020 · consulta rápida')) + '</span><small>' + esc(tr('Quem paga o frete e quando o risco muda de mãos')) + '</small></summary>'
