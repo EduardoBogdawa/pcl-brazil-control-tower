@@ -86,24 +86,38 @@ function clockHtml(c, now, hol) {
     + note + '</div>';
 }
 
-function agendaHtml(now, hol) {
-  if (hol === null) return '<p class="cx-hol-msg">' + esc(tr('Carregando feriados...')) + '</p>';
-  if (hol === false) return '<p class="cx-hol-msg">' + esc(tr('Calendário de feriados indisponível no momento.')) + '</p>';
+// Holidays at every site within `days`, already labelled, nearest first; shared by the Comex strip and the presentation.
+export function upcomingHolidayRows(hol, now, days) {
   const items = [];
   CLOCKS.forEach((c) => {
     const today = todayIn(c.tz, now);
-    (hol[c.cc] || []).forEach((h) => {
+    ((hol && hol[c.cc]) || []).forEach((h) => {
       if (h.end < today) return;
       const n = daysBetween(today, h.start);
-      if (n <= AGENDA_DAYS) items.push({ c, h, n });
+      if (n <= days) items.push({ c, h, n });
     });
   });
   items.sort((a, b) => a.n - b.n || a.c.city.localeCompare(b.c.city));
-  if (!items.length) return '<p class="cx-hol-msg">' + esc(tr('Nenhum feriado nos próximos {0} dias.', AGENDA_DAYS)) + '</p>';
-  return '<ul class="cx-hol-list">' + items.slice(0, AGENDA_MAX).map(({ c, h, n }) => '<li class="' + (n <= 0 ? 'now' : n <= SOON_DAYS ? 'soon' : '') + '">'
-    + '<span class="cx-hol-cc">' + esc(c.cc) + '</span>'
-    + '<div class="cx-hol-id"><b>' + esc(holName(h)) + '</b><small>' + esc(tr(c.country)) + ' · ' + esc(fmtRange(h)) + (h.estimated ? ' · ' + esc(tr('período estimado')) : '') + '</small></div>'
-    + '<span class="cx-hol-when">' + esc(n <= 0 ? tr('em andamento') : inDays(n)) + '</span></li>').join('') + '</ul>';
+  return items.map(({ c, h, n }) => ({
+    cc: c.cc, country: tr(c.country), name: holName(h), range: fmtRange(h), estimated: h.estimated,
+    state: n <= 0 ? 'now' : n <= SOON_DAYS ? 'soon' : '', when: n <= 0 ? tr('em andamento') : inDays(n),
+  }));
+}
+
+export function loadSiteHolidays() {
+  const year = new Date().getFullYear();
+  return loadHolidays(CLOCKS, [year, year + 1]);
+}
+
+function agendaHtml(now, hol) {
+  if (hol === null) return '<p class="cx-hol-msg">' + esc(tr('Carregando feriados...')) + '</p>';
+  if (hol === false) return '<p class="cx-hol-msg">' + esc(tr('Calendário de feriados indisponível no momento.')) + '</p>';
+  const rows = upcomingHolidayRows(hol, now, AGENDA_DAYS);
+  if (!rows.length) return '<p class="cx-hol-msg">' + esc(tr('Nenhum feriado nos próximos {0} dias.', AGENDA_DAYS)) + '</p>';
+  return '<ul class="cx-hol-list">' + rows.slice(0, AGENDA_MAX).map((r) => '<li class="' + r.state + '">'
+    + '<span class="cx-hol-cc">' + esc(r.cc) + '</span>'
+    + '<div class="cx-hol-id"><b>' + esc(r.name) + '</b><small>' + esc(r.country) + ' · ' + esc(r.range) + (r.estimated ? ' · ' + esc(tr('período estimado')) : '') + '</small></div>'
+    + '<span class="cx-hol-when">' + esc(r.when) + '</span></li>').join('') + '</ul>';
 }
 
 function incotermHtml(t) {
@@ -135,8 +149,7 @@ export function startComexClocks(root) {
     });
     hub.querySelector('[data-hol-agenda]').innerHTML = agendaHtml(now, hol);
   };
-  const year = new Date().getFullYear();
-  loadHolidays(CLOCKS, [year, year + 1])
+  loadSiteHolidays()
     .then((h) => { hol = h; })
     .catch(() => { hol = false; })
     .then(() => { if (hub.isConnected) paint(); });

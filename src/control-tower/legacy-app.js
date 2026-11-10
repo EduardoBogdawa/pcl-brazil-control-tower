@@ -3,7 +3,7 @@ import {tr,getLang,setLang,translateStatic} from '@/control-tower/i18n';
 import {icon,categoryIcon,categoryTint,portalIcon} from '@/control-tower/icons.js';
 import {createCommandPalette} from '@/control-tower/command-palette.js';
 import {createCalendar,CALENDAR_CATEGORY} from '@/control-tower/calendar.js';
-import {COMEX_CATEGORY,comexHubHtml,startComexClocks,contactsCardHtml,syncContactsField,fillContactsField,bindContactsField,readContactsField} from '@/control-tower/comex.js';
+import {COMEX_CATEGORY,loadSiteHolidays,upcomingHolidayRows,comexHubHtml,startComexClocks,contactsCardHtml,syncContactsField,fillContactsField,bindContactsField,readContactsField} from '@/control-tower/comex.js';
 import {PCP_CATEGORY,pcpHubHtml,bindPcpHub} from '@/control-tower/pcp.js';
 import {createWeeklyAgenda} from '@/control-tower/weekly-agenda.js';
 import {groupHead,sortGroupedRows,syncGroupField,fillGroupField,applyGroupField,bindGroupField} from '@/control-tower/panel-groups.js';
@@ -310,7 +310,7 @@ function render(){Array.prototype.forEach.call(nav.querySelectorAll('button[data
  function reloadShared(){Promise.all([fetchCategories(),fetchPanels(),fetchTasks()]).then(function(r){categories=r[0];if(r[1])dashboards=r[1];if(r[2])tasks=r[2];dashboards.forEach(normalizePanel);saveCache();renderNav();render();}).catch(function(){showToast(tr('Não foi possível atualizar. Recarregue a página.'),true);});}
  function openTrashSheet(){openTrash(sheet,{showToast:showToast,onRestored:function(kind){if(kind==='event')calendar.reload();else reloadShared();}});}
  alerts=createNotifications(document.getElementById('bellBtn'),function(){return buildAlerts(insights(),{timeLabel:calendar.timeLabel,calendarCategory:CALENDAR_CATEGORY,taskCategory:TASK_CATEGORY});},{openEvent:function(id,day){calendar.openEvent(id,day);},goTo:goTo,openPanel:function(id){var d=findPanel(id);if(d)goTo(d.category);},openPending:openPending});
- var presenter=createPresentation({getSlides:function(){return presentSlides(insights(),{stats:panelStats,dashboards:dashboards,categoryLabel:categoryLabel,timeLabel:calendar.timeLabel});},getSeconds:function(){return prefs.get().presentSeconds;}});
+ var presentHolidays=null;var presenter=createPresentation({getSlides:function(){return presentSlides(insights(),{stats:panelStats,dashboards:dashboards,categoryLabel:categoryLabel,timeLabel:calendar.timeLabel,holidays:presentHolidays?upcomingHolidayRows(presentHolidays,new Date(),30):null});},getSeconds:function(){return prefs.get().presentSeconds;},onStart:function(){if(presentHolidays)return;loadSiteHolidays().then(function(h){presentHolidays=h;}).catch(function(){presentHolidays=null;});}});
  document.getElementById('presentBtn').onclick=function(){presenter.start();};
  document.getElementById('trashBtn').onclick=openTrashSheet;
  document.getElementById('prefsBtn').onclick=function(){prefs.open();};

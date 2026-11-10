@@ -192,31 +192,58 @@
 .presenting{overflow:hidden}
 .present-top{display:flex;align-items:center;gap:16px;color:#8693A2;font:600 12px/1 var(--f-mono);letter-spacing:.18em}
 .present-top img{height:28px;filter:brightness(0) invert(1)}
-.present-clock{margin-left:auto;color:#EEF2F6;font:600 28px/1 var(--f-display);letter-spacing:-.01em}
-.present-stage{flex:1;display:flex;align-items:center}
+.present-count{margin-left:auto;padding:6px 12px;border:1px solid rgba(255,255,255,.12);border-radius:999px;color:#B9C3CE;letter-spacing:.12em;font-variant-numeric:tabular-nums}
+.present-time{display:flex;align-items:baseline;gap:12px;margin-left:16px}
+.present-date{color:#8693A2;font:600 13px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase}
+.present-clock{color:#EEF2F6;font:600 28px/1 var(--f-display);letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.present-stage{flex:1;display:flex;align-items:center;min-height:0}
 .present-slide{width:100%;animation:slide-in .6s var(--ease) both}
 @keyframes slide-in{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
 .present-kicker{color:#FF5C72;font:600 14px/1 var(--f-mono);letter-spacing:.18em;text-transform:uppercase}
 .present-slide h2{margin:16px 0 40px;font:600 clamp(36px,5vw,64px)/1.1 var(--f-display);letter-spacing:-.03em}
 .present-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
-.present-big{padding:32px;border:1px solid rgba(255,255,255,.1);border-radius:24px;background:rgba(255,255,255,.04)}
+.present-big{--tone:#E4002B;position:relative;overflow:hidden;padding:32px;border:1px solid rgba(255,255,255,.1);border-radius:24px;background:linear-gradient(160deg,color-mix(in srgb,var(--tone) 14%,transparent),rgba(255,255,255,.03) 60%);animation:slide-in .6s var(--ease) both}
+.present-big:nth-child(2){animation-delay:.08s}.present-big:nth-child(3){animation-delay:.16s}.present-big:nth-child(4){animation-delay:.24s}
+.present-big.b-ready{--tone:#22C55E}.present-big.b-tasks{--tone:#F59E0B}.present-big.b-today{--tone:#E4002B}.present-big.b-week{--tone:#3B82F6}
+.present-big-ico{display:inline-flex;width:48px;height:48px;align-items:center;justify-content:center;margin-bottom:24px;border-radius:14px;background:color-mix(in srgb,var(--tone) 22%,transparent);color:#EEF2F6}
+.present-big-ico svg{width:24px;height:24px}
 .present-big b{display:block;font:600 clamp(48px,7vw,96px)/1 var(--f-display);letter-spacing:-.04em;font-variant-numeric:tabular-nums}
-.present-big span{display:block;margin-top:12px;color:#B9C3CE;font-size:18px}
+.present-big>span:not(.present-big-ico){display:block;margin-top:12px;color:#DCE3EA;font-size:18px;font-weight:600}
+.present-big small{display:block;margin-top:8px;color:#8693A2;font-size:14px}
 .present-list{list-style:none;margin:0;padding:0;display:grid;gap:12px}
-.present-list li{display:flex;align-items:center;gap:20px;padding:20px 24px;border:1px solid rgba(255,255,255,.08);border-radius:18px;background:rgba(255,255,255,.035);font-size:22px}
-.present-list b{flex:1;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.present-list li{display:flex;align-items:center;gap:20px;padding:20px 24px;border:1px solid rgba(255,255,255,.08);border-radius:18px;background:rgba(255,255,255,.035);font-size:22px;animation:slide-in .5s var(--ease) both;animation-delay:calc(var(--i,0) * 70ms)}
+.present-list li.soon{border-left:4px solid #F59E0B}
+.present-list li.now{border-left:4px solid #E4002B;background:rgba(228,0,43,.08)}
+.present-list b{flex:1;min-width:0;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .present-list small{color:#8693A2;font-size:16px}
 .present-when{min-width:120px;color:#FF5C72;font:600 14px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase}
+.present-cc{flex:none;min-width:56px;padding:8px 0;border-radius:10px;background:rgba(255,255,255,.08);color:#EEF2F6;font:600 16px/1 var(--f-mono);text-align:center}
+.present-tag{flex:none;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.08);color:#DCE3EA;font:600 14px/1.2 var(--f-mono)}
+.present-list li.soon .present-tag{background:rgba(245,158,11,.18);color:#FCD34D}
+.present-list li.now .present-tag{background:rgba(228,0,43,.2);color:#FF9AA8}
 .present-empty{color:#8693A2;font-size:22px}
-.present-foot{display:flex;align-items:center;gap:24px;color:#8693A2;font-size:13px}
+.present-foot{display:flex;align-items:center;gap:24px;color:#8693A2;font-size:13px;transition:opacity .4s}
 .present-foot .btn{margin-left:auto}
+.present-ctrl{display:flex;gap:8px}
+.present-btn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border:1px solid rgba(255,255,255,.14);border-radius:50%;background:rgba(255,255,255,.05);color:#EEF2F6;cursor:pointer;transition:background .2s,transform .2s,border-color .2s}
+.present-btn:hover{background:rgba(255,255,255,.12);transform:translateY(-1px)}
+.present-btn:focus-visible,.present-dots button:focus-visible{outline:2px solid #FF5C72;outline-offset:2px}
+.present-btn.main{background:#E4002B;border-color:#E4002B}
+.present-btn.main:hover{background:#C70026}
+.present-btn svg{width:18px;height:18px}
 .present-dots{display:flex;gap:8px}
-.present-dots i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2);transition:all .3s}
-.present-dots i.on{width:24px;border-radius:4px;background:#E4002B}
+.present-dots button{width:8px;height:8px;padding:0;border:0;border-radius:50%;background:rgba(255,255,255,.22);cursor:pointer;transition:all .3s}
+.present-dots button:hover{background:rgba(255,255,255,.5)}
+.present-dots button.on{width:24px;border-radius:4px;background:#E4002B}
+.present-paused{display:none;padding:4px 12px;border-radius:999px;background:rgba(245,158,11,.18);color:#FCD34D;font:600 12px/1.2 var(--f-mono);letter-spacing:.12em;text-transform:uppercase}
+.present.paused .present-paused{display:inline-block}
+.present.idle{cursor:none}
+.present.idle:not(.paused) .present-foot{opacity:0}
 .present-progress{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.06)}
 .present-progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,#E4002B,#FF5C72)}
 @keyframes present-fill{to{width:100%}}
-@media (max-width:900px){.present{padding:24px}.present-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.present-list li{font-size:16px}}
+@media (max-width:900px){.present{padding:24px}.present-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.present-list li{font-size:16px;gap:12px;padding:16px}.present-hint,.present-date,.present-top>span:not(.present-count):not(.present-time){display:none}.present-tag{font-size:12px}}
+@media (prefers-reduced-motion:reduce){.present-slide,.present-big,.present-list li{animation:none}}
 
 /* ---------- Daily splash ---------- */
 .splash{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:radial-gradient(60% 50% at 50% 50%,rgba(228,0,43,.16),transparent 70%),#05070A;color:#EEF2F6;cursor:pointer;transition:opacity .5s ease,visibility .5s}

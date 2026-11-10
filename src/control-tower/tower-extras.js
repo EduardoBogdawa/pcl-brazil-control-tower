@@ -143,13 +143,28 @@ export function openTrash(sheet, { onRestored, showToast }) {
 }
 
 // --- Presentation mode: full screen slides for a meeting room TV.
-export function createPresentation({ getSlides, getSeconds }) {
+const IDLE_MS = 3000;
+
+export function createPresentation({ getSlides, getSeconds, onStart }) {
   const root = document.createElement('div');
   root.className = 'present';
   root.setAttribute('role', 'dialog');
   root.setAttribute('aria-label', tr('Modo apresentação'));
   document.body.appendChild(root);
-  let idx = 0, timer = null, clock = null, slides = [];
+  let idx = 0, timer = null, clock = null, idleTimer = null, slides = [], paused = false, wakeLock = null;
+
+  // Keeps the TV from dimming while slides rotate; silently skipped where the browser lacks support.
+  async function holdScreen() {
+    try { if (navigator.wakeLock && !wakeLock) { wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', () => { wakeLock = null; }); } } catch { wakeLock = null; }
+  }
+
+  function syncControls() {
+    const btn = root.querySelector('[data-present-toggle]');
+    btn.innerHTML = icon(paused ? 'resume' : 'pause');
+    btn.setAttribute('aria-label', tr(paused ? 'Retomar' : 'Pausar'));
+    btn.setAttribute('title', tr(paused ? 'Retomar' : 'Pausar'));
+    root.classList.toggle('paused', paused);
+  }
 
   function show() {
     slides = getSlides();
@@ -157,55 +172,108 @@ export function createPresentation({ getSlides, getSeconds }) {
     idx = (idx + slides.length) % slides.length;
     const s = slides[idx];
     root.querySelector('.present-stage').innerHTML = '<div class="present-slide"><div class="present-kicker">' + esc(s.kicker) + '</div><h2>' + esc(s.title) + '</h2>' + s.body + '</div>';
-    root.querySelector('.present-dots').innerHTML = slides.map((_, i) => '<i class="' + (i === idx ? 'on' : '') + '"></i>').join('');
+    root.querySelector('.present-count').textContent = String(idx + 1).padStart(2, '0') + ' / ' + String(slides.length).padStart(2, '0');
+    root.querySelector('.present-dots').innerHTML = slides.map((x, i) => '<button type="button" data-present-go="' + i + '" class="' + (i === idx ? 'on' : '') + '" aria-label="' + esc(x.title) + '"' + (i === idx ? ' aria-current="step"' : '') + '></button>').join('');
     const bar = root.querySelector('.present-progress i');
     bar.style.animation = 'none';
     void bar.offsetWidth;
-    bar.style.animation = 'present-fill ' + getSeconds() + 's linear forwards';
+    bar.style.animation = paused ? 'none' : 'present-fill ' + getSeconds() + 's linear forwards';
     clearTimeout(timer);
-    timer = setTimeout(() => { idx++; show(); }, getSeconds() * 1000);
+    if (!paused) timer = setTimeout(() => { idx++; show(); }, getSeconds() * 1000);
   }
+  function go(n) { idx = n; show(); }
+  function toggle() { paused = !paused; syncControls(); show(); }
   function tick() {
-    const el = root.querySelector('.present-clock');
-    if (el) el.textContent = new Date().toLocaleTimeString(locale(), { hour: '2-digit', minute: '2-digit' });
+    const t = root.querySelector('.present-clock');
+    const d = root.querySelector('.present-date');
+    const now = new Date();
+    if (t) t.textContent = now.toLocaleTimeString(locale(), { hour: '2-digit', minute: '2-digit' });
+    if (d) d.textContent = now.toLocaleDateString(locale(), { weekday: 'short', day: '2-digit', month: 'short' });
+  }
+  function wake() {
+    root.classList.remove('idle');
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => root.classList.add('idle'), IDLE_MS);
   }
   function stop() {
-    clearTimeout(timer); clearInterval(clock);
-    root.classList.remove('on');
+    clearTimeout(timer); clearInterval(clock); clearTimeout(idleTimer);
+    root.classList.remove('on', 'idle', 'paused');
     document.body.classList.remove('presenting');
+    if (wakeLock) wakeLock.release().catch(() => {});
     if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
   }
   function start() {
-    idx = 0;
-    root.innerHTML = '<div class="present-top"><img src="/nexteer-logo.png" alt="Nexteer Automotive"><span>PC&amp;L BRAZIL · CONTROL TOWER</span><b class="present-clock"></b></div><div class="present-stage"></div><div class="present-foot"><div class="present-dots"></div><span>' + tr('Setas para navegar · Esc para sair') + '</span><button type="button" class="btn" data-present-exit>' + icon('x') + tr('Sair') + '</button></div><div class="present-progress"><i></i></div>';
+    idx = 0; paused = false;
+    root.innerHTML = '<div class="present-top"><img src="/nexteer-logo.png" alt="Nexteer Automotive"><span>PC&amp;L BRAZIL · CONTROL TOWER</span><span class="present-count"></span><span class="present-time"><small class="present-date"></small><b class="present-clock"></b></span></div>'
+      + '<div class="present-stage" aria-live="polite"></div>'
+      + '<div class="present-foot"><div class="present-ctrl">'
+      + '<button type="button" class="present-btn" data-present-prev aria-label="' + esc(tr('Anterior')) + '" title="' + esc(tr('Anterior')) + '">' + icon('chevronLeft') + '</button>'
+      + '<button type="button" class="present-btn main" data-present-toggle></button>'
+      + '<button type="button" class="present-btn" data-present-next aria-label="' + esc(tr('Próxima')) + '" title="' + esc(tr('Próxima')) + '">' + icon('chevronRight') + '</button></div>'
+      + '<div class="present-dots"></div><span class="present-paused">' + esc(tr('Pausado')) + '</span><span class="present-hint">' + esc(tr('Setas para navegar · Espaço pausa · Esc para sair')) + '</span>'
+      + '<button type="button" class="btn" data-present-exit>' + icon('x') + esc(tr('Sair')) + '</button></div><div class="present-progress"><i></i></div>';
     root.classList.add('on');
     document.body.classList.add('presenting');
     if (root.requestFullscreen) root.requestFullscreen().catch(() => {});
+    holdScreen();
+    if (onStart) onStart();
+    syncControls();
     tick(); clock = setInterval(tick, 15000);
+    wake();
     show();
   }
-  root.addEventListener('click', (e) => { if (e.target.closest('[data-present-exit]')) stop(); });
+  root.addEventListener('click', (e) => {
+    if (e.target.closest('[data-present-exit]')) stop();
+    else if (e.target.closest('[data-present-toggle]')) toggle();
+    else if (e.target.closest('[data-present-prev]')) go(idx - 1);
+    else if (e.target.closest('[data-present-next]')) go(idx + 1);
+    else if (e.target.closest('[data-present-go]')) go(Number(e.target.closest('[data-present-go]').getAttribute('data-present-go')));
+  });
+  root.addEventListener('mousemove', wake);
   document.addEventListener('keydown', (e) => {
     if (!root.classList.contains('on')) return;
+    wake();
     if (e.key === 'Escape') stop();
-    else if (e.key === 'ArrowRight' || e.key === ' ') { idx++; show(); }
-    else if (e.key === 'ArrowLeft') { idx--; show(); }
+    else if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); go(idx + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(idx - 1); }
+    else if (e.key === ' ' || e.key === 'p' || e.key === 'P') {
+      if (e.key === ' ' && e.target.closest && e.target.closest('button')) return;
+      e.preventDefault();
+      toggle();
+    }
   });
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && root.classList.contains('on')) holdScreen(); });
   document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && root.classList.contains('on')) stop(); });
   return { start, stop };
 }
 
-export function presentSlides(s, { stats, dashboards, categoryLabel, timeLabel }) {
-  const big = (v, l) => '<div class="present-big"><b>' + v + '</b><span>' + esc(l) + '</span></div>';
-  const list = (rows, empty) => rows.length ? '<ul class="present-list">' + rows.join('') + '</ul>' : '<p class="present-empty">' + esc(empty) + '</p>';
+// `holidays` is null while loading or when the calendar is unreachable; that slide is then left out.
+export function presentSlides(s, { stats, dashboards, categoryLabel, timeLabel, holidays }) {
+  const big = (cls, ico, v, l, sub) => '<div class="present-big ' + cls + '"><span class="present-big-ico">' + icon(ico) + '</span><b>' + v + '</b><span>' + esc(l) + '</span>' + (sub ? '<small>' + esc(sub) + '</small>' : '') + '</div>';
+  const list = (rows, empty) => rows.length ? '<ul class="present-list">' + rows.map((r, i) => r.replace('<li', '<li style="--i:' + i + '"')).join('') + '</ul>' : '<p class="present-empty">' + esc(empty) + '</p>';
   const byId = new Map(dashboards.map((d) => [d.id, d]));
   const date = new Date().toLocaleDateString(locale(), { weekday: 'long', day: '2-digit', month: 'long' });
-  return [
-    { kicker: date, title: tr('Indicadores da central'), body: '<div class="present-grid">' + big(s.ready, tr('painéis prontos')) + big(s.eventsToday.length, tr('eventos hoje')) + big(s.todayTasks.length, tr('atividades hoje')) + big(s.workshops.length, tr('workshops em 30 dias')) + '</div>' },
+  const readyPct = s.panels ? Math.round((s.ready / s.panels) * 100) : 0;
+  const n = (v) => Number(v).toLocaleString(locale());
+  const top = stats.map((x) => ({ x, d: byId.get(x.panel_id) })).filter((r) => r.d).slice(0, 6);
+  const slides = [
+    { kicker: date, title: tr('Indicadores da central'), body: '<div class="present-grid">'
+      + big('b-ready', 'activity', n(s.ready), tr('painéis prontos'), tr('{0}% com link configurado', readyPct))
+      + big('b-tasks', 'checkSquare', n(s.todayTasks.length), tr('atividades hoje'), tr('Rotina da equipe'))
+      + big('b-today', 'calendar', n(s.eventsToday.length), tr('eventos hoje'), tr('Agenda compartilhada'))
+      + big('b-week', 'clock', n(s.eventsWeek.length), tr('eventos em 7 dias'), tr('Próxima semana'))
+      + '</div>' },
     { kicker: tr('Agenda'), title: tr('Próximos eventos'), body: list(s.eventsWeek.slice(0, 6).map(({ ev, offset }) => '<li><span class="present-when">' + esc(offset === 0 ? tr('Hoje') : offset === 1 ? tr('Amanhã') : tr('Em {0} dias', offset)) + '</span><b>' + esc(ev.title) + '</b><small>' + esc(timeLabel(ev)) + '</small></li>'), tr('Nenhum evento nos próximos 7 dias.')) },
     { kicker: tr('Rotina'), title: tr('Atividades de hoje'), body: list(s.todayTasks.slice(0, 6).map((t) => '<li><span class="present-when">' + esc(t.owner) + '</span><b>' + esc(t.name) + '</b><small>' + esc(tr(t.period)) + '</small></li>'), tr('Nenhuma atividade programada para hoje.')) },
-    { kicker: tr('Equipe'), title: tr('Mais acessados'), body: list(stats.map((x) => byId.get(x.panel_id)).filter(Boolean).slice(0, 6).map((d, i) => '<li><span class="present-when">' + String(i + 1).padStart(2, '0') + '</span>' + portalIcon(d) + '<b>' + esc(d.name) + '</b><small>' + esc(categoryLabel(d.category)) + '</small></li>'), tr('O ranking aparece assim que a equipe começar a abrir os painéis.')) },
   ];
+  if (Array.isArray(holidays)) {
+    slides.push({ kicker: tr('Plantas e parceiros'), title: tr('Feriados nos próximos 30 dias'), body: list(holidays.slice(0, 6).map((h) => '<li class="' + h.state + '"><span class="present-cc">' + esc(h.cc) + '</span><b>' + esc(h.name) + '</b><small>' + esc(h.country) + ' · ' + esc(h.range) + (h.estimated ? ' · ' + esc(tr('período estimado')) : '') + '</small><span class="present-tag">' + esc(h.when) + '</span></li>'), tr('Nenhum feriado nas plantas nos próximos 30 dias.')) });
+  }
+  if (s.fresh.length) {
+    slides.push({ kicker: tr('Novidades'), title: tr('Adicionados nesta semana'), body: list(s.fresh.slice(0, 6).map((d) => '<li>' + portalIcon(d) + '<b>' + esc(d.name) + '</b><small>' + esc(categoryLabel(d.category)) + '</small></li>'), '') });
+  }
+  slides.push({ kicker: tr('Equipe'), title: tr('Mais acessados'), body: list(top.map(({ x, d }, i) => '<li><span class="present-when">' + String(i + 1).padStart(2, '0') + '</span>' + portalIcon(d) + '<b>' + esc(d.name) + '</b><small>' + esc(categoryLabel(d.category)) + '</small><span class="present-tag">' + esc(n(x.open_count)) + ' ' + esc(tr(x.open_count === 1 ? 'acesso' : 'acessos')) + '</span></li>'), tr('O ranking aparece assim que a equipe começar a abrir os painéis.')) });
+  return slides;
 }
 
 // --- Daily splash: once per day per browser, skippable, never blocks work.
