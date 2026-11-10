@@ -12,6 +12,16 @@ const GROUPED = {
       { id: 'outros', title: 'Outros portais', hint: 'Demais acessos do time de comércio exterior', glyph: 'link' },
     ],
   },
+  PCP: {
+    field: 'pcpGroup', fallback: 'outros', label: 'Etapa do PCP',
+    groups: [
+      { id: 'edi', title: 'EDI', hint: 'Programações recebidas dos clientes: firmes e previsões', glyph: 'repeat' },
+      { id: 'po', title: 'PO Clientes', hint: 'Carteira de pedidos, confirmações e atendimento', glyph: 'checkSquare' },
+      { id: 'mps', title: 'MPS', hint: 'Plano mestre de produção semanal e capacidade', glyph: 'calendar' },
+      { id: 'sop', title: 'S&OP', hint: 'Demanda x capacidade no médio prazo e ciclo mensal', glyph: 'trend' },
+      { id: 'outros', title: 'Outros recursos', hint: 'Demais relatórios e ferramentas do PCP', glyph: 'link' },
+    ],
+  },
   'Acessos e Links': {
     field: 'accessGroup', fallback: 'operacional', label: 'Classificação',
     groups: [
@@ -48,7 +58,7 @@ export function groupHead(category, d, prev) {
   const id = groupOf(cfg, d);
   if (prev && groupOf(cfg, prev) === id) return '';
   const g = cfg.groups.find((x) => x.id === id);
-  return '<div class="panel-group-head" style="--gh:' + categoryTint(category) + '"><span class="panel-group-ico">' + icon(g.glyph) + '</span><div><h4>' + esc(tr(g.title)) + '</h4><small>' + esc(tr(g.hint)) + '</small></div></div>';
+  return '<div class="panel-group-head" data-group="' + id + '" style="--gh:' + categoryTint(category) + '"><span class="panel-group-ico">' + icon(g.glyph) + '</span><div><h4>' + esc(tr(g.title)) + '</h4><small>' + esc(tr(g.hint)) + '</small></div></div>';
 }
 
 // The section picker in the panel form follows the chosen category; the current pick survives a category round-trip.
@@ -74,4 +84,14 @@ export function applyGroupField(obj) {
   if (!cfg) return;
   const v = document.getElementById('panelGroup').value;
   obj[cfg.field] = cfg.groups.some((g) => g.id === v) ? v : cfg.fallback;
+}
+
+// Panels of a grouped category bucketed by section id, e.g. for summary strips above the cards.
+export function rowsByGroup(category, rows) {
+  const cfg = GROUPED[category];
+  const out = {};
+  if (!cfg) return out;
+  cfg.groups.forEach((g) => { out[g.id] = []; });
+  rows.forEach((d) => { if (d.category === category) out[groupOf(cfg, d)].push(d); });
+  return out;
 }
