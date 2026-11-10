@@ -13,7 +13,7 @@ const GROUPED = {
     ],
   },
   PCP: {
-    field: 'pcpGroup', fallback: 'outros', label: 'Etapa do PCP',
+    field: 'pcpGroup', fallback: 'outros', label: 'Etapa do PCP', allowCustom: true,
     groups: [
       { id: 'edi', title: 'EDI', hint: 'Programações recebidas dos clientes: firmes e previsões', glyph: 'repeat' },
       { id: 'po', title: 'PO Clientes', hint: 'Carteira de pedidos, confirmações e atendimento', glyph: 'checkSquare' },
@@ -36,8 +36,48 @@ function esc(s) {
   return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
+const NEW_GROUP = '__new';
+const CUSTOM_PREFIX = 'c-';
+const MAX_TITLE = 40;
+
+const titleField = (cfg) => cfg.field + 'Title';
+const customTitle = (cfg, d) => String(d[titleField(cfg)] || '').trim().slice(0, MAX_TITLE);
+const isCustom = (cfg, d) => !!cfg.allowCustom && typeof d[cfg.field] === 'string' && d[cfg.field].startsWith(CUSTOM_PREFIX) && !!customTitle(cfg, d);
+
 function groupOf(cfg, d) {
+  if (isCustom(cfg, d)) return d[cfg.field];
   return cfg.groups.some((g) => g.id === d[cfg.field]) ? d[cfg.field] : cfg.fallback;
+}
+
+function slug(text) {
+  return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 32) || 'secao';
+}
+
+// Sections created by the team live on the panels themselves, so they appear as soon as a panel uses them.
+function customGroups(cfg, category, rows) {
+  if (!cfg.allowCustom) return [];
+  const seen = new Map();
+  rows.forEach((d) => {
+    if (d.category === category && isCustom(cfg, d) && !seen.has(d[cfg.field])) {
+      seen.set(d[cfg.field], { id: d[cfg.field], title: customTitle(cfg, d), hint: 'Seção criada pela equipe', glyph: 'folder', custom: true });
+    }
+  });
+  return Array.from(seen.values()).sort((a, b) => a.title.localeCompare(b.title, 'pt-BR', { sensitivity: 'base' }));
+}
+
+// Built-in sections first, then team sections, with the catch-all fallback kept last.
+function allGroups(category, rows) {
+  const cfg = GROUPED[category];
+  const fixed = cfg.groups.filter((g) => g.id !== cfg.fallback);
+  const fallback = cfg.groups.filter((g) => g.id === cfg.fallback);
+  return fixed.concat(customGroups(cfg, category, rows || []), fallback);
+}
+
+const groupLabel = (g) => (g.custom ? g.title : tr(g.title));
+
+export function customGroupsOf(category, rows) {
+  const cfg = GROUPED[category];
+  return cfg ? customGroups(cfg, category, rows) : [];
 }
 
 export function isGrouped(category) {
@@ -48,7 +88,8 @@ export function isGrouped(category) {
 export function sortGroupedRows(category, rows) {
   const cfg = GROUPED[category];
   if (!cfg) return rows;
-  const order = (d) => cfg.groups.findIndex((g) => g.id === groupOf(cfg, d));
+  const ids = allGroups(category, rows).map((g) => g.id);
+  const order = (d) => ids.indexOf(groupOf(cfg, d));
   return rows.slice().sort((a, b) => order(a) - order(b));
 }
 
@@ -57,33 +98,69 @@ export function groupHead(category, d, prev) {
   if (!cfg) return '';
   const id = groupOf(cfg, d);
   if (prev && groupOf(cfg, prev) === id) return '';
-  const g = cfg.groups.find((x) => x.id === id);
-  return '<div class="panel-group-head" data-group="' + id + '" style="--gh:' + categoryTint(category) + '"><span class="panel-group-ico">' + icon(g.glyph) + '</span><div><h4>' + esc(tr(g.title)) + '</h4><small>' + esc(tr(g.hint)) + '</small></div></div>';
+  const g = cfg.groups.find((x) => x.id === id) || { title: customTitle(cfg, d), hint: 'Seção criada pela equipe', glyph: 'folder', custom: true };
+  return '<div class="panel-group-head" data-group="' + esc(id) + '" style="--gh:' + categoryTint(category) + '"><span class="panel-group-ico">' + icon(g.glyph) + '</span><div><h4>' + esc(groupLabel(g)) + '</h4><small>' + esc(tr(g.hint)) + '</small></div></div>';
+}
+
+function syncNewGroupInput() {
+  const input = document.getElementById('panelGroupNew');
+  const on = document.getElementById('panelGroup').value === NEW_GROUP && !document.getElementById('panelGroupField').hidden;
+  input.closest('label').hidden = !on;
+  input.required = on;
+  if (!on) input.value = '';
+}
+
+export function bindGroupField() {
+  document.getElementById('panelGroup').addEventListener('change', () => {
+    syncNewGroupInput();
+    const input = document.getElementById('panelGroupNew');
+    if (input.required) input.focus();
+  });
 }
 
 // The section picker in the panel form follows the chosen category; the current pick survives a category round-trip.
-export function syncGroupField(selected) {
-  const cfg = GROUPED[document.getElementById('category').value];
+export function syncGroupField(selected, rows) {
+  const category = document.getElementById('category').value;
+  const cfg = GROUPED[category];
   const wrap = document.getElementById('panelGroupField');
   const select = document.getElementById('panelGroup');
   wrap.hidden = !cfg;
-  if (!cfg) return;
-  const keep = selected || select.value;
-  document.getElementById('panelGroupLabel').textContent = tr(cfg.label);
-  select.innerHTML = cfg.groups.map((g) => '<option value="' + g.id + '">' + esc(tr(g.title)) + '</option>').join('');
-  select.value = cfg.groups.some((g) => g.id === keep) ? keep : cfg.groups[0].id;
+  if (cfg) {
+    const keep = selected || select.value;
+    const groups = allGroups(category, rows);
+    document.getElementById('panelGroupLabel').textContent = tr(cfg.label);
+    select.innerHTML = groups.map((g) => '<option value="' + esc(g.id) + '">' + esc(groupLabel(g)) + '</option>').join('')
+      + (cfg.allowCustom ? '<option value="' + NEW_GROUP + '">' + esc(tr('+ Nova seção...')) + '</option>' : '');
+    select.value = groups.some((g) => g.id === keep) ? keep : groups[0].id;
+  }
+  syncNewGroupInput();
 }
 
-export function fillGroupField(d) {
+export function fillGroupField(d, rows) {
   const cfg = d && GROUPED[d.category];
-  syncGroupField(cfg ? groupOf(cfg, d) : '');
+  syncGroupField(cfg ? groupOf(cfg, d) : '', rows);
 }
 
-export function applyGroupField(obj) {
+// Returns an error message when a new section was picked but left unnamed; a name that already exists reuses that section.
+export function applyGroupField(obj, rows) {
   const cfg = GROUPED[obj.category];
-  if (!cfg) return;
+  if (!cfg) return '';
   const v = document.getElementById('panelGroup').value;
-  obj[cfg.field] = cfg.groups.some((g) => g.id === v) ? v : cfg.fallback;
+  const groups = allGroups(obj.category, rows);
+  if (cfg.allowCustom) obj[titleField(cfg)] = '';
+  if (v === NEW_GROUP && cfg.allowCustom) {
+    const name = document.getElementById('panelGroupNew').value.trim().replace(/\s+/g, ' ').slice(0, MAX_TITLE);
+    if (!name) return tr('Informe o nome da nova seção.');
+    const same = groups.find((g) => groupLabel(g).toLowerCase() === name.toLowerCase() || g.title.toLowerCase() === name.toLowerCase());
+    if (same && !same.custom) { obj[cfg.field] = same.id; return ''; }
+    obj[cfg.field] = same ? same.id : CUSTOM_PREFIX + slug(name);
+    obj[titleField(cfg)] = same ? same.title : name;
+    return '';
+  }
+  const g = groups.find((x) => x.id === v);
+  obj[cfg.field] = g ? g.id : cfg.fallback;
+  if (g && g.custom) obj[titleField(cfg)] = g.title;
+  return '';
 }
 
 // Panels of a grouped category bucketed by section id, e.g. for summary strips above the cards.
@@ -91,7 +168,7 @@ export function rowsByGroup(category, rows) {
   const cfg = GROUPED[category];
   const out = {};
   if (!cfg) return out;
-  cfg.groups.forEach((g) => { out[g.id] = []; });
+  allGroups(category, rows).forEach((g) => { out[g.id] = []; });
   rows.forEach((d) => { if (d.category === category) out[groupOf(cfg, d)].push(d); });
   return out;
 }

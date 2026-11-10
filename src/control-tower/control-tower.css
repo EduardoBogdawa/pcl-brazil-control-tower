@@ -964,6 +964,9 @@ button.cal-file{font:inherit;color:inherit;text-align:left;cursor:pointer}
 [data-theme=light] .pcp-layout{--pc-2:#1D4ED8}
 [data-theme=light] .pcp-step.ready .pcp-step-foot{color:#15803D}
 [data-theme=light] .pcp-step.pending .pcp-step-foot{color:#B45309}
-@media (max-width:1100px){.pcp-cal,.pcp-flow{grid-template-columns:repeat(2,minmax(0,1fr))}.pcp-step:nth-child(2):after{display:none}}
-@media (max-width:600px){.pcp-cal,.pcp-flow{grid-template-columns:1fr}.pcp-step:not(:last-child):after{top:auto;bottom:-13px;right:auto;left:32px;transform:rotate(135deg)}.pcp-step:nth-child(2):after{display:block}}
+.pcp-step:nth-child(4n):after{display:none}
+.group-field{display:flex;flex-direction:column;gap:8px}
+.group-field[hidden]{display:none}
+@media (max-width:1100px){.pcp-cal,.pcp-flow{grid-template-columns:repeat(2,minmax(0,1fr))}.pcp-step:nth-child(2n):after{display:none}}
+@media (max-width:600px){.pcp-cal,.pcp-flow{grid-template-columns:1fr}.pcp-step:not(:last-child):after{top:auto;bottom:-13px;right:auto;left:32px;transform:rotate(135deg)}.pcp-step:not(:last-child):nth-child(2n):after{display:block}}
 @media (prefers-reduced-motion:reduce){.pcp-bar:after,.pcp-step,.panel-group-head.flash{animation:none}}

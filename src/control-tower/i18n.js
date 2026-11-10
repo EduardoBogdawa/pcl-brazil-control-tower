@@ -254,6 +254,7 @@ const EN = {
   'Ajustes': 'Settings',
   '{0} prompt': '{0} prompt',
   '{0} prompts': '{0} prompts',
+  '+ Nova seção...': '+ New section...', 'Nome da nova seção': 'New section name', 'Nome da nova seção (ex.: Capacidade)': 'New section name (e.g.: Capacity)', 'Informe o nome da nova seção.': 'Enter the new section name.', 'Seção criada pela equipe': 'Section created by the team', 'Seção da equipe': 'Team section', 'Seção criada pela equipe para outros painéis do PCP.': 'Section created by the team for other PCP panels.',
   'Feriado': 'Holiday', 'hoje': 'today', 'amanhã': 'tomorrow', 'em {0} dias': 'in {0} days', 'em andamento': 'ongoing', 'período estimado': 'estimated period',
   'Próximos feriados': 'Upcoming holidays', 'Plantas e parceiros · próximos {0} dias': 'Plants and partners · next {0} days', 'Carregando feriados...': 'Loading holidays...',
   'Calendário de feriados indisponível no momento.': 'Holiday calendar is unavailable right now.', 'Nenhum feriado nos próximos {0} dias.': 'No holidays in the next {0} days.',

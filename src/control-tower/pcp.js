@@ -1,6 +1,6 @@
 import { tr, getLang } from '@/control-tower/i18n';
 import { icon } from '@/control-tower/icons.js';
-import { rowsByGroup } from '@/control-tower/panel-groups.js';
+import { rowsByGroup, customGroupsOf } from '@/control-tower/panel-groups.js';
 
 export const PCP_CATEGORY = 'PCP';
 
@@ -82,7 +82,7 @@ function stageHtml(s, i, list, safeUrl) {
   const pending = list.filter((d) => !safeUrl(d.url) && !(d.links && d.links.length)).length;
   const meta = !list.length ? tr('Nenhum painel ainda') : pending ? tr(pending === 1 ? '{0} link pendente' : '{0} links pendentes', pending) : tr(list.length === 1 ? '{0} painel pronto' : '{0} painéis prontos', list.length);
   const state = !list.length ? 'empty' : pending ? 'pending' : 'ready';
-  return '<li class="pcp-step ' + state + '" style="--i:' + i + '"><button type="button" data-pcp-step="' + s.id + '" aria-label="' + esc(tr(list.length ? 'Ver painéis de {0}' : 'Adicionar painel em {0}', s.title)) + '">'
+  return '<li class="pcp-step ' + state + '" style="--i:' + i + '"><button type="button" data-pcp-step="' + esc(s.id) + '" aria-label="' + esc(tr(list.length ? 'Ver painéis de {0}' : 'Adicionar painel em {0}', s.title)) + '">'
     + '<span class="pcp-step-top"><span class="pcp-step-n">' + String(i + 1).padStart(2, '0') + '</span><span class="pcp-step-ico">' + icon(s.glyph) + '</span></span>'
     + '<b>' + esc(s.title) + '</b><span class="pcp-step-tag">' + esc(tr(s.horizon)) + '</span><p>' + esc(tr(s.text)) + '</p>'
     + '<span class="pcp-step-foot"><i></i>' + esc(meta) + '<span class="pcp-step-go">' + icon(list.length ? 'arrow' : 'plus') + '</span></span>'
@@ -91,11 +91,14 @@ function stageHtml(s, i, list, safeUrl) {
 
 export function pcpHubHtml(dashboards, safeUrl) {
   const groups = rowsByGroup(PCP_CATEGORY, dashboards);
+  const stages = STAGES.concat(customGroupsOf(PCP_CATEGORY, dashboards).map((g) => ({
+    id: g.id, title: g.title, glyph: 'folder', horizon: 'Seção da equipe', text: 'Seção criada pela equipe para outros painéis do PCP.',
+  })));
   return '<section class="pcp-hub">'
     + '<div class="pcp-block-head"><span>' + icon('calendar') + esc(tr('Calendário de planejamento')) + '</span><small>' + esc(tr('Dias úteis de segunda a sexta, sem considerar feriados')) + '</small></div>'
     + calendarHtml(new Date())
     + '<div class="pcp-block-head"><span>' + icon('repeat') + esc(tr('Fluxo de planejamento')) + '</span><small>' + esc(tr('Da demanda do cliente à decisão mensal · clique em uma etapa')) + '</small></div>'
-    + '<ol class="pcp-flow">' + STAGES.map((s, i) => stageHtml(s, i, groups[s.id] || [], safeUrl)).join('') + '</ol>'
+    + '<ol class="pcp-flow">' + stages.map((s, i) => stageHtml(s, i, groups[s.id] || [], safeUrl)).join('') + '</ol>'
     + '</section>';
 }
 
