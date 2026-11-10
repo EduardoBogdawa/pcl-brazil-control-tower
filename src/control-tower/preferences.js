@@ -8,7 +8,7 @@ const DEFAULTS = {
   density: 'comfortable',
   start: 'overview',
   motion: 'full',
-  splash: true,
+  welcome: false,
   presentSeconds: 12,
   blocks: { kpi: true, today: true, top: true, pins: true },
 };
@@ -17,6 +17,8 @@ export function loadPrefs() {
   try {
     const raw = JSON.parse(localStorage.getItem(KEY) || 'null');
     if (!raw || typeof raw !== 'object') return structuredClone(DEFAULTS);
+    // Older saves stored the welcome screen as on; it is now opt-in for everyone.
+    delete raw.splash;
     return { ...structuredClone(DEFAULTS), ...raw, blocks: { ...DEFAULTS.blocks, ...(raw.blocks || {}) } };
   } catch {
     return structuredClone(DEFAULTS);
@@ -72,7 +74,7 @@ export function createPreferences({ getCategories, onChange }) {
       + toggle('autoTheme', prefs.autoTheme, 'Tema automático', 'Claro das 7h às 18h, escuro no restante do dia')
       + '<div class="pref-row"><span><b>' + tr('Densidade dos cartões') + '</b><small>' + tr('O modo compacto mostra mais itens por tela') + '</small></span>' + seg('density', prefs.density, [['comfortable', 'Confortável'], ['compact', 'Compacto']]) + '</div>'
       + '<div class="pref-row"><span><b>' + tr('Animações') + '</b><small>' + tr('Reduza para uma navegação mais leve') + '</small></span>' + seg('motion', prefs.motion, [['full', 'Completas'], ['reduced', 'Reduzidas']]) + '</div>'
-      + toggle('splash', prefs.splash, 'Tela de abertura', 'Saudação rápida no primeiro acesso do dia')
+      + toggle('welcome', prefs.welcome, 'Tela de abertura', 'Saudação rápida no primeiro acesso do dia')
       + '</section>'
       + '<section><h3>' + tr('Navegação') + '</h3>'
       + '<label class="pref-row"><span><b>' + tr('Tela inicial') + '</b><small>' + tr('O que abre quando você entra no painel') + '</small></span><select name="start">' + startOpts + '</select></label>'
@@ -97,7 +99,7 @@ export function createPreferences({ getCategories, onChange }) {
       autoTheme: chk('autoTheme'),
       density: val('density') === 'compact' ? 'compact' : 'comfortable',
       motion: val('motion') === 'reduced' ? 'reduced' : 'full',
-      splash: chk('splash'),
+      welcome: chk('welcome'),
       start: val('start') || 'overview',
       presentSeconds: [8, 12, 20].includes(+val('presentSeconds')) ? +val('presentSeconds') : 12,
       blocks: { kpi: chk('b_kpi'), today: chk('b_today'), top: chk('b_top'), pins: chk('b_pins') },

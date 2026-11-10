@@ -50,20 +50,14 @@ function downloadCsv(name, header, rows) {
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
 
-// ctx: { getDashboards, getTasks, getEvents, categoryLabel, safeUrl, exportJson, showToast }
-export function bindExportMenu(button, ctx) {
+// items: [[key, icon, title, subtitle]]; onPick receives the chosen key.
+export function bindMenu(button, items, onPick) {
   const menu = document.createElement('div');
   menu.className = 'menu-pop';
   menu.setAttribute('role', 'menu');
   document.body.appendChild(menu);
-  const items = [
-    ['json', 'download', 'Configuração completa (JSON)', 'Backup para restaurar ou compartilhar'],
-    ['panels', 'sheet', 'Painéis e links (Excel)', 'Lista de todos os painéis com URLs'],
-    ['tasks', 'check', 'Atividades da rotina (Excel)', 'Rotina semanal e mensal da equipe'],
-    ['events', 'calendar', 'Eventos do calendário (Excel)', 'Agenda com datas, horários e participantes'],
-  ];
   function draw() {
-    menu.innerHTML = items.map(([k, ico, t, s]) => '<button type="button" role="menuitem" data-export="' + k + '"><span class="menu-ico">' + icon(ico) + '</span><span><b>' + esc(tr(t)) + '</b><small>' + esc(tr(s)) + '</small></span></button>').join('');
+    menu.innerHTML = items.map(([k, ico, t, s]) => '<button type="button" role="menuitem" data-menu-key="' + k + '"><span class="menu-ico">' + icon(ico) + '</span><span><b>' + esc(tr(t)) + '</b><small>' + esc(tr(s)) + '</small></span></button>').join('');
   }
   function close() { menu.classList.remove('on'); button.setAttribute('aria-expanded', 'false'); }
   button.setAttribute('aria-haspopup', 'menu');
@@ -82,13 +76,23 @@ export function bindExportMenu(button, ctx) {
   };
   menu.addEventListener('click', (e) => {
     e.stopPropagation();
-    const b = e.target.closest('[data-export]');
+    const b = e.target.closest('[data-menu-key]');
     if (!b) return;
     close();
-    run(b.getAttribute('data-export'));
+    onPick(b.getAttribute('data-menu-key'));
   });
   document.addEventListener('click', close);
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+}
+
+// ctx: { getDashboards, getTasks, getEvents, categoryLabel, safeUrl, exportJson, showToast }
+export function bindExportMenu(button, ctx) {
+  bindMenu(button, [
+    ['json', 'download', 'Configuração completa (JSON)', 'Backup para restaurar ou compartilhar'],
+    ['panels', 'sheet', 'Painéis e links (Excel)', 'Lista de todos os painéis com URLs'],
+    ['tasks', 'check', 'Atividades da rotina (Excel)', 'Rotina semanal e mensal da equipe'],
+    ['events', 'calendar', 'Eventos do calendário (Excel)', 'Agenda com datas, horários e participantes'],
+  ], run);
 
   function run(kind) {
     if (kind === 'json') { ctx.exportJson(); return; }
@@ -284,7 +288,7 @@ export function maybeSplash(enabled, greeting) {
   const el = document.createElement('div');
   el.className = 'splash';
   el.setAttribute('aria-hidden', 'true');
-  el.innerHTML = '<div class="splash-core"><span class="splash-ring"></span><img src="/nexteer-logo.png" alt=""><b>' + esc(greeting) + '</b><small>PC&amp;L BRAZIL · CONTROL TOWER</small><i class="splash-line"></i></div>';
+  el.innerHTML = '<div class="splash-core"><span class="splash-ring"></span><img src="/nexteer-logo.png" alt=""><b>' + esc(greeting) + '</b><small>PC&amp;L BRASIL · CONTROL TOWER</small><i class="splash-line"></i></div>';
   document.body.appendChild(el);
   const done = () => { el.classList.add('out'); setTimeout(() => el.remove(), 600); };
   el.addEventListener('click', done);
