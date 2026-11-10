@@ -45,12 +45,10 @@ function kpi(cls, ico, value, label, sub, go, ratio) {
     + '<span class="kpi-body"><b data-count="' + value + '">' + value + '</b><span class="kpi-label">' + esc(label) + '</span><small>' + esc(sub) + '</small></span></button>';
 }
 
-export function kpiHtml(s, { calendarCategory, taskCategory }) {
+export function kpiHtml(s) {
   const ready = s.panels ? s.ready / s.panels : 0;
   return '<section class="kpi-strip" aria-label="' + esc(tr('Indicadores')) + '">'
     + kpi('k-ready', 'activity', s.ready, tr('Painéis prontos'), tr('{0}% com link configurado', Math.round(ready * 100)), '', ready)
-    + kpi('k-events', 'calendar', s.eventsToday.length, tr('Eventos hoje'), tr('{0} nos próximos 7 dias', s.eventsWeek.length), calendarCategory)
-    + kpi('k-tasks', 'check', s.todayTasks.length, tr('Atividades hoje'), tr('{0} na rotina da equipe', s.tasks), taskCategory)
     + kpi('k-pending', 'alert', s.pending.length, tr('Links pendentes'), s.pending.length ? tr('Toque para revisar') : tr('Tudo configurado'), s.pending.length ? '#pending' : '')
     + '</section>';
 }
