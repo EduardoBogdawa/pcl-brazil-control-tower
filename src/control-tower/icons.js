@@ -58,7 +58,7 @@ const GLYPHS = {
 
 const CATEGORY_GLYPHS = {
   'Acessos e Links': 'link', Agentes: 'bot', 'Best Practice': 'award', 'BOM Audit': 'tree', CM: 'swap',
-  CPI: 'trend', ECR: 'delta', 'Instrução': 'book', 'Packaging/SPI': 'cube', 'PC&L Advanced': 'rocket', IA: 'ai',
+  CPI: 'trend', ECR: 'delta', Comex: 'globe', 'Instrução': 'book', 'Packaging/SPI': 'cube', 'PC&L Advanced': 'rocket', IA: 'ai',
   Prompt: 'prompt', Workshops: 'users', Todos: 'home', 'Calendário': 'calendar',
 };
 
@@ -71,7 +71,7 @@ export function categoryIcon(name) {
 const CATEGORY_TINTS = {
   'Acessos e Links': '#3B82F6', Calendário: '#0EA5E9', IA: '#06B6D4', Agentes: '#14B8A6', 'Packaging/SPI': '#10B981',
   CPI: '#16A34A', Workshops: '#65A30D', 'Best Practice': '#CA8A04', 'BOM Audit': '#D97706', ECR: '#F97316',
-  'Instrução': '#C2410C', CM: '#EC4899', 'PC&L Advanced': '#E4002B', Prompt: '#64748B',
+  'Instrução': '#C2410C', CM: '#EC4899', Comex: '#0D9488', 'PC&L Advanced': '#E4002B', Prompt: '#64748B',
 };
 const TINT_FALLBACK = ['#3B82F6', '#14B8A6', '#22C55E', '#F59E0B', '#0EA5E9', '#F97316', '#10B981', '#64748B'];
 
