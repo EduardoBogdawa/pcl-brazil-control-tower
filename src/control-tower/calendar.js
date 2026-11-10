@@ -10,7 +10,7 @@ const VACATION_FILE = {
 };
 
 const COLORS = ['#E4002B', '#8F0B22', '#F5A524', '#0F9D8A', '#0078D4', '#34383D'];
-const RECURRENCE = { none: 'Não se repete', daily: 'Diariamente', weekly: 'Semanalmente', monthly: 'Mensalmente', yearly: 'Anualmente' };
+const RECURRENCE = { none: 'Não se repete', daily: 'Diariamente', weekdays: 'Dias úteis (seg a sex)', weekly: 'Semanalmente', monthly: 'Mensalmente', yearly: 'Anualmente' };
 const DEFAULT_PEOPLE = ['Eduardo', 'Amanda'];
 const MAX_PER_CELL = 3;
 
@@ -27,6 +27,7 @@ function occursOn(ev, day) {
   if (ev.recurrence_until && day > parse(ev.recurrence_until)) return false;
   switch (ev.recurrence) {
     case 'daily': return true;
+    case 'weekdays': return day.getDay() !== 0 && day.getDay() !== 6;
     case 'weekly': return day.getDay() === start.getDay();
     case 'monthly': return day.getDate() === start.getDate();
     case 'yearly': return day.getDate() === start.getDate() && day.getMonth() === start.getMonth();

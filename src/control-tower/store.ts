@@ -113,7 +113,7 @@ export async function deleteTask(id: string): Promise<void> {
   if (error) throw error;
 }
 
-export type Recurrence = 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly';
+export type Recurrence = 'none' | 'daily' | 'weekdays' | 'weekly' | 'monthly' | 'yearly';
 
 export interface CalendarEvent {
   id: string;
