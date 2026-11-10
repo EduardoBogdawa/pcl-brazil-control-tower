@@ -1,16 +1,21 @@
 import { tr, getLang } from '@/control-tower/i18n';
 import { icon } from '@/control-tower/icons.js';
+import { loadHolidays, todayIn, daysBetween } from '@/control-tower/holidays.js';
 
 export const COMEX_CATEGORY = 'Comex';
 
 // Business hours (08h-18h, Mon-Fri) tell whether a partner site is likely reachable right now.
 const CLOCKS = [
-  { city: 'Porto Real', country: 'Brasil', tz: 'America/Sao_Paulo' },
-  { city: 'Saginaw', country: 'EUA', tz: 'America/Detroit' },
-  { city: 'Querétaro', country: 'México', tz: 'America/Mexico_City' },
-  { city: 'Tychy', country: 'Polônia', tz: 'Europe/Warsaw' },
-  { city: 'Suzhou', country: 'China', tz: 'Asia/Shanghai' },
+  { city: 'Porto Real', country: 'Brasil', tz: 'America/Sao_Paulo', cc: 'BR', region: 'BR-RJ' },
+  { city: 'Saginaw', country: 'EUA', tz: 'America/Detroit', cc: 'US', region: 'US-MI' },
+  { city: 'Querétaro', country: 'México', tz: 'America/Mexico_City', cc: 'MX', region: 'MX-QUE' },
+  { city: 'Tychy', country: 'Polônia', tz: 'Europe/Warsaw', cc: 'PL', region: 'PL-SL' },
+  { city: 'Suzhou', country: 'China', tz: 'Asia/Shanghai', cc: 'CN', region: '' },
 ];
+
+const SOON_DAYS = 14;
+const AGENDA_DAYS = 45;
+const AGENDA_MAX = 8;
 
 const INCOTERMS = [
   ['EXW', 'Ex Works', 'Comprador assume transporte, riscos e desembaraço a partir do local do vendedor.', 'any'],
@@ -41,12 +46,64 @@ function clockState(tz, now) {
   return { time, day, open };
 }
 
-function clockHtml(c, now) {
+const holName = (h) => (getLang() === 'en' ? h.en : h.pt);
+
+function fmtDay(iso) {
+  const loc = getLang() === 'en' ? 'en-US' : 'pt-BR';
+  return new Intl.DateTimeFormat(loc, { timeZone: 'UTC', day: '2-digit', month: 'short' }).format(new Date(iso + 'T12:00:00Z'));
+}
+
+function fmtRange(h) {
+  return h.start === h.end ? fmtDay(h.start) : fmtDay(h.start) + ' – ' + fmtDay(h.end);
+}
+
+function inDays(n) {
+  if (n <= 0) return tr('hoje');
+  return n === 1 ? tr('amanhã') : tr('em {0} dias', n);
+}
+
+// Today's holiday (if any) and the next one starting within SOON_DAYS, seen from the site's own calendar day.
+function holidayState(c, now, hol) {
+  const list = (hol && hol[c.cc]) || [];
+  const today = todayIn(c.tz, now);
+  const current = list.find((h) => h.start <= today && today <= h.end) || null;
+  const next = list.find((h) => h.start > today && daysBetween(today, h.start) <= SOON_DAYS) || null;
+  return { current, next, nextIn: next ? daysBetween(today, next.start) : 0 };
+}
+
+function clockHtml(c, now, hol) {
   const s = clockState(c.tz, now);
-  return '<div class="cx-clock' + (s.open ? ' open' : '') + '" data-tz="' + esc(c.tz) + '" role="listitem">'
+  const h = holidayState(c, now, hol);
+  const open = s.open && !h.current;
+  const status = h.current ? 'Feriado' : open ? 'Expediente' : 'Fora do horário';
+  let note = '';
+  if (h.current) note = '<div class="cx-clock-hol now" title="' + esc(holName(h.current) + ' · ' + fmtRange(h.current)) + '">' + icon('calendar') + '<span>' + esc(holName(h.current)) + '</span></div>';
+  else if (h.next) note = '<div class="cx-clock-hol soon" title="' + esc(holName(h.next) + ' · ' + fmtRange(h.next)) + '">' + icon('bell') + '<span>' + esc(inDays(h.nextIn)) + ' · ' + esc(holName(h.next)) + '</span></div>';
+  return '<div class="cx-clock' + (open ? ' open' : '') + (h.current ? ' holiday' : '') + '" data-tz="' + esc(c.tz) + '" role="listitem">'
     + '<div class="cx-clock-top"><span>' + esc(c.city) + '</span><small>' + esc(tr(c.country)) + '</small></div>'
     + '<b class="cx-clock-time">' + esc(s.time) + '</b>'
-    + '<div class="cx-clock-foot"><span class="cx-clock-day">' + esc(s.day) + '</span><span class="cx-clock-status"><i></i>' + esc(tr(s.open ? 'Expediente' : 'Fora do horário')) + '</span></div></div>';
+    + '<div class="cx-clock-foot"><span class="cx-clock-day">' + esc(s.day) + '</span><span class="cx-clock-status"><i></i>' + esc(tr(status)) + '</span></div>'
+    + note + '</div>';
+}
+
+function agendaHtml(now, hol) {
+  if (hol === null) return '<p class="cx-hol-msg">' + esc(tr('Carregando feriados...')) + '</p>';
+  if (hol === false) return '<p class="cx-hol-msg">' + esc(tr('Calendário de feriados indisponível no momento.')) + '</p>';
+  const items = [];
+  CLOCKS.forEach((c) => {
+    const today = todayIn(c.tz, now);
+    (hol[c.cc] || []).forEach((h) => {
+      if (h.end < today) return;
+      const n = daysBetween(today, h.start);
+      if (n <= AGENDA_DAYS) items.push({ c, h, n });
+    });
+  });
+  items.sort((a, b) => a.n - b.n || a.c.city.localeCompare(b.c.city));
+  if (!items.length) return '<p class="cx-hol-msg">' + esc(tr('Nenhum feriado nos próximos {0} dias.', AGENDA_DAYS)) + '</p>';
+  return '<ul class="cx-hol-list">' + items.slice(0, AGENDA_MAX).map(({ c, h, n }) => '<li class="' + (n <= 0 ? 'now' : n <= SOON_DAYS ? 'soon' : '') + '">'
+    + '<span class="cx-hol-cc">' + esc(c.cc) + '</span>'
+    + '<div class="cx-hol-id"><b>' + esc(holName(h)) + '</b><small>' + esc(tr(c.country)) + ' · ' + esc(fmtRange(h)) + (h.estimated ? ' · ' + esc(tr('período estimado')) : '') + '</small></div>'
+    + '<span class="cx-hol-when">' + esc(n <= 0 ? tr('em andamento') : inDays(n)) + '</span></li>').join('') + '</ul>';
 }
 
 function incotermHtml(t) {
@@ -58,7 +115,8 @@ export function comexHubHtml() {
   const now = new Date();
   return '<section class="cx-hub">'
     + '<div class="cx-block-head"><span>' + icon('clock') + esc(tr('Fusos das plantas e parceiros')) + '</span><small>' + esc(tr('Expediente considerado: 08h às 18h, segunda a sexta')) + '</small></div>'
-    + '<div class="cx-clocks" role="list">' + CLOCKS.map((c) => clockHtml(c, now)).join('') + '</div>'
+    + '<div class="cx-clocks" role="list">' + CLOCKS.map((c) => clockHtml(c, now, null)).join('') + '</div>'
+    + '<div class="cx-hol"><div class="cx-hol-head"><span>' + icon('calendar') + esc(tr('Próximos feriados')) + '</span><small>' + esc(tr('Plantas e parceiros · próximos {0} dias', AGENDA_DAYS)) + '</small></div><div data-hol-agenda aria-live="polite">' + agendaHtml(now, null) + '</div></div>'
     + '<details class="cx-inco"><summary><span>' + icon('book') + esc(tr('Incoterms 2020 · consulta rápida')) + '</span><small>' + esc(tr('Quem paga o frete e quando o risco muda de mãos')) + '</small></summary>'
     + '<div class="cx-inco-grid">' + INCOTERMS.map(incotermHtml).join('') + '</div></details>'
     + '</section>';
@@ -68,13 +126,23 @@ export function comexHubHtml() {
 export function startComexClocks(root) {
   const hub = root.querySelector('.cx-hub');
   if (!hub) return;
-  const timer = setInterval(() => {
-    if (!hub.isConnected) { clearInterval(timer); return; }
+  let hol = null;
+  const paint = () => {
     const now = new Date();
     hub.querySelectorAll('[data-tz]').forEach((el) => {
       const c = CLOCKS.find((x) => x.tz === el.getAttribute('data-tz'));
-      if (c) el.outerHTML = clockHtml(c, now);
+      if (c) el.outerHTML = clockHtml(c, now, hol || null);
     });
+    hub.querySelector('[data-hol-agenda]').innerHTML = agendaHtml(now, hol);
+  };
+  const year = new Date().getFullYear();
+  loadHolidays(CLOCKS, [year, year + 1])
+    .then((h) => { hol = h; })
+    .catch(() => { hol = false; })
+    .then(() => { if (hub.isConnected) paint(); });
+  const timer = setInterval(() => {
+    if (!hub.isConnected) { clearInterval(timer); return; }
+    paint();
   }, 30000);
 }
 

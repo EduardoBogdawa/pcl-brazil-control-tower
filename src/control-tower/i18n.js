@@ -254,6 +254,9 @@ const EN = {
   'Ajustes': 'Settings',
   '{0} prompt': '{0} prompt',
   '{0} prompts': '{0} prompts',
+  'Feriado': 'Holiday', 'hoje': 'today', 'amanhã': 'tomorrow', 'em {0} dias': 'in {0} days', 'em andamento': 'ongoing', 'período estimado': 'estimated period',
+  'Próximos feriados': 'Upcoming holidays', 'Plantas e parceiros · próximos {0} dias': 'Plants and partners · next {0} days', 'Carregando feriados...': 'Loading holidays...',
+  'Calendário de feriados indisponível no momento.': 'Holiday calendar is unavailable right now.', 'Nenhum feriado nos próximos {0} dias.': 'No holidays in the next {0} days.',
 };
 
 const LANG_KEY = 'pcl-lang';
