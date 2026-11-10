@@ -24,6 +24,7 @@
   <label>Descrição em inglês (opcional)<input id="descEn" maxlength="140" placeholder="Exibida quando a página estiver em inglês"></label>
   <div class="form-row"><label>Categoria<select id="category" required></select></label><input type="hidden" id="status"></div>
   <label>URL<input id="url" type="url" placeholder="https://..."></label><label>Data do workshop<input id="workshopDate" type="date"></label>
+  <label id="comexGroupField" hidden>Grupo na Central Comex<select id="comexGroup"><option value="agentes">Agentes de carga e courier</option><option value="processos">Processos e desembaraço</option><option value="rastreio">Rastreamento marítimo e de cargas</option><option value="outros">Outros portais</option></select></label>
   <fieldset class="cm-fields" id="cmFields" hidden>
    <legend>Dados da mudança (CM)</legend>
    <label>Tipo da mudança<input id="cmHead" maxlength="80" placeholder="Ex.: ALTERAÇÃO DE PART NUMBER · ECR 3054264"></label>

@@ -765,3 +765,63 @@ a.cal-file:focus-visible{outline:2px solid var(--nx-red);outline-offset:2px}
 @media (max-width:1200px){.yr-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:860px){.yr-grid{grid-template-columns:repeat(2,minmax(0,1fr));padding:16px}}
 @media (max-width:520px){.yr-grid{grid-template-columns:1fr}}
+
+/* Comex hub */
+.comex-layout{--cx:#0D9488;--cx-2:#2DD4BF}
+.cx-hub{grid-column:1/-1;display:flex;flex-direction:column;gap:16px;animation:rise .4s var(--ease) both}
+.cx-hero{position:relative;overflow:hidden;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;padding:24px;border:1px solid var(--line);border-radius:var(--r-lg);background:linear-gradient(120deg,color-mix(in srgb,var(--cx) 22%,var(--surface)) 0%,var(--surface) 62%)}
+.cx-hero:after{content:'';position:absolute;right:-60px;top:-80px;width:280px;height:280px;border-radius:50%;border:1px dashed color-mix(in srgb,var(--cx-2) 40%,transparent);box-shadow:inset 0 0 0 40px color-mix(in srgb,var(--cx) 6%,transparent),inset 0 0 0 80px color-mix(in srgb,var(--cx) 4%,transparent);pointer-events:none}
+.cx-hero-copy{position:relative;z-index:1;display:flex;flex-direction:column;gap:8px;max-width:560px}
+.cx-eyebrow{font:600 10px/1.2 var(--f-mono);letter-spacing:.16em;color:var(--cx-2)}
+.cx-hero h3{font-size:24px}
+.cx-hero p{margin:0;color:var(--text-2);font-size:14px;line-height:1.5}
+.cx-stats{position:relative;z-index:1;display:flex;gap:8px}
+.cx-stat{display:flex;flex-direction:column;gap:2px;min-width:112px;padding:12px 16px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface)}
+.cx-stat b{font:600 22px/1.2 var(--f-display);color:var(--text)}
+.cx-stat span{color:var(--muted);font-size:12px}
+.cx-stat.warn b{color:var(--wa-400)}
+.cx-block-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.cx-block-head span{display:inline-flex;align-items:center;gap:8px;font:600 13px/1.2 var(--f-display);color:var(--text)}
+.cx-block-head small{color:var(--muted);font-size:12px}
+.cx-block-head .ico,.cx-inco summary .ico{width:16px;height:16px;color:var(--cx-2)}
+.cx-clocks{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.cx-clock{display:flex;flex-direction:column;gap:8px;padding:12px 16px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface-2);transition:border-color .2s,transform .2s var(--ease)}
+.cx-clock:hover{transform:translateY(-2px);border-color:var(--line-2)}
+.cx-clock.open{border-color:color-mix(in srgb,var(--ok-500) 35%,var(--line))}
+.cx-clock-top{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.cx-clock-top span{font-size:13px;font-weight:600;color:var(--text)}
+.cx-clock-top small{color:var(--muted);font-size:11px}
+.cx-clock-time{font:600 24px/1.2 var(--f-mono);color:var(--text);letter-spacing:-.02em}
+.cx-clock-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:11px;color:var(--muted)}
+.cx-clock-day{text-transform:capitalize}
+.cx-clock-status{display:inline-flex;align-items:center;gap:6px}
+.cx-clock-status i{width:6px;height:6px;border-radius:50%;background:var(--muted)}
+.cx-clock.open .cx-clock-status{color:var(--ok-400)}
+.cx-clock.open .cx-clock-status i{background:var(--ok-500);box-shadow:0 0 8px var(--ok-500);animation:blink 1.6s infinite}
+.cx-inco{border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface-2);overflow:hidden}
+.cx-inco summary{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:12px 16px;cursor:pointer;list-style:none;transition:background .2s}
+.cx-inco summary::-webkit-details-marker{display:none}
+.cx-inco summary:hover{background:var(--surface-3)}
+.cx-inco summary:focus-visible{outline:2px solid var(--cx-2);outline-offset:-2px}
+.cx-inco summary span{display:inline-flex;align-items:center;gap:8px;font:600 13px/1.2 var(--f-display);color:var(--text)}
+.cx-inco summary small{color:var(--muted);font-size:12px}
+.cx-inco summary:after{content:'+';margin-left:auto;color:var(--cx-2);font:600 16px/1 var(--f-mono);transition:transform .25s var(--ease)}
+.cx-inco[open] summary:after{transform:rotate(45deg)}
+.cx-inco-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;padding:0 16px 16px;animation:rise .3s var(--ease) both}
+.cx-inco-item{display:flex;flex-direction:column;gap:4px;padding:12px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface)}
+.cx-inco-code{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.cx-inco-code b{font:600 16px/1.2 var(--f-mono);color:var(--cx-2)}
+.cx-inco-mode{padding:2px 8px;border-radius:999px;font-size:10px;font-weight:600;background:var(--surface-3);color:var(--text-2)}
+.cx-inco-mode.sea{background:color-mix(in srgb,var(--in-500,#3B82F6) 18%,transparent);color:var(--text)}
+.cx-inco-item strong{font-size:12px;color:var(--text)}
+.cx-inco-item p{margin:0;color:var(--text-2);font-size:12px;line-height:1.5}
+.cx-group-head{grid-column:1/-1;display:flex;align-items:center;gap:12px;margin-top:8px;padding-bottom:8px;border-bottom:1px solid var(--line);animation:rise .4s var(--ease) both}
+.cx-group-head h4{margin:0;font:600 15px/1.2 var(--f-display);color:var(--text)}
+.cx-group-head small{color:var(--muted);font-size:12px}
+.cx-group-ico{display:grid;place-items:center;width:32px;height:32px;border-radius:var(--r-sm);background:color-mix(in srgb,var(--cx) 18%,transparent);color:var(--cx-2)}
+.cx-group-ico .ico{width:16px;height:16px}
+[data-theme=light] .cx-eyebrow,[data-theme=light] .cx-inco-code b,[data-theme=light] .cx-group-ico,[data-theme=light] .cx-block-head .ico,[data-theme=light] .cx-inco summary .ico{color:#0F766E}
+[data-theme=light] .cx-clock.open .cx-clock-status{color:#15803D}
+@media (max-width:1100px){.cx-clocks{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:640px){.cx-clocks{grid-template-columns:repeat(2,minmax(0,1fr))}.cx-hero{padding:20px}.cx-stats{width:100%}.cx-stat{flex:1}}
+[data-theme=light] .cx-stat.warn b{color:#B45309}
