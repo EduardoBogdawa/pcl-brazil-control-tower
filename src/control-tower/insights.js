@@ -21,6 +21,7 @@ function daysUntil(isoDate) {
 // One pass over the data that both the overview indicators and the presentation mode read from.
 export function computeInsights({ dashboards, tasks, todayTasks, upcoming, safeUrl }) {
   const pending = dashboards.filter((d) => !safeUrl(d.url) && !(d.links && d.links.length) && !d.changeType);
+  const broken = dashboards.filter((d) => d.linkHealth === 'broken');
   const weekAgo = Date.now() - 7 * 86400000;
   const fresh = dashboards.filter((d) => d.createdAt && Date.parse(d.createdAt) > weekAgo);
   const workshops = dashboards
@@ -32,8 +33,8 @@ export function computeInsights({ dashboards, tasks, todayTasks, upcoming, safeU
   const eventsToday = upcoming.filter((x) => x.offset === 0);
   const eventsWeek = upcoming.filter((x) => x.offset < 7);
   return {
-    panels: dashboards.length, reports, tasks: tasks.length, todayTasks, pending, fresh, workshops,
-    eventsToday, eventsWeek, ready: dashboards.length - pending.length,
+    panels: dashboards.length, reports, tasks: tasks.length, todayTasks, pending, broken, fresh, workshops,
+    eventsToday, eventsWeek, ready: dashboards.filter((d) => !pending.includes(d) && !broken.includes(d)).length,
   };
 }
 
@@ -50,6 +51,7 @@ export function kpiHtml(s) {
   return '<section class="kpi-strip" aria-label="' + esc(tr('Indicadores')) + '">'
     + kpi('k-ready', 'activity', s.ready, tr('Painéis prontos'), tr('{0}% com link configurado', Math.round(ready * 100)), '', ready)
     + kpi('k-pending', 'alert', s.pending.length, tr('Links pendentes'), s.pending.length ? tr('Toque para revisar') : tr('Tudo configurado'), s.pending.length ? '#pending' : '')
+    + kpi('k-broken', 'alert', s.broken.length, tr('Links com falha'), tr('Falhas informadas pela equipe'), '#broken')
     + '</section>';
 }
 
