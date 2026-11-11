@@ -10,6 +10,7 @@ const GROUPED = {
       { id: 'processos', title: 'Processos e desembaraço', hint: 'Acompanhamento de importação, exportação e documentos', glyph: 'folder' },
       { id: 'rastreio', title: 'Rastreamento marítimo e de cargas', hint: 'Navios, contêineres e status de embarque', glyph: 'globe' },
       { id: 'outros', title: 'Outros portais', hint: 'Demais acessos do time de comércio exterior', glyph: 'link' },
+      { id: 'ferramentas', title: 'Ferramentas', hint: '', glyph: 'settings' },
     ],
   },
   PCP: {
@@ -68,6 +69,7 @@ function customGroups(cfg, category, rows) {
 // Built-in sections first, then team sections, with the catch-all fallback kept last.
 function allGroups(category, rows) {
   const cfg = GROUPED[category];
+  if (category === 'Comex') return cfg.groups;
   const fixed = cfg.groups.filter((g) => g.id !== cfg.fallback);
   const fallback = cfg.groups.filter((g) => g.id === cfg.fallback);
   return fixed.concat(customGroups(cfg, category, rows || []), fallback);
