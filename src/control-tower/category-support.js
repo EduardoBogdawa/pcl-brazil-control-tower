@@ -11,7 +11,7 @@ function topic(title, lines) {
 export function mountCategorySupport(root, category) {
   let title, description, topics;
   if (category === 'Packaging/SPI') {
-    title = 'SPI · Supplier Packaging Information';
+    title = text('SPI · Instrução de Embalagem do Fornecedor', 'SPI · Supplier Packaging Instruction');
     description = text('Documento do fornecedor que descreve a embalagem e registra a aprovação Nexteer.', 'Supplier document describing packaging and recording Nexteer approval.');
     topics = [
       topic(text('O que conferir no SPI', 'What to check in the SPI'), [
@@ -49,6 +49,22 @@ export function mountCategorySupport(root, category) {
   const section = document.createElement('section');
   section.className = 'category-support support-compact';
   section.innerHTML = '<div class="support-compact-heading">' + icon(category === 'Packaging/SPI' ? 'cube' : 'book') + '<div><h3>' + escapeHtml(title) + '</h3><p>' + escapeHtml(description) + '</p></div></div><div class="support-topic-row">' + topics.join('') + '</div>';
+  if (category === 'Packaging/SPI' || category === 'Agentes') {
+    section.classList.add('support-hub');
+    section.dataset.kind = category === 'Packaging/SPI' ? 'spi' : 'agents';
+    const previews = category === 'Packaging/SPI' ? [
+      ['checkSquare', text('Conferir SPI', 'Check SPI'), text('Peça · fornecedor · aprovação', 'Part · supplier · approval')],
+      ['cube', text('Validar pack', 'Validate pack'), text('Dimensões · quantidade · peso', 'Dimensions · quantity · weight')],
+      ['shield', text('Proteger peças', 'Protect parts'), text('VCI conforme solução aprovada', 'VCI per approved solution')],
+    ] : [
+      ['users', text('Escolher assistente', 'Choose assistant'), text('Defina a tarefa e confira a finalidade', 'Define the task and check its purpose')],
+      ['checkSquare', text('Validar resposta', 'Validate answer'), text('Confira dados, cálculos e recomendações', 'Check data, calculations and recommendations')],
+    ];
+    section.querySelectorAll('.support-topic summary').forEach((summary, index) => {
+      const [glyph, label, preview] = previews[index];
+      summary.innerHTML = '<span class="support-tile-top"><span class="support-tile-icon">' + icon(glyph) + '</span><small>' + text('REFERÊNCIA', 'REFERENCE') + '</small>' + icon('chevronDown') + '</span><b>' + escapeHtml(label) + '</b><span class="support-tile-description">' + escapeHtml(preview) + '</span>';
+    });
+  }
   if (category === 'Prompt') {
     const template = text('Analise o desvio de estoque no período [período].\nContexto: [processo]. Dados anonimizados: [estoque, meta e demanda].\nApresente um resumo e uma tabela de possíveis causas, evidências necessárias e ações sugeridas.\nNão invente números. Indique premissas e pergunte se faltarem dados.', 'Analyze the inventory deviation during [period].\nContext: [process]. Anonymized data: [stock, target and demand].\nProvide a summary and a table of possible causes, required evidence and suggested actions.\nDo not invent numbers. State assumptions and ask if data is missing.');
     section.querySelector('.support-topic-row').insertAdjacentHTML('beforeend', '<details class="support-topic"><summary>' + text('Adaptar um exemplo de estoque', 'Adapt an inventory example') + '</summary><div class="support-editor-body"><label>' + text('Substitua os campos entre colchetes', 'Replace the bracketed fields') + '<textarea rows="5">' + escapeHtml(template) + '</textarea></label><button type="button" class="btn support-copy">' + text('Copiar', 'Copy') + '</button><p role="status" class="support-status"></p></div></details>');
