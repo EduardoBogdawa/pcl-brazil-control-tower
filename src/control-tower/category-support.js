@@ -4,82 +4,65 @@ import { icon } from '@/control-tower/icons.js';
 export const text = (pt, en) => getLang() === 'en' ? en : pt;
 export const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
-function guide(title, entries) {
-  return '<details class="support-guide"><summary>' + escapeHtml(title) + '</summary><ul>' + entries.map((entry) => '<li>' + escapeHtml(entry) + '</li>').join('') + '</ul></details>';
-}
-
-function quickOverview(category) {
-  const packaging = category === 'Packaging/SPI';
-  const prompt = category === 'Prompt';
-  const cards = packaging ? [
-    ['layers', 'EUR / EPAL 1', '1.200 × 800', text('mm · base de referência', 'mm · reference footprint'), text('Confirme o padrão do cliente', 'Confirm customer standard')],
-    ['cube', 'PBR', '1.200 × 1.000', text('mm · base de referência', 'mm · reference footprint'), text('Carga depende da aplicação', 'Load depends on application')],
-    ['checkSquare', text('Liberação', 'Release'), text('PN + lote', 'PN + batch'), text('Quantidade e revisão corretas', 'Correct quantity and revision'), text('Rastreabilidade antes do envio', 'Traceability before shipment')],
-    ['shield', 'VCI', text('Seco + selado', 'Dry + sealed'), text('Metal compatível · sem rasgos', 'Compatible metal · no tears'), text('Prazo definido pelo fornecedor', 'Duration defined by supplier')],
-  ] : prompt ? [
-    ['users', text('Papel', 'Role'), text('Quem analisa?', 'Who analyzes?'), text('Especialidade e objetivo claros', 'Clear expertise and objective'), '01'],
-    ['layers', text('Contexto', 'Context'), text('Qual cenário?', 'Which scenario?'), text('Processo, período e restrições', 'Process, period and constraints'), '02'],
-    ['checkSquare', text('Dados', 'Data'), text('Qual evidência?', 'Which evidence?'), text('Anonimizados · sem inventar números', 'Anonymized · no invented numbers'), '03'],
-    ['book', text('Saída', 'Output'), text('Qual entrega?', 'Which deliverable?'), text('Formato, premissas e ações', 'Format, assumptions and actions'), '04'],
-  ] : [
-    ['trend', text('Analisar', 'Analyze'), text('Desvios', 'Deviations'), text('Inventário · demanda · causas', 'Inventory · demand · causes'), text('Peça hipóteses e evidências', 'Request hypotheses and evidence')],
-    ['book', text('Redigir', 'Write'), text('Comunicação', 'Communication'), text('Instruções · resumo · e-mail', 'Instructions · summary · email'), text('Defina público e tom', 'Define audience and tone')],
-    ['calendar', text('Planejar', 'Plan'), text('Plano de ação', 'Action plan'), text('Prioridades · responsáveis · prazos', 'Priorities · owners · deadlines'), text('Valide com o responsável', 'Validate with the owner')],
-    ['shield', text('Proteger', 'Protect'), text('Dados seguros', 'Safe data'), text('Somente ferramentas aprovadas', 'Approved tools only'), text('Nunca envie senhas ou dados restritos', 'Never send passwords or restricted data')],
-  ];
-  const steps = packaging ? [text('Inspecionar pallet', 'Inspect pallet'), text('Proteger peças', 'Protect parts'), text('Conferir etiqueta', 'Check label'), text('Validar aprovação', 'Validate approval')] : prompt ? [text('Preencher contexto', 'Provide context'), text('Informar evidências', 'Provide evidence'), text('Definir formato', 'Define format'), text('Revisar resposta', 'Review response')] : [text('Escolher assistente', 'Choose assistant'), text('Anonimizar dados', 'Anonymize data'), text('Enviar contexto', 'Send context'), text('Revisar resultado', 'Review result')];
-  const note = packaging ? text('Referências gerais: dimensões não definem capacidade. Especificações do cliente e do fornecedor prevalecem.', 'General references: dimensions do not determine capacity. Customer and supplier specifications take precedence.') : text('Apoio à decisão, não execução automática. Confira fontes, cálculos e conclusões antes de agir.', 'Decision support, not automatic execution. Check sources, calculations and conclusions before acting.');
-  return '<div class="support-quick-grid">' + cards.map(([glyph, label, value, sub, foot]) => '<article class="support-quick-card"><div class="support-quick-label"><span>' + icon(glyph) + '</span>' + escapeHtml(label) + '</div><strong>' + escapeHtml(value) + '</strong><p>' + escapeHtml(sub) + '</p><small>' + escapeHtml(foot) + '</small></article>').join('') + '</div><div class="support-process"><span class="support-process-label">' + text('FLUXO ESSENCIAL', 'ESSENTIAL FLOW') + '</span><ol>' + steps.map((step, i) => '<li><b>' + (i + 1) + '</b>' + escapeHtml(step) + '</li>').join('') + '</ol></div><p class="support-notice">' + icon('info') + escapeHtml(note) + '</p>';
+function topic(title, lines) {
+  return '<details class="support-topic"><summary>' + escapeHtml(title) + '</summary><ul>' + lines.map((line) => '<li>' + escapeHtml(line) + '</li>').join('') + '</ul></details>';
 }
 
 export function mountCategorySupport(root, category) {
-  let title, guides;
+  let title, description, topics;
   if (category === 'Packaging/SPI') {
-    title = text('Referências de embalagem', 'Packaging references');
-    guides = [
-      guide(text('Pallets · seleção e inspeção', 'Pallets · selection and inspection'), [
-        text('Referências dimensionais: EUR/EPAL 1: 1.200 × 800 mm; PBR: 1.200 × 1.000 mm. Confirme o padrão exigido pelo cliente antes de usar.', 'Dimensional references: EUR/EPAL 1: 1,200 × 800 mm; PBR: 1,200 × 1,000 mm. Confirm customer requirements before use.'),
-        text('Capacidade estática, dinâmica e em rack são diferentes: consulte o fabricante e a aplicação aprovada.', 'Static, dynamic and racking capacities differ: consult the manufacturer and approved application.'),
-        text('Inspecione tábuas, blocos, pregos, umidade e contaminação. Não use pallets danificados.', 'Inspect boards, blocks, nails, moisture and contamination. Do not use damaged pallets.'),
-        text('Evite carga fora da base; valide altura, peso bruto, estabilidade, cintas e compatibilidade com racks e empilhadeiras.', 'Avoid overhang; validate height, gross weight, stability, straps and rack/forklift compatibility.'),
-        text('Para madeira em comércio internacional, verifique aplicabilidade da ISPM 15 e marcação válida.', 'For wood in international trade, check ISPM 15 applicability and valid marking.'),
+    title = 'SPI · Supplier Packaging Information';
+    description = text('Documento do fornecedor que descreve a embalagem e registra a aprovação Nexteer.', 'Supplier document describing packaging and recording Nexteer approval.');
+    topics = [
+      topic(text('O que conferir no SPI', 'What to check in the SPI'), [
+        text('Identificação: part number, nome da peça, fornecedor, contatos e data de envio.', 'Identification: part number, part name, supplier, contacts and submission date.'),
+        text('Requisitos Nexteer: tipo de embalagem, proteção ESD, prevenção de corrosão, restrição de movimento e demais requisitos marcados no formulário.', 'Nexteer requirements: packaging type, ESD protection, corrosion prevention, movement restraint and other requirements selected in the form.'),
+        text('Pack: materiais e dimensões da embalagem, dunnage, caixa secundária e pallet; quantidades, camadas e pesos, com unidades consistentes.', 'Pack: materials and dimensions of packaging, dunnage, secondary container and pallet; quantities, layers and weights with consistent units.'),
+        text('Evidências: fotos da peça, peça com dunnage e caixa primária, e carga unitizada; feedback e aprovações Nexteer.', 'Evidence: photos of the part, part with dunnage and primary box, and unit load; feedback and Nexteer approvals.'),
+        text('Referência: formulário da imagem enviada. Confirme a revisão vigente antes de usar; os valores do exemplo não são um padrão universal.', 'Reference: the supplied form image. Confirm the current revision before use; example values are not a universal standard.'),
       ]),
-      guide(text('Embalagem · checklist de liberação', 'Packaging · release checklist'), [
-        text('Confirme código e revisão da embalagem, quantidade por caixa e por pallet e orientação das peças.', 'Confirm packaging code and revision, quantities per box and pallet and part orientation.'),
-        text('Valide separadores, proteção de superfícies, contenção, ergonomia e limites de empilhamento.', 'Validate separators, surface protection, restraint, ergonomics and stacking limits.'),
-        text('Confira etiqueta: part number, lote, quantidade e rastreabilidade conforme requisito do cliente.', 'Check labels: part number, batch, quantity and traceability per customer requirements.'),
-        text('Registre aprovação e ensaios requeridos. Este guia não substitui especificações aprovadas.', 'Record approval and required tests. This guide does not replace approved specifications.'),
+      topic(text('Pallet e embalagem', 'Pallet and packaging'), [
+        text('Use dimensões e material definidos no SPI aprovado, não uma medida genérica de pallet.', 'Use dimensions and material specified in the approved SPI, not a generic pallet size.'),
+        text('Confira quantidade por caixa, caixas por camada, camadas por pallet e peso bruto da carga.', 'Check quantity per box, boxes per layer, layers per pallet and gross load weight.'),
+        text('Valide estabilidade, limite de empilhamento, proteção da peça e etiqueta. Para madeira em exportação, verifique a aplicabilidade da ISPM 15.', 'Validate stability, stacking limit, part protection and label. For export wood, check ISPM 15 applicability.'),
       ]),
-      guide(text('Saco VCI · proteção anticorrosiva', 'VCI bag · corrosion protection'), [
-        text('VCI libera inibidores de corrosão em um ambiente fechado. Selecione produto compatível com os metais e o processo.', 'VCI releases corrosion inhibitors in an enclosed environment. Select a product compatible with the metals and process.'),
-        text('Embale peças limpas e secas, sem condensação; evite rasgos e feche conforme instrução do fabricante.', 'Pack clean, dry parts without condensation; avoid tears and close per manufacturer instructions.'),
-        text('Valide distância de proteção, espessura, prazo de proteção, armazenamento e reutilização com o fornecedor. Não existe prazo universal.', 'Validate protection distance, thickness, protection period, storage and reuse with the supplier. There is no universal duration.'),
-        text('Consulte a ficha de segurança; dessecante e VCI não são substitutos automáticos entre si.', 'Consult the safety data sheet; desiccants and VCI are not automatic substitutes for one another.'),
+      topic(text('Saco VCI: quando usar', 'VCI bag: when to use'), [
+        text('Use quando a proteção anticorrosiva for requerida e a solução estiver aprovada para o metal e a rota logística.', 'Use when corrosion protection is required and the solution is approved for the metal and logistics route.'),
+        text('Embale peças limpas e secas; mantenha o saco íntegro e fechado conforme orientação do fornecedor.', 'Pack clean, dry parts; keep the bag intact and closed per supplier instructions.'),
+        text('Registre material e aplicação no SPI. Prazo de proteção, espessura e compatibilidade dependem do fornecedor; VCI não substitui automaticamente dessecante.', 'Record material and application in the SPI. Protection duration, thickness and compatibility depend on the supplier; VCI does not automatically replace desiccant.'),
       ]),
     ];
-  } else if (category === 'IA' || category === 'Agentes') {
-    title = text('Como escolher e usar um assistente', 'Choosing and using an assistant');
-    guides = [
-      guide(text('Escolha pela tarefa', 'Choose by task'), [text('Análise: resumir desvios e hipóteses. Redação: preparar comunicação e instruções. Planejamento: organizar ações e checklists.', 'Analysis: summarize deviations and hypotheses. Writing: prepare communications and instructions. Planning: organize actions and checklists.'), text('Confira a descrição de cada agente e o acesso aprovado antes de enviar dados. Os recursos abaixo são guias, não executam IA.', 'Check each agent description and approved access before sending data. These resources are guides, not AI execution.')]),
-      guide(text('Uso seguro e revisão humana', 'Safe use and human review'), [text('Não envie senhas, dados pessoais, desenhos, preços ou informações restritas a ferramentas não aprovadas.', 'Do not send passwords, personal data, drawings, prices or restricted information to unapproved tools.'), text('Use dados anonimizados. Confira cálculos, fontes e conclusões; a IA pode inventar informações.', 'Use anonymized data. Check calculations, sources and conclusions; AI can invent information.'), text('Não autorize alterações de pedidos, estoques ou comunicação externa sem revisão do responsável.', 'Do not authorize order, stock or external communication changes without owner review.')]),
-    ];
+  } else if (category === 'Agentes') {
+    title = text('Agentes: escolha pela finalidade', 'Agents: choose by purpose');
+    description = text('Um agente é um assistente configurado para uma tarefa. Consulte sua finalidade antes de usar.', 'An agent is an assistant configured for a task. Check its purpose before use.');
+    topics = [topic(text('Como escolher', 'How to choose'), [text('Escolha pelo resultado necessário: analisar desvios, preparar uma comunicação ou organizar ações. Confira a descrição dos assistentes listados abaixo.', 'Choose by the result you need: analyze deviations, prepare communication or organize actions. Check the descriptions of the assistants below.'), text('Forneça contexto e dados permitidos. Não suponha que o agente tenha acesso aos sistemas ou possa executar alterações.', 'Provide context and permitted data. Do not assume the agent has system access or can execute changes.')]), topic(text('Antes de usar a resposta', 'Before using the answer'), [text('Confira números, fontes e recomendações com o responsável pelo processo. Use apenas ferramentas aprovadas para os dados enviados.', 'Check numbers, sources and recommendations with the process owner. Use only tools approved for the data being sent.')])];
+  } else if (category === 'IA') {
+    title = text('IA: apoio ao trabalho, não decisão final', 'AI: work support, not the final decision');
+    description = text('Use para resumir, comparar e elaborar rascunhos; valide o resultado antes de aplicar.', 'Use it to summarize, compare and draft; validate the result before applying it.');
+    topics = [topic(text('Exemplo prático', 'Practical example'), [text('Para analisar um desvio de estoque, informe período, valores anonimizados e meta. Peça possíveis causas e quais dados faltam para confirmá-las.', 'To analyze an inventory deviation, provide the period, anonymized values and target. Ask for possible causes and the data needed to confirm them.'), text('Trate as causas como hipóteses, não como fatos. Refaça os cálculos e confira os dados de origem.', 'Treat causes as hypotheses, not facts. Recalculate and check source data.')]), topic(text('O que não enviar', 'What not to send'), [text('Não envie senhas, dados pessoais ou informações restritas a ferramentas não aprovadas. Anonimize o conteúdo quando necessário.', 'Do not send passwords, personal data or restricted information to unapproved tools. Anonymize content when necessary.')])];
   } else if (category === 'Prompt') {
-    title = text('Prepare um prompt melhor', 'Build a better prompt');
-    guides = [guide(text('Checklist antes de enviar', 'Pre-send checklist'), [text('Defina papel, objetivo, contexto, dados disponíveis e período analisado.', 'Define role, objective, context, available data and time period.'), text('Peça formato de saída, premissas explícitas e perguntas para dados faltantes. Não permita números inventados.', 'Request output format, explicit assumptions and questions for missing data. Do not allow invented numbers.'), text('Anonimize informações e revise a resposta antes de usar na operação.', 'Anonymize information and review the response before operational use.')])];
+    title = text('Prompt: diga o que precisa e com quais dados', 'Prompt: say what you need and which data to use');
+    description = text('Um bom pedido informa objetivo, contexto e formato de resposta. Use a biblioteca abaixo ou adapte um modelo.', 'A good request provides the objective, context and response format. Use the library below or adapt a template.');
+    topics = [topic(text('Como escrever um pedido claro', 'How to write a clear request'), [text('Objetivo: o que resolver. Contexto: processo e período. Dados: somente o que pode compartilhar. Saída: resumo, tabela ou plano de ação.', 'Objective: what to solve. Context: process and period. Data: only what you may share. Output: summary, table or action plan.'), text('Peça para indicar premissas, não inventar números e perguntar quando faltarem informações.', 'Ask it to state assumptions, not invent numbers and ask when information is missing.')])];
   } else return;
+
   const section = document.createElement('section');
-  section.className = 'category-support support-dashboard';
-  section.dataset.supportType = category === 'Packaging/SPI' ? 'packaging' : 'ai';
-  section.innerHTML = '<header class="support-dashboard-head"><div><span class="support-eyebrow">' + text('CONSULTA RÁPIDA · PC&L', 'QUICK REFERENCE · PC&L') + '</span><h3>' + escapeHtml(title) + '</h3></div><span class="support-head-icon">' + icon(category === 'Packaging/SPI' ? 'cube' : 'ai') + '</span></header>' + quickOverview(category) + '<div class="support-guides-heading">' + text('APROFUNDE QUANDO PRECISAR', 'EXPLORE WHEN NEEDED') + '</div><div class="support-guides-grid">' + guides.join('') + '</div>';
+  section.className = 'category-support support-compact';
+  section.innerHTML = '<div class="support-compact-heading">' + icon(category === 'Packaging/SPI' ? 'cube' : 'book') + '<div><h3>' + escapeHtml(title) + '</h3><p>' + escapeHtml(description) + '</p></div></div><div class="support-topic-row">' + topics.join('') + '</div>';
   if (category === 'Prompt') {
-    const template = text('Atue como especialista em PC&L.\nObjetivo: [tarefa].\nContexto: [processo e período].\nDados anonimizados: [dados].\nRestrições: não invente números; indique premissas e solicite dados faltantes.\nSaída: resumo, riscos e tabela de ações com responsável e prazo sugeridos.\nDiferencie fatos de hipóteses.', 'Act as a PC&L specialist.\nObjective: [task].\nContext: [process and period].\nAnonymized data: [data].\nConstraints: do not invent numbers; state assumptions and request missing data.\nOutput: summary, risks and action table with suggested owners and deadlines.\nDistinguish facts from hypotheses.');
-    section.insertAdjacentHTML('beforeend', '<details class="support-guide support-editor"><summary>' + text('Personalizar e copiar um modelo', 'Customize and copy a template') + '</summary><div class="support-editor-body"><label>' + text('Modelo editável', 'Editable template') + '<textarea rows="7" class="support-template">' + escapeHtml(template) + '</textarea></label><button type="button" class="btn support-copy">' + text('Copiar modelo', 'Copy template') + '</button><p role="status" class="support-status"></p></div></details>');
+    const template = text('Analise o desvio de estoque no período [período].\nContexto: [processo]. Dados anonimizados: [estoque, meta e demanda].\nApresente um resumo e uma tabela de possíveis causas, evidências necessárias e ações sugeridas.\nNão invente números. Indique premissas e pergunte se faltarem dados.', 'Analyze the inventory deviation during [period].\nContext: [process]. Anonymized data: [stock, target and demand].\nProvide a summary and a table of possible causes, required evidence and suggested actions.\nDo not invent numbers. State assumptions and ask if data is missing.');
+    section.querySelector('.support-topic-row').insertAdjacentHTML('beforeend', '<details class="support-topic"><summary>' + text('Adaptar um exemplo de estoque', 'Adapt an inventory example') + '</summary><div class="support-editor-body"><label>' + text('Substitua os campos entre colchetes', 'Replace the bracketed fields') + '<textarea rows="5">' + escapeHtml(template) + '</textarea></label><button type="button" class="btn support-copy">' + text('Copiar', 'Copy') + '</button><p role="status" class="support-status"></p></div></details>');
     section.querySelector('.support-copy').onclick = async () => {
       const status = section.querySelector('.support-status');
-      try { await navigator.clipboard.writeText(section.querySelector('textarea').value); status.textContent = text('Modelo copiado.', 'Template copied.'); }
-      catch { status.textContent = text('Não foi possível copiar. Selecione o texto e copie manualmente.', 'Unable to copy. Select the text and copy manually.'); }
+      try { await navigator.clipboard.writeText(section.querySelector('textarea').value); status.textContent = text('Exemplo copiado.', 'Example copied.'); }
+      catch { status.textContent = text('Selecione o texto e copie manualmente.', 'Select the text and copy manually.'); }
     };
   }
+  section.querySelectorAll('details').forEach((detail) => {
+    detail.addEventListener('toggle', () => {
+      if (detail.open) section.querySelectorAll('details').forEach((other) => { if (other !== detail) other.open = false; });
+    });
+  });
   const tabs = root.querySelector('.adv-hub');
   if (tabs) tabs.after(section); else root.prepend(section);
 }
