@@ -8,6 +8,30 @@ function guide(title, entries) {
   return '<details class="support-guide"><summary>' + escapeHtml(title) + '</summary><ul>' + entries.map((entry) => '<li>' + escapeHtml(entry) + '</li>').join('') + '</ul></details>';
 }
 
+function quickOverview(category) {
+  const packaging = category === 'Packaging/SPI';
+  const prompt = category === 'Prompt';
+  const cards = packaging ? [
+    ['layers', 'EUR / EPAL 1', '1.200 × 800', text('mm · base de referência', 'mm · reference footprint'), text('Confirme o padrão do cliente', 'Confirm customer standard')],
+    ['cube', 'PBR', '1.200 × 1.000', text('mm · base de referência', 'mm · reference footprint'), text('Carga depende da aplicação', 'Load depends on application')],
+    ['checkSquare', text('Liberação', 'Release'), text('PN + lote', 'PN + batch'), text('Quantidade e revisão corretas', 'Correct quantity and revision'), text('Rastreabilidade antes do envio', 'Traceability before shipment')],
+    ['shield', 'VCI', text('Seco + selado', 'Dry + sealed'), text('Metal compatível · sem rasgos', 'Compatible metal · no tears'), text('Prazo definido pelo fornecedor', 'Duration defined by supplier')],
+  ] : prompt ? [
+    ['users', text('Papel', 'Role'), text('Quem analisa?', 'Who analyzes?'), text('Especialidade e objetivo claros', 'Clear expertise and objective'), '01'],
+    ['layers', text('Contexto', 'Context'), text('Qual cenário?', 'Which scenario?'), text('Processo, período e restrições', 'Process, period and constraints'), '02'],
+    ['checkSquare', text('Dados', 'Data'), text('Qual evidência?', 'Which evidence?'), text('Anonimizados · sem inventar números', 'Anonymized · no invented numbers'), '03'],
+    ['book', text('Saída', 'Output'), text('Qual entrega?', 'Which deliverable?'), text('Formato, premissas e ações', 'Format, assumptions and actions'), '04'],
+  ] : [
+    ['trend', text('Analisar', 'Analyze'), text('Desvios', 'Deviations'), text('Inventário · demanda · causas', 'Inventory · demand · causes'), text('Peça hipóteses e evidências', 'Request hypotheses and evidence')],
+    ['book', text('Redigir', 'Write'), text('Comunicação', 'Communication'), text('Instruções · resumo · e-mail', 'Instructions · summary · email'), text('Defina público e tom', 'Define audience and tone')],
+    ['calendar', text('Planejar', 'Plan'), text('Plano de ação', 'Action plan'), text('Prioridades · responsáveis · prazos', 'Priorities · owners · deadlines'), text('Valide com o responsável', 'Validate with the owner')],
+    ['shield', text('Proteger', 'Protect'), text('Dados seguros', 'Safe data'), text('Somente ferramentas aprovadas', 'Approved tools only'), text('Nunca envie senhas ou dados restritos', 'Never send passwords or restricted data')],
+  ];
+  const steps = packaging ? [text('Inspecionar pallet', 'Inspect pallet'), text('Proteger peças', 'Protect parts'), text('Conferir etiqueta', 'Check label'), text('Validar aprovação', 'Validate approval')] : prompt ? [text('Preencher contexto', 'Provide context'), text('Informar evidências', 'Provide evidence'), text('Definir formato', 'Define format'), text('Revisar resposta', 'Review response')] : [text('Escolher assistente', 'Choose assistant'), text('Anonimizar dados', 'Anonymize data'), text('Enviar contexto', 'Send context'), text('Revisar resultado', 'Review result')];
+  const note = packaging ? text('Referências gerais: dimensões não definem capacidade. Especificações do cliente e do fornecedor prevalecem.', 'General references: dimensions do not determine capacity. Customer and supplier specifications take precedence.') : text('Apoio à decisão, não execução automática. Confira fontes, cálculos e conclusões antes de agir.', 'Decision support, not automatic execution. Check sources, calculations and conclusions before acting.');
+  return '<div class="support-quick-grid">' + cards.map(([glyph, label, value, sub, foot]) => '<article class="support-quick-card"><div class="support-quick-label"><span>' + icon(glyph) + '</span>' + escapeHtml(label) + '</div><strong>' + escapeHtml(value) + '</strong><p>' + escapeHtml(sub) + '</p><small>' + escapeHtml(foot) + '</small></article>').join('') + '</div><div class="support-process"><span class="support-process-label">' + text('FLUXO ESSENCIAL', 'ESSENTIAL FLOW') + '</span><ol>' + steps.map((step, i) => '<li><b>' + (i + 1) + '</b>' + escapeHtml(step) + '</li>').join('') + '</ol></div><p class="support-notice">' + icon('info') + escapeHtml(note) + '</p>';
+}
+
 export function mountCategorySupport(root, category) {
   let title, guides;
   if (category === 'Packaging/SPI') {
@@ -44,11 +68,12 @@ export function mountCategorySupport(root, category) {
     guides = [guide(text('Checklist antes de enviar', 'Pre-send checklist'), [text('Defina papel, objetivo, contexto, dados disponíveis e período analisado.', 'Define role, objective, context, available data and time period.'), text('Peça formato de saída, premissas explícitas e perguntas para dados faltantes. Não permita números inventados.', 'Request output format, explicit assumptions and questions for missing data. Do not allow invented numbers.'), text('Anonimize informações e revise a resposta antes de usar na operação.', 'Anonymize information and review the response before operational use.')])];
   } else return;
   const section = document.createElement('section');
-  section.className = 'category-support';
-  section.innerHTML = '<h3>' + icon('book') + escapeHtml(title) + '</h3>' + guides.join('');
+  section.className = 'category-support support-dashboard';
+  section.dataset.supportType = category === 'Packaging/SPI' ? 'packaging' : 'ai';
+  section.innerHTML = '<header class="support-dashboard-head"><div><span class="support-eyebrow">' + text('CONSULTA RÁPIDA · PC&L', 'QUICK REFERENCE · PC&L') + '</span><h3>' + escapeHtml(title) + '</h3></div><span class="support-head-icon">' + icon(category === 'Packaging/SPI' ? 'cube' : 'ai') + '</span></header>' + quickOverview(category) + '<div class="support-guides-heading">' + text('APROFUNDE QUANDO PRECISAR', 'EXPLORE WHEN NEEDED') + '</div><div class="support-guides-grid">' + guides.join('') + '</div>';
   if (category === 'Prompt') {
     const template = text('Atue como especialista em PC&L.\nObjetivo: [tarefa].\nContexto: [processo e período].\nDados anonimizados: [dados].\nRestrições: não invente números; indique premissas e solicite dados faltantes.\nSaída: resumo, riscos e tabela de ações com responsável e prazo sugeridos.\nDiferencie fatos de hipóteses.', 'Act as a PC&L specialist.\nObjective: [task].\nContext: [process and period].\nAnonymized data: [data].\nConstraints: do not invent numbers; state assumptions and request missing data.\nOutput: summary, risks and action table with suggested owners and deadlines.\nDistinguish facts from hypotheses.');
-    section.insertAdjacentHTML('beforeend', '<label>' + text('Modelo editável', 'Editable template') + '<textarea rows="7" class="support-template">' + escapeHtml(template) + '</textarea></label><button type="button" class="btn support-copy">' + text('Copiar modelo', 'Copy template') + '</button><p role="status" class="support-status"></p>');
+    section.insertAdjacentHTML('beforeend', '<details class="support-guide support-editor"><summary>' + text('Personalizar e copiar um modelo', 'Customize and copy a template') + '</summary><div class="support-editor-body"><label>' + text('Modelo editável', 'Editable template') + '<textarea rows="7" class="support-template">' + escapeHtml(template) + '</textarea></label><button type="button" class="btn support-copy">' + text('Copiar modelo', 'Copy template') + '</button><p role="status" class="support-status"></p></div></details>');
     section.querySelector('.support-copy').onclick = async () => {
       const status = section.querySelector('.support-status');
       try { await navigator.clipboard.writeText(section.querySelector('textarea').value); status.textContent = text('Modelo copiado.', 'Template copied.'); }
