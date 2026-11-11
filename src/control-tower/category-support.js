@@ -33,9 +33,9 @@ export function mountCategorySupport(root, category) {
       ]),
     ];
   } else if (category === 'Agentes') {
-    title = text('Agentes: escolha pela finalidade', 'Agents: choose by purpose');
-    description = text('Um agente é um assistente configurado para uma tarefa. Consulte sua finalidade antes de usar.', 'An agent is an assistant configured for a task. Check its purpose before use.');
-    topics = [topic(text('Como escolher', 'How to choose'), [text('Escolha pelo resultado necessário: analisar desvios, preparar uma comunicação ou organizar ações. Confira a descrição dos assistentes listados abaixo.', 'Choose by the result you need: analyze deviations, prepare communication or organize actions. Check the descriptions of the assistants below.'), text('Forneça contexto e dados permitidos. Não suponha que o agente tenha acesso aos sistemas ou possa executar alterações.', 'Provide context and permitted data. Do not assume the agent has system access or can execute changes.')]), topic(text('Antes de usar a resposta', 'Before using the answer'), [text('Confira números, fontes e recomendações com o responsável pelo processo. Use apenas ferramentas aprovadas para os dados enviados.', 'Check numbers, sources and recommendations with the process owner. Use only tools approved for the data being sent.')])];
+    title = text('Agentes & IA · Assistentes para a operação', 'Agents & AI · Operational assistants');
+    description = text('Escolha o assistente pela tarefa. Abra os painéis abaixo para acessar as ferramentas disponíveis.', 'Choose an assistant by task. Open the panels below to access available tools.');
+    topics = [topic(text('Como escolher', 'How to choose'), [text('Análise SPI: apoio à análise da instrução de embalagem. Consulte os requisitos aplicáveis antes de validar recomendações.', 'SPI Analysis: support for analyzing packaging instructions. Check applicable requirements before validating recommendations.'), text('Conversor BOM para Excel: acesso ao assistente dedicado à conversão de BOM. Confira part numbers, quantidades e estrutura na saída.', 'BOM to Excel Converter: access the assistant dedicated to BOM conversion. Check part numbers, quantities and structure in the output.'), text('Invoice/Packing List: reúna a PO do QAD em PDF, a invoice e o packing list para identificar itens corretos e pontos a revisar.', 'Invoice/Packing List: gather the QAD PO as a PDF, invoice and packing list to identify correct items and points to review.')]), topic(text('Antes de usar a resposta', 'Before using the answer'), [text('Abra o painel do assistente para acessar a ferramenta. Este guia não executa IA nem confirma acesso aos sistemas.', 'Open the assistant panel to access the tool. This guide does not execute AI or confirm system access.'), text('Envie somente dados permitidos na ferramenta aprovada. Confira números, fontes e recomendações com o responsável antes de aplicar.', 'Send only permitted data to the approved tool. Check numbers, sources and recommendations with the owner before applying them.')])];
   } else if (category === 'IA') {
     title = text('IA: apoio ao trabalho, não decisão final', 'AI: work support, not the final decision');
     description = text('Use para resumir, comparar e elaborar rascunhos; valide o resultado antes de aplicar.', 'Use it to summarize, compare and draft; validate the result before applying it.');
@@ -49,13 +49,18 @@ export function mountCategorySupport(root, category) {
   const section = document.createElement('section');
   section.className = 'category-support support-compact';
   section.innerHTML = '<div class="support-compact-heading">' + icon(category === 'Packaging/SPI' ? 'cube' : 'book') + '<div><h3>' + escapeHtml(title) + '</h3><p>' + escapeHtml(description) + '</p></div></div><div class="support-topic-row">' + topics.join('') + '</div>';
-  if (category === 'Packaging/SPI' || category === 'Agentes') {
+  if (['Packaging/SPI', 'Agentes', 'IA', 'Prompt'].includes(category)) {
     section.classList.add('support-hub');
     section.dataset.kind = category === 'Packaging/SPI' ? 'spi' : 'agents';
     const previews = category === 'Packaging/SPI' ? [
       ['checkSquare', text('Conferir SPI', 'Check SPI'), text('Peça · fornecedor · aprovação', 'Part · supplier · approval')],
       ['cube', text('Validar pack', 'Validate pack'), text('Dimensões · quantidade · peso', 'Dimensions · quantity · weight')],
       ['shield', text('Proteger peças', 'Protect parts'), text('VCI conforme solução aprovada', 'VCI per approved solution')],
+    ] : category === 'IA' ? [
+      ['book', text('Analisar com contexto', 'Analyze with context'), text('Desvios de estoque · causas possíveis', 'Inventory deviations · possible causes')],
+      ['shield', text('Compartilhar com segurança', 'Share safely'), text('Dados anonimizados · ferramentas aprovadas', 'Anonymized data · approved tools')],
+    ] : category === 'Prompt' ? [
+      ['book', text('Estruturar o pedido', 'Structure the request'), text('Objetivo · contexto · dados · saída', 'Objective · context · data · output')],
     ] : [
       ['users', text('Escolher assistente', 'Choose assistant'), text('Defina a tarefa e confira a finalidade', 'Define the task and check its purpose')],
       ['checkSquare', text('Validar resposta', 'Validate answer'), text('Confira dados, cálculos e recomendações', 'Check data, calculations and recommendations')],
@@ -67,7 +72,7 @@ export function mountCategorySupport(root, category) {
   }
   if (category === 'Prompt') {
     const template = text('Analise o desvio de estoque no período [período].\nContexto: [processo]. Dados anonimizados: [estoque, meta e demanda].\nApresente um resumo e uma tabela de possíveis causas, evidências necessárias e ações sugeridas.\nNão invente números. Indique premissas e pergunte se faltarem dados.', 'Analyze the inventory deviation during [period].\nContext: [process]. Anonymized data: [stock, target and demand].\nProvide a summary and a table of possible causes, required evidence and suggested actions.\nDo not invent numbers. State assumptions and ask if data is missing.');
-    section.querySelector('.support-topic-row').insertAdjacentHTML('beforeend', '<details class="support-topic"><summary>' + text('Adaptar um exemplo de estoque', 'Adapt an inventory example') + '</summary><div class="support-editor-body"><label>' + text('Substitua os campos entre colchetes', 'Replace the bracketed fields') + '<textarea rows="5">' + escapeHtml(template) + '</textarea></label><button type="button" class="btn support-copy">' + text('Copiar', 'Copy') + '</button><p role="status" class="support-status"></p></div></details>');
+    section.querySelector('.support-topic-row').insertAdjacentHTML('beforeend', '<details class="support-topic"><summary><span class="support-tile-top"><span class="support-tile-icon">' + icon('book') + '</span><small>' + text('MODELO EDITÁVEL', 'EDITABLE TEMPLATE') + '</small>' + icon('chevronDown') + '</span><b>' + text('Adaptar um exemplo de estoque', 'Adapt an inventory example') + '</b><span class="support-tile-description">' + text('Preencha o contexto e copie seu pedido', 'Provide context and copy your request') + '</span>' + '</summary><div class="support-editor-body"><label>' + text('Substitua os campos entre colchetes', 'Replace the bracketed fields') + '<textarea rows="5">' + escapeHtml(template) + '</textarea></label><button type="button" class="btn support-copy">' + text('Copiar', 'Copy') + '</button><p role="status" class="support-status"></p></div></details>');
     section.querySelector('.support-copy').onclick = async () => {
       const status = section.querySelector('.support-status');
       try { await navigator.clipboard.writeText(section.querySelector('textarea').value); status.textContent = text('Exemplo copiado.', 'Example copied.'); }
