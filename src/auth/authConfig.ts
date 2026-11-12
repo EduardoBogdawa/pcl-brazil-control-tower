@@ -21,15 +21,20 @@ const inIframe = (() => {
   try { return window.self !== window.top; } catch { return true; }
 })();
 
+// Credentialless iframes (e.g. the Bolt preview) force every window.open into noopener: the window appears,
+// but the opener gets no handle and the popup gets no opener, and storage is an isolated ephemeral partition.
+// No popup or relay can hand a sign-in response back to such a frame, so sign-in must happen in a top-level tab.
+export const isolatedFrame = inIframe && (window as Window & { credentialless?: boolean }).credentialless === true;
+
 export const msalConfig: Configuration = {
   auth: {
     clientId,
     authority,
     redirectUri: window.location.origin,
     postLogoutRedirectUri: window.location.origin,
-    // Embedded (e.g. the Bolt preview), the popup's response can't reach this frame directly,
-    // so a same-origin relay window forwards it back via postMessage.
-    popupRelayUri: inIframe ? window.location.origin + RELAY_PATH : undefined,
+    // In a regular cross-site iframe the popup's response can't reach this frame through partitioned
+    // storage, so a same-origin relay window forwards it back via postMessage.
+    popupRelayUri: inIframe && !isolatedFrame ? window.location.origin + RELAY_PATH : undefined,
   },
   // Session storage keeps tokens scoped to the tab and clears them when it closes.
   cache: { cacheLocation: 'sessionStorage' },

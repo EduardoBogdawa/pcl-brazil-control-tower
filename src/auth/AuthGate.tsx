@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { AccountInfo } from '@azure/msal-browser';
 import App from '@/App';
-import { devMode, loginRequest } from '@/auth/authConfig';
+import { devMode, isolatedFrame, loginRequest } from '@/auth/authConfig';
 import { describeAuthError, initializeMsal, msal, type AuthMessage } from '@/auth/msalClient';
 import SignInScreen from '@/auth/SignInScreen';
 import type { AuthUser } from '@/auth/types';
@@ -11,7 +11,8 @@ type AuthState =
   | { status: 'loading' }
   | { status: 'signedOut'; message?: AuthMessage }
   | { status: 'signedIn'; user: AuthUser }
-  | { status: 'misconfigured' };
+  | { status: 'misconfigured' }
+  | { status: 'isolated' };
 
 const DEV_USER: AuthUser = { name: 'Dev Mode', email: 'dev@localhost', dev: true };
 
@@ -36,7 +37,8 @@ function takeNotice(): AuthMessage | undefined {
 
 function initialState(): AuthState {
   if (devMode) return { status: 'signedIn', user: DEV_USER };
-  return msal ? { status: 'loading' } : { status: 'misconfigured' };
+  if (!msal) return { status: 'misconfigured' };
+  return isolatedFrame ? { status: 'isolated' } : { status: 'loading' };
 }
 
 function AuthGate() {
@@ -47,7 +49,7 @@ function AuthGate() {
 
   useEffect(() => {
     const client = msal;
-    if (!client) return;
+    if (!client || isolatedFrame) return;
     let active = true;
     initializeMsal(client)
       .then(() => {
@@ -99,7 +101,7 @@ function AuthGate() {
       .catch((err: unknown) => {
         console.warn('[auth] Microsoft sign-out window did not complete', err);
         try {
-          sessionStorage.setItem(NOTICE_KEY, 'Você saiu do Control Tower. O navegador bloqueou a janela da Microsoft; feche o navegador para encerrar também a sessão Microsoft.');
+          sessionStorage.setItem(NOTICE_KEY, 'Você saiu do Control Tower, mas a janela de saída da Microsoft não pôde ser aberta; feche o navegador para encerrar também a sessão Microsoft.');
         } catch { /* notice is optional */ }
       })
       .finally(() => window.location.reload());
@@ -108,6 +110,7 @@ function AuthGate() {
   if (state.status === 'signedIn') return <App user={state.user} onSignOut={signOut} />;
   if (state.status === 'loading') return <SignInScreen mode="loading" />;
   if (state.status === 'misconfigured') return <SignInScreen mode="misconfigured" />;
+  if (state.status === 'isolated') return <SignInScreen mode="isolated" />;
   return <SignInScreen mode="signedOut" message={state.message} busy={busy} onSignIn={signIn} />;
 }
 

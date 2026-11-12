@@ -1,10 +1,11 @@
-import { AlertTriangle, Info, Loader2, Lock, ShieldCheck } from 'lucide-react';
+import { AlertTriangle, ExternalLink, Info, Loader2, Lock, ShieldCheck } from 'lucide-react';
 import { tr } from '@/control-tower/i18n.js';
 import type { AuthMessage } from '@/auth/msalClient';
 
 type Props =
   | { mode: 'loading' }
   | { mode: 'misconfigured' }
+  | { mode: 'isolated' }
   | { mode: 'signedOut'; message?: AuthMessage; busy: boolean; onSignIn: () => void };
 
 function MicrosoftMark() {
@@ -15,6 +16,19 @@ function MicrosoftMark() {
       <rect x="1" y="11" width="9" height="9" fill="#00A4EF" />
       <rect x="11" y="11" width="9" height="9" fill="#FFB900" />
     </svg>
+  );
+}
+
+function AlertBox({ message }: { message: AuthMessage }) {
+  const info = message.tone === 'info';
+  return (
+    <div className={'auth-alert' + (info ? ' info' : '')} role={info ? 'status' : 'alert'}>
+      {info ? <Info size={18} aria-hidden="true" /> : <AlertTriangle size={18} aria-hidden="true" />}
+      <span>
+        {tr(message.text)}
+        {message.code && <code className="auth-code">{tr('Código')}: {message.code}</code>}
+      </span>
+    </div>
   );
 }
 
@@ -36,20 +50,28 @@ function SignInScreen(props: Props) {
         )}
 
         {props.mode === 'misconfigured' && (
-          <div className="auth-alert" role="alert">
-            <AlertTriangle size={18} aria-hidden="true" />
-            <span>{tr('O login da Microsoft não está configurado. Informe o Tenant ID e o Client ID do Entra ID.')}</span>
-          </div>
+          <AlertBox message={{ tone: 'error', text: 'O login da Microsoft não está configurado. Informe o Tenant ID e o Client ID do Entra ID.' }} />
+        )}
+
+        {props.mode === 'isolated' && (
+          <>
+            <AlertBox
+              message={{
+                tone: 'info',
+                code: 'credentialless_iframe',
+                text: 'Esta prévia roda em um quadro isolado do navegador, que abre janelas sem vínculo com a página. Por isso o login da Microsoft não consegue retornar aqui. Abra o Control Tower em uma nova aba para entrar.',
+              }}
+            />
+            <a className="auth-btn" href={window.location.href} target="_blank" rel="noopener">
+              <ExternalLink size={18} aria-hidden="true" />
+              <span>{tr('Abrir em nova aba para entrar')}</span>
+            </a>
+          </>
         )}
 
         {props.mode === 'signedOut' && (
           <>
-            {props.message && (
-              <div className={'auth-alert' + (props.message.tone === 'info' ? ' info' : '')} role={props.message.tone === 'info' ? 'status' : 'alert'}>
-                {props.message.tone === 'info' ? <Info size={18} aria-hidden="true" /> : <AlertTriangle size={18} aria-hidden="true" />}
-                <span>{tr(props.message.text)}</span>
-              </div>
-            )}
+            {props.message && <AlertBox message={props.message} />}
             <button type="button" className="auth-btn" onClick={props.onSignIn} disabled={props.busy} aria-busy={props.busy}>
               {props.busy ? <Loader2 className="auth-spin" size={18} aria-hidden="true" /> : <MicrosoftMark />}
               <span>{props.busy ? tr('Conclua o login na janela da Microsoft...') : tr('Entrar com Microsoft')}</span>

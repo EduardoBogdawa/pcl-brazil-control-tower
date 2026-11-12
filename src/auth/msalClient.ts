@@ -11,23 +11,28 @@ export function initializeMsal(client: PublicClientApplication) {
   return ready;
 }
 
-export type AuthMessage = { tone: 'info' | 'error'; text: string };
+export type AuthMessage = { tone: 'info' | 'error'; text: string; code?: string };
+
+// Only the library's short error code is surfaced; messages can carry trace IDs or account hints.
+const safeCode = (err: unknown) =>
+  err instanceof AuthError && /^[a-z0-9_]{1,64}$/i.test(err.errorCode) ? err.errorCode : 'unknown_error';
 
 export function describeAuthError(err: unknown): AuthMessage {
-  const code = err instanceof AuthError ? err.errorCode : '';
+  const code = safeCode(err);
   switch (code) {
     case BrowserAuthErrorCodes.userCancelled:
     case 'access_denied':
-      return { tone: 'info', text: 'Login cancelado. Clique em "Entrar com Microsoft" para tentar novamente.' };
+      return { tone: 'info', code, text: 'Login cancelado. Clique em "Entrar com Microsoft" para tentar novamente.' };
+    // MSAL reports a null window.open() result (blocked, or opened without a handle) under this code too.
     case BrowserAuthErrorCodes.popupWindowError:
     case BrowserAuthErrorCodes.emptyWindowError:
-      return { tone: 'error', text: 'O navegador bloqueou a janela de login. Permita pop-ups para este site e tente novamente.' };
+      return { tone: 'error', code, text: 'A janela de login foi solicitada, mas o navegador não deu ao app acesso a ela. Feche janelas de login abertas e tente novamente; se persistir, abra o app em uma nova aba.' };
     case BrowserAuthErrorCodes.interactionInProgress:
     case BrowserAuthErrorCodes.interactionInProgressCancelled:
-      return { tone: 'error', text: 'Já existe um login em andamento. Conclua-o na janela aberta ou feche-a e tente novamente.' };
+      return { tone: 'error', code, text: 'Já existe um login em andamento. Conclua-o na janela aberta ou feche-a e tente novamente.' };
     case BrowserAuthErrorCodes.timedOut:
-      return { tone: 'error', text: 'O tempo para concluir o login expirou. Tente novamente.' };
+      return { tone: 'error', code, text: 'O tempo para concluir o login expirou. Tente novamente.' };
     default:
-      return { tone: 'error', text: 'Não foi possível concluir o login. Tente novamente.' };
+      return { tone: 'error', code, text: 'Não foi possível concluir o login. Tente novamente.' };
   }
 }
