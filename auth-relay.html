@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/nexteer-logo.png" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Login Microsoft</title>
+    <style>
+      :root { color-scheme: dark; }
+      * { box-sizing: border-box; }
+      body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px; background: #06080B; color: #EEF2F6;
+        font: 400 14px/1.5 'Inter', 'Segoe UI', Arial, sans-serif; }
+      main { width: 100%; max-width: 360px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+      img { height: 28px; margin-bottom: 16px; }
+      h1 { margin: 0; font-size: 20px; font-weight: 700; line-height: 1.2; }
+      p { margin: 0 0 16px; color: #B9C3CE; }
+      button { width: 100%; display: flex; align-items: center; justify-content: center; gap: 12px; height: 48px; border: 1px solid rgba(255,255,255,.15);
+        border-radius: 12px; background: #151B24; color: #EEF2F6; font: 600 14px/1 inherit; cursor: pointer; transition: background .2s, border-color .2s; }
+      button:hover:not(:disabled) { background: #1C242F; border-color: #E4002B; }
+      button:focus-visible { outline: 2px solid #E4002B; outline-offset: 2px; }
+      button:disabled { cursor: wait; opacity: .7; }
+      button[hidden] { display: none; }
+      svg { width: 18px; height: 18px; }
+      #status { min-height: 21px; margin: 8px 0 0; font-size: 13px; color: #8693A2; }
+      #status.error { color: #FF5C72; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <img src="/nexteer-logo.png" alt="Nexteer" />
+      <h1 id="title">Conta Microsoft</h1>
+      <p id="desc">Clique abaixo para continuar na página da Microsoft.</p>
+      <button type="button" id="continue">
+        <svg viewBox="0 0 21 21" aria-hidden="true">
+          <rect x="1" y="1" width="9" height="9" fill="#F25022" /><rect x="11" y="1" width="9" height="9" fill="#7FBA00" />
+          <rect x="1" y="11" width="9" height="9" fill="#00A4EF" /><rect x="11" y="11" width="9" height="9" fill="#FFB900" />
+        </svg>
+        <span id="label">Continuar com Microsoft</span>
+      </button>
+      <p id="status" role="status"></p>
+    </main>
+    <script type="module" src="/src/auth/relay.ts"></script>
+  </body>
+</html>

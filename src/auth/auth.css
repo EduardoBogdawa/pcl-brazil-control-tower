@@ -23,6 +23,9 @@
   background:rgba(228,0,43,.1);color:var(--text);text-align:left;font-size:13px;line-height:1.5}
 .auth-alert svg{flex:none;margin-top:2px;color:var(--nx-red-300)}
 [data-theme=light] .auth-alert svg{color:var(--nx-red-600)}
+.auth-alert.info{border-color:var(--line-2);background:var(--surface-2)}
+.auth-alert.info svg,[data-theme=light] .auth-alert.info svg{color:var(--text-2)}
+.user-pop-item:disabled{cursor:wait;opacity:.7}
 .auth-foot{width:100%;display:flex;flex-wrap:wrap;justify-content:center;gap:8px 16px;margin-top:24px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:12px}
 .auth-foot span{display:inline-flex;align-items:center;gap:4px}
 .auth-spin{animation:auth-spin 1s linear infinite}

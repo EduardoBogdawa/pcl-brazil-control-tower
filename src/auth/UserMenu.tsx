@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { FlaskConical, LogOut } from 'lucide-react';
+import { FlaskConical, Loader2, LogOut } from 'lucide-react';
 import { tr } from '@/control-tower/i18n.js';
 import type { AuthUser } from '@/auth/types';
 
@@ -10,6 +10,7 @@ const initials = (name: string) =>
 
 function UserMenu({ user, onSignOut }: Props) {
   const [open, setOpen] = useState(false);
+  const [leaving, setLeaving] = useState(false);
   const wrap = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -48,9 +49,15 @@ function UserMenu({ user, onSignOut }: Props) {
           {user.dev ? (
             <p className="user-pop-note">{tr('Login da Microsoft desativado neste ambiente.')}</p>
           ) : (
-            <button type="button" role="menuitem" className="user-pop-item" onClick={onSignOut}>
-              <LogOut size={16} aria-hidden="true" />
-              <span>{tr('Sair da conta')}</span>
+            <button
+              type="button"
+              role="menuitem"
+              className="user-pop-item"
+              disabled={leaving}
+              onClick={() => { setLeaving(true); onSignOut(); }}
+            >
+              {leaving ? <Loader2 className="auth-spin" size={16} aria-hidden="true" /> : <LogOut size={16} aria-hidden="true" />}
+              <span>{leaving ? tr('Saindo...') : tr('Sair da conta')}</span>
             </button>
           )}
         </div>

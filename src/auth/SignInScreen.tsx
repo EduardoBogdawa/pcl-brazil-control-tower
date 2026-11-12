@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { AlertTriangle, Loader2, Lock, ShieldCheck } from 'lucide-react';
+import { AlertTriangle, Info, Loader2, Lock, ShieldCheck } from 'lucide-react';
 import { tr } from '@/control-tower/i18n.js';
+import type { AuthMessage } from '@/auth/msalClient';
 
 type Props =
   | { mode: 'loading' }
   | { mode: 'misconfigured' }
-  | { mode: 'signedOut'; error?: string; onSignIn: () => Promise<void> };
+  | { mode: 'signedOut'; message?: AuthMessage; busy: boolean; onSignIn: () => void };
 
 function MicrosoftMark() {
   return (
@@ -19,15 +19,6 @@ function MicrosoftMark() {
 }
 
 function SignInScreen(props: Props) {
-  const [redirecting, setRedirecting] = useState(false);
-
-  const handleSignIn = async () => {
-    if (props.mode !== 'signedOut') return;
-    setRedirecting(true);
-    await props.onSignIn();
-    setRedirecting(false);
-  };
-
   return (
     <main className="auth-shell">
       <div className="auth-glow" aria-hidden="true" />
@@ -53,15 +44,15 @@ function SignInScreen(props: Props) {
 
         {props.mode === 'signedOut' && (
           <>
-            {props.error && (
-              <div className="auth-alert" role="alert">
-                <AlertTriangle size={18} aria-hidden="true" />
-                <span>{tr(props.error)}</span>
+            {props.message && (
+              <div className={'auth-alert' + (props.message.tone === 'info' ? ' info' : '')} role={props.message.tone === 'info' ? 'status' : 'alert'}>
+                {props.message.tone === 'info' ? <Info size={18} aria-hidden="true" /> : <AlertTriangle size={18} aria-hidden="true" />}
+                <span>{tr(props.message.text)}</span>
               </div>
             )}
-            <button type="button" className="auth-btn" onClick={handleSignIn} disabled={redirecting}>
-              {redirecting ? <Loader2 className="auth-spin" size={18} aria-hidden="true" /> : <MicrosoftMark />}
-              <span>{redirecting ? tr('Redirecionando...') : tr('Entrar com Microsoft')}</span>
+            <button type="button" className="auth-btn" onClick={props.onSignIn} disabled={props.busy} aria-busy={props.busy}>
+              {props.busy ? <Loader2 className="auth-spin" size={18} aria-hidden="true" /> : <MicrosoftMark />}
+              <span>{props.busy ? tr('Conclua o login na janela da Microsoft...') : tr('Entrar com Microsoft')}</span>
             </button>
           </>
         )}

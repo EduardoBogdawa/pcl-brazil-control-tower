@@ -19,11 +19,16 @@ const EN = {
     'to register Power BI, SharePoint, Lists, Excel or HTML page URLs. Changes are saved and shown to everyone who opens the panel.',
   'Buscar painel...': 'Search panels...', 'Buscar painel': 'Search panels', 'Idioma': 'Language',
   // Sign-in and account
-  'Verificando sua sessão...': 'Checking your session...', 'Entrar com Microsoft': 'Sign in with Microsoft', 'Redirecionando...': 'Redirecting...',
+  'Verificando sua sessão...': 'Checking your session...', 'Entrar com Microsoft': 'Sign in with Microsoft', 'Conclua o login na janela da Microsoft...': 'Finish signing in in the Microsoft window...',
   'Login único corporativo (SSO)': 'Corporate single sign-on (SSO)', 'Acesso restrito a colaboradores Nexteer': 'Restricted to Nexteer employees',
   'O login da Microsoft não está configurado. Informe o Tenant ID e o Client ID do Entra ID.': 'Microsoft sign-in is not configured. Provide the Entra ID Tenant ID and Client ID.',
   'Não foi possível concluir o login. Tente novamente.': 'Could not complete sign-in. Please try again.',
-  'Não foi possível abrir o login da Microsoft. Tente novamente.': 'Could not open Microsoft sign-in. Please try again.',
+  'Login cancelado. Clique em "Entrar com Microsoft" para tentar novamente.': 'Sign-in cancelled. Click "Sign in with Microsoft" to try again.',
+  'O navegador bloqueou a janela de login. Permita pop-ups para este site e tente novamente.': 'Your browser blocked the sign-in window. Allow pop-ups for this site and try again.',
+  'Já existe um login em andamento. Conclua-o na janela aberta ou feche-a e tente novamente.': 'A sign-in is already in progress. Finish it in the open window, or close it and try again.',
+  'O tempo para concluir o login expirou. Tente novamente.': 'The sign-in timed out. Please try again.',
+  'Você saiu do Control Tower. O navegador bloqueou a janela da Microsoft; feche o navegador para encerrar também a sessão Microsoft.': 'You signed out of Control Tower. Your browser blocked the Microsoft window; close the browser to also end your Microsoft session.',
+  'Saindo...': 'Signing out...',
   'Conta de {0}': '{0} account', 'Modo dev': 'Dev mode', 'Sair da conta': 'Sign out', 'Login da Microsoft desativado neste ambiente.': 'Microsoft sign-in is disabled in this environment.',
   // Panel form
   'Editar painel': 'Edit panel', 'Nome do painel ou link': 'Panel or link name', 'Descrição': 'Description', 'Categoria': 'Category',
