@@ -17,14 +17,21 @@ export const authorityOrigin = (() => {
 
 const RELAY_PATH = '/auth-relay.html';
 
-const inIframe = (() => {
+export const inIframe = (() => {
   try { return window.self !== window.top; } catch { return true; }
 })();
 
-// Credentialless iframes (e.g. the Bolt preview) force every window.open into noopener: the window appears,
-// but the opener gets no handle and the popup gets no opener, and storage is an isolated ephemeral partition.
-// No popup or relay can hand a sign-in response back to such a frame, so sign-in must happen in a top-level tab.
-export const isolatedFrame = inIframe && (window as Window & { credentialless?: boolean }).credentialless === true;
+// The Bolt preview is served from this host inside a credentialless iframe; window.credentialless is not
+// reliably exposed there, so the host is checked too. Its raw URL only works through the editor's
+// connect handshake, so a plain "open this URL" link fails and the editor's own control must be used.
+const WEBCONTAINER_PREVIEW_SUFFIX = '.local-credentialless.webcontainer-api.io';
+export const inWebContainerPreview = inIframe && window.location.hostname.endsWith(WEBCONTAINER_PREVIEW_SUFFIX);
+
+// Credentialless iframes force every window.open into noopener: the window appears, but the opener gets no
+// handle and the popup gets no opener, and storage is an isolated ephemeral partition. No popup or relay can
+// hand a sign-in response back to such a frame, so sign-in must happen in a top-level window.
+export const isolatedFrame = inWebContainerPreview
+  || (inIframe && (window as Window & { credentialless?: boolean }).credentialless === true);
 
 export const msalConfig: Configuration = {
   auth: {

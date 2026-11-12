@@ -28,6 +28,9 @@
 .user-pop-item:disabled{cursor:wait;opacity:.7}
 .auth-code{display:block;margin-top:4px;font:400 12px/1.5 var(--f-mono);color:var(--muted)}
 a.auth-btn{text-decoration:none}
+.auth-steps{width:100%;margin:0;padding:12px 16px 12px 32px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface-2);
+  color:var(--text);text-align:left;font-size:13px;line-height:1.5;display:grid;gap:8px}
+.auth-steps li::marker{color:var(--nx-red);font-weight:600}
 .auth-foot{width:100%;display:flex;flex-wrap:wrap;justify-content:center;gap:8px 16px;margin-top:24px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:12px}
 .auth-foot span{display:inline-flex;align-items:center;gap:4px}
 .auth-spin{animation:auth-spin 1s linear infinite}

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { AccountInfo } from '@azure/msal-browser';
 import App from '@/App';
-import { devMode, isolatedFrame, loginRequest } from '@/auth/authConfig';
+import { devMode, inIframe, inWebContainerPreview, isolatedFrame, loginRequest } from '@/auth/authConfig';
 import { describeAuthError, initializeMsal, msal, type AuthMessage } from '@/auth/msalClient';
 import SignInScreen from '@/auth/SignInScreen';
 import type { AuthUser } from '@/auth/types';
@@ -12,7 +12,11 @@ type AuthState =
   | { status: 'signedOut'; message?: AuthMessage }
   | { status: 'signedIn'; user: AuthUser }
   | { status: 'misconfigured' }
-  | { status: 'isolated' };
+  | { status: 'isolated'; code: string };
+
+// Inside any iframe these mean the popup opened without a usable window handle, which is what an isolated
+// frame produces even when it could not be detected up front.
+const DETACHED_POPUP_CODES = new Set(['popup_window_error', 'empty_window_error']);
 
 const DEV_USER: AuthUser = { name: 'Dev Mode', email: 'dev@localhost', dev: true };
 
@@ -38,7 +42,7 @@ function takeNotice(): AuthMessage | undefined {
 function initialState(): AuthState {
   if (devMode) return { status: 'signedIn', user: DEV_USER };
   if (!msal) return { status: 'misconfigured' };
-  return isolatedFrame ? { status: 'isolated' } : { status: 'loading' };
+  return isolatedFrame ? { status: 'isolated', code: 'credentialless_iframe' } : { status: 'loading' };
 }
 
 function AuthGate() {
@@ -81,7 +85,12 @@ function AuthGate() {
       })
       .catch((err: unknown) => {
         console.warn('[auth] sign-in did not complete', err);
-        setState({ status: 'signedOut', message: describeAuthError(err) });
+        const message = describeAuthError(err);
+        if (inIframe && message.code && DETACHED_POPUP_CODES.has(message.code)) {
+          setState({ status: 'isolated', code: message.code });
+        } else {
+          setState({ status: 'signedOut', message });
+        }
       })
       .finally(() => {
         busyRef.current = false;
@@ -110,7 +119,7 @@ function AuthGate() {
   if (state.status === 'signedIn') return <App user={state.user} onSignOut={signOut} />;
   if (state.status === 'loading') return <SignInScreen mode="loading" />;
   if (state.status === 'misconfigured') return <SignInScreen mode="misconfigured" />;
-  if (state.status === 'isolated') return <SignInScreen mode="isolated" />;
+  if (state.status === 'isolated') return <SignInScreen mode="isolated" code={state.code} webContainer={inWebContainerPreview} />;
   return <SignInScreen mode="signedOut" message={state.message} busy={busy} onSignIn={signIn} />;
 }
 

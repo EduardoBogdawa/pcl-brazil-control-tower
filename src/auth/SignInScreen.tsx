@@ -5,7 +5,7 @@ import type { AuthMessage } from '@/auth/msalClient';
 type Props =
   | { mode: 'loading' }
   | { mode: 'misconfigured' }
-  | { mode: 'isolated' }
+  | { mode: 'isolated'; code: string; webContainer: boolean }
   | { mode: 'signedOut'; message?: AuthMessage; busy: boolean; onSignIn: () => void };
 
 function MicrosoftMark() {
@@ -58,14 +58,23 @@ function SignInScreen(props: Props) {
             <AlertBox
               message={{
                 tone: 'info',
-                code: 'credentialless_iframe',
-                text: 'Esta prévia roda em um quadro isolado do navegador, que abre janelas sem vínculo com a página. Por isso o login da Microsoft não consegue retornar aqui. Abra o Control Tower em uma nova aba para entrar.',
+                code: props.code,
+                text: 'Esta prévia roda em um quadro isolado do navegador, que abre janelas sem vínculo com a página. Por isso o login da Microsoft não consegue retornar aqui. Abra o Control Tower em uma janela própria para entrar.',
               }}
             />
-            <a className="auth-btn" href={window.location.href} target="_blank" rel="noopener">
-              <ExternalLink size={18} aria-hidden="true" />
-              <span>{tr('Abrir em nova aba para entrar')}</span>
-            </a>
+            {props.webContainer ? (
+              // The preview address only loads through the Bolt editor's own handshake, so a plain link would fail.
+              <ol className="auth-steps">
+                <li>{tr('Acima da prévia no Bolt, clique em "More preview controls" (…).')}</li>
+                <li>{tr('Escolha "Open in new window".')}</li>
+                <li>{tr('Na nova janela, clique em "Entrar com Microsoft".')}</li>
+              </ol>
+            ) : (
+              <a className="auth-btn" href={window.location.href} target="_blank" rel="noopener">
+                <ExternalLink size={18} aria-hidden="true" />
+                <span>{tr('Abrir em nova aba para entrar')}</span>
+              </a>
+            )}
           </>
         )}
 
