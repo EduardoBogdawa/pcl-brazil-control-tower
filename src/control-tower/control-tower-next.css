@@ -325,3 +325,48 @@ body{font-variant-numeric:tabular-nums}
 .menu-pop button.is-active .menu-ico{color:var(--nx-red)}
 .menu-check{margin-left:auto;display:grid;place-items:center;color:var(--nx-red)}
 .menu-check .ico{width:16px;height:16px}
+
+.orb{animation:none;will-change:auto;opacity:.2}
+.bg-fx:after{background:none}
+.grid .card:not(.add-card),.area-card,.top-list,.kpi{background:var(--surface);backdrop-filter:none;-webkit-backdrop-filter:none}
+.card:not(.add-card):after,.area-card:after{display:none}
+.card:not(.add-card):hover,.area-card:hover{box-shadow:var(--shadow-sm);border-color:var(--line-2);transform:translateY(-2px)}
+.top{background:var(--surface);backdrop-filter:none;-webkit-backdrop-filter:none}
+[data-theme=light] .top{background:var(--surface)}
+.card-host,.tag,.access-count span,.kpi-body small,.top-txt small,.pins .fav-chip small,.cx-clock-top small,.cx-clock-day,.cx-clock-status,.cx-hol-id small{font-size:12px;line-height:1.5;color:var(--text-2)}
+.grid{align-items:start}
+.card p{line-height:1.5}
+.card-actions{margin-top:16px}
+.panel-actions-menu{position:relative;flex:0 0 auto}
+.panel-actions-menu>summary{display:grid;place-items:center;min-width:40px;min-height:40px;border:1px solid var(--line-2);border-radius:var(--r-sm);background:var(--surface-2);color:var(--text-2);cursor:pointer;list-style:none}
+.panel-actions-menu>summary::-webkit-details-marker{display:none}
+.card:has(.panel-actions-menu[open]){overflow:visible;z-index:10}
+.panel-actions-options{position:absolute;right:0;bottom:calc(100% + 8px);z-index:11;min-width:176px;display:flex;flex-direction:column;gap:4px;padding:8px;border:1px solid var(--line-2);border-radius:var(--r-md);background:var(--surface);box-shadow:var(--shadow)}
+.panel-actions-options button{justify-content:flex-start;white-space:nowrap;background:var(--surface);box-shadow:none}
+.contacts-only .form>:not(.contacts-field):not(.dialog-actions){display:none}
+.contacts-only .contacts-field{display:block}
+.contacts-only .dialog-delete{display:none}
+.contacts-only .dialog{width:min(720px,100%)}
+.cx-hub{display:block;grid-column:1/-1;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--surface)}
+.cx-support-summary{display:flex;align-items:center;gap:12px;padding:16px;color:var(--text);font-weight:600;cursor:pointer;list-style:none}
+.cx-support-summary::-webkit-details-marker{display:none}
+.cx-support-summary>.ico:last-child{margin-left:auto}
+.cx-support-body{display:flex;flex-direction:column;gap:16px;padding:0 16px 16px}
+.comex-layout .panel-group-head[data-group=ferramentas]{margin-top:24px;padding-top:24px;border-top:2px solid var(--line-2)}
+.list-view .card:not(.add-card)>.cx-contacts{display:block;grid-column:2;grid-row:3;margin-top:8px;max-width:480px}
+.list-view .card-actions{align-self:start}
+.top-used>summary{padding:16px 0;color:var(--text-2);font-size:14px;font-weight:600;cursor:pointer}
+.pins details>summary{padding:8px 0;color:var(--text-2);font-size:13px;font-weight:600;cursor:pointer}
+.pins details .fav-head{display:none}
+.overview-wrap{display:flex;flex-direction:column}
+.overview-hero{order:0}.overview-wrap>.today{order:1}.overview-wrap>.pins{order:2}.overview-wrap>.ov-title{order:3}.overview-wrap>.area-suite{order:4}.overview-wrap>.kpi-strip{order:5}.overview-wrap>.top-used{order:6}
+.fav,.tool-btn,.view-toggle button,.cx-contact-acts a,.contact-remove{min-width:40px;min-height:40px}
+.card-actions .primary{min-height:40px}
+[hidden]{display:none!important}
+@media(max-width:720px){
+  .tool-btn,.view-toggle button,.fav,.cx-contact-acts a,.contact-remove,.panel-actions-menu>summary{min-width:44px;min-height:44px}
+  .top{position:relative;top:auto}.actions,.tools{flex-wrap:wrap}
+  .list-view .card:not(.add-card)>.cx-contacts{grid-column:1/-1;grid-row:auto;max-width:none}
+  .cx-support-summary{font-size:13px;line-height:1.5}.cx-contacts.empty{flex-wrap:wrap}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}

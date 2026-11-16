@@ -75,7 +75,7 @@ function clockHtml(c, now, hol) {
   const s = clockState(c.tz, now);
   const h = holidayState(c, now, hol);
   const open = s.open && !h.current;
-  const status = h.current ? 'Feriado' : open ? 'Expediente' : 'Fora do horário';
+  const status = h.current ? 'Feriado' : open ? 'Expediente estimado' : 'Fora do horário';
   let note = '';
   if (h.current) note = '<div class="cx-clock-hol now" title="' + esc(holName(h.current) + ' · ' + fmtRange(h.current)) + '">' + icon('calendar') + '<span>' + esc(holName(h.current)) + '</span></div>';
   else if (h.next) note = '<div class="cx-clock-hol soon" title="' + esc(holName(h.next) + ' · ' + fmtRange(h.next)) + '">' + icon('bell') + '<span>' + esc(inDays(h.nextIn)) + ' · ' + esc(holName(h.next)) + '</span></div>';
@@ -127,13 +127,13 @@ function incotermHtml(t) {
 
 export function comexHubHtml() {
   const now = new Date();
-  return '<section class="cx-hub">'
-    + '<div class="cx-block-head"><span>' + icon('clock') + esc(tr('Fusos das plantas e parceiros')) + '</span><small>' + esc(tr('Expediente considerado: 08h às 18h, segunda a sexta')) + '</small></div>'
+  return '<details class="cx-hub"><summary class="cx-support-summary">' + icon('globe') + esc(tr('Apoio ao Comex · fusos, feriados e Incoterms')) + icon('chevronDown') + '</summary><div class="cx-support-body">'
+    + '<div class="cx-block-head"><span>' + icon('clock') + esc(tr('Fusos das plantas e parceiros')) + '</span><small>' + esc(tr('Expediente estimado: 08h às 18h, segunda a sexta')) + '</small></div>'
     + '<div class="cx-clocks" role="list">' + CLOCKS.map((c) => clockHtml(c, now, null)).join('') + '</div>'
     + '<div class="cx-hol"><div class="cx-hol-head"><span>' + icon('calendar') + esc(tr('Próximos feriados')) + '</span><small>' + esc(tr('Plantas e parceiros · próximos {0} dias', AGENDA_DAYS)) + '</small></div><div data-hol-agenda aria-live="polite">' + agendaHtml(now, null) + '</div></div>'
     + '<details class="cx-inco"><summary><span>' + icon('book') + esc(tr('Incoterms 2020 · consulta rápida')) + '</span><small>' + esc(tr('Quem paga o frete e quando o risco muda de mãos')) + '</small></summary>'
     + '<div class="cx-inco-grid">' + INCOTERMS.map(incotermHtml).join('') + '</div></details>'
-    + '</section>';
+    + '</div></details>';
 }
 
 // The interval stops itself once the Comex view is replaced, so no timer outlives the screen.
@@ -141,13 +141,18 @@ export function startComexClocks(root) {
   const hub = root.querySelector('.cx-hub');
   if (!hub) return;
   let hol = null;
+  let agendaState;
   const paint = () => {
     const now = new Date();
     hub.querySelectorAll('[data-tz]').forEach((el) => {
       const c = CLOCKS.find((x) => x.tz === el.getAttribute('data-tz'));
       if (c) el.outerHTML = clockHtml(c, now, hol || null);
     });
-    hub.querySelector('[data-hol-agenda]').innerHTML = agendaHtml(now, hol);
+    const state = todayIn(CLOCKS[0].tz, now) + ':' + (hol === null ? 'loading' : hol === false ? 'error' : 'ready');
+    if (state !== agendaState) {
+      hub.querySelector('[data-hol-agenda]').innerHTML = agendaHtml(now, hol);
+      agendaState = state;
+    }
   };
   loadSiteHolidays()
     .then((h) => { hol = h; })
@@ -155,8 +160,9 @@ export function startComexClocks(root) {
     .then(() => { if (hub.isConnected) paint(); });
   const timer = setInterval(() => {
     if (!hub.isConnected) { clearInterval(timer); return; }
-    paint();
+    if (hub.open && !document.hidden) paint();
   }, 30000);
+  hub.addEventListener('toggle', () => { if (hub.open) paint(); });
 }
 
 const MAX_CONTACTS = 12;
@@ -173,10 +179,14 @@ export function contactsOf(d) {
   return Array.isArray(d && d.contacts) ? d.contacts.map(cleanContact).filter((c) => c.name) : [];
 }
 
+export function supportsContacts(d) {
+  return d.category === COMEX_CATEGORY && d.comexGroup !== 'ferramentas';
+}
+
 export function contactsCardHtml(d) {
-  if (d.category !== COMEX_CATEGORY) return '';
+  if (!supportsContacts(d)) return '';
   const list = contactsOf(d);
-  const manage = '<button type="button" class="cx-contacts-edit" data-edit="' + esc(d.id) + '">' + icon(list.length ? 'pencil' : 'plus') + esc(tr(list.length ? 'Editar contatos' : 'Adicionar contato')) + '</button>';
+  const manage = '<button type="button" class="cx-contacts-edit" data-contacts="' + esc(d.id) + '">' + icon(list.length ? 'pencil' : 'plus') + esc(tr(list.length ? 'Editar contatos' : 'Adicionar contato')) + '</button>';
   if (!list.length) return '<div class="cx-contacts empty"><span>' + icon('users') + esc(tr('Nenhum contato cadastrado')) + '</span>' + manage + '</div>';
   const rows = list.map((c) => '<li><span class="cx-contact-av" aria-hidden="true">' + esc(c.name.charAt(0).toUpperCase()) + '</span><div class="cx-contact-id"><b>' + esc(c.name) + '</b>' + (c.role ? '<small>' + esc(c.role) + '</small>' : '') + '</div>'
     + '<div class="cx-contact-acts">'
@@ -199,7 +209,9 @@ function syncContactsAdd() {
 }
 
 export function syncContactsField() {
-  document.getElementById('contactsField').hidden = document.getElementById('category').value !== COMEX_CATEGORY;
+  const enabled = supportsContacts({ category: document.getElementById('category').value, comexGroup: document.getElementById('panelGroup').value });
+  document.getElementById('contactsField').hidden = !enabled;
+  document.querySelectorAll('#contactsList input').forEach((input) => { input.disabled = !enabled; });
 }
 
 export function fillContactsField(d) {
@@ -210,6 +222,7 @@ export function fillContactsField(d) {
 
 export function bindContactsField() {
   const list = document.getElementById('contactsList');
+  document.getElementById('panelGroup').addEventListener('change', syncContactsField);
   document.getElementById('addContactBtn').onclick = () => {
     list.insertAdjacentHTML('beforeend', contactRowHtml(cleanContact({})));
     list.lastElementChild.querySelector('input').focus();

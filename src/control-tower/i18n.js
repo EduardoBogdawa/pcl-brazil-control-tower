@@ -1,5 +1,9 @@
 // Portuguese text is the key; English is looked up only when the visitor picks EN.
 const EN = {
+  'Mais ações': 'More actions', 'Abrir portal': 'Open portal', 'Abrir ferramenta': 'Open tool', 'Abrir relatório': 'Open report',
+  'Expediente estimado': 'Estimated business hours',
+  'Expediente estimado: 08h às 18h, segunda a sexta': 'Estimated business hours: 8am to 6pm, Monday to Friday',
+  'Apoio ao Comex · fusos, feriados e Incoterms': 'Comex support · time zones, holidays and Incoterms',
   // Navigation, header and static texts
   'Descrição em inglês (opcional)': 'English description (optional)', 'Exibida quando a página estiver em inglês': 'Shown when the page is in English',
   'relatório': 'report', 'Nome': 'Name', 'Salvar': 'Save', 'Adicionar {0}': 'Add {0}', '{0} item cadastrado': '{0} item', '{0} itens cadastrados': '{0} items', 'Ex.: Portal do fornecedor': 'E.g.: Supplier portal', 'Ex.: Inventory LATAM': 'E.g.: Inventory LATAM', 'Link (https://...)': 'Link (https://...)', 'Informe o nome.': 'Enter a name.', 'Informe um link válido começando com https://': 'Enter a valid link starting with https://', 'Já existe um item com esse nome.': 'An item with this name already exists.', 'Excluir item': 'Delete item', '"{0}" será removido de {1} para todos.': '"{0}" will be removed from {1} for everyone.',
