@@ -5,7 +5,8 @@ set -eu
 # Patterns below contain glob characters; disable pathname expansion while iterating them.
 set -f
 
-OUT="${RUNTIME_CONFIG_PATH:-/usr/share/nginx/html/runtime-config.js}"
+# Outside the read-only web root so the container can run as a non-root user (see nginx.conf alias).
+OUT="${RUNTIME_CONFIG_PATH:-/usr/share/nginx/runtime/runtime-config.js}"
 
 GUID='[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}'
 HTTPS_URL='https://[A-Za-z0-9.-]+(:[0-9]{1,5})?(/[A-Za-z0-9._~-]+)*/?'
