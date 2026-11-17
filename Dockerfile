@@ -21,6 +21,8 @@ RUN apk add --no-cache jq \
  && chown 101:0 /usr/share/nginx/runtime \
  && chmod 0770 /usr/share/nginx/runtime
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Outside conf.d so it is only included inside locations, never at http level.
+COPY docker/security-headers.conf /etc/nginx/snippets/security-headers.conf
 COPY --from=build /app/dist /usr/share/nginx/html
 # The nginx image runs every script in /docker-entrypoint.d before starting the server.
 COPY --chmod=755 docker/40-runtime-config.sh /docker-entrypoint.d/40-runtime-config.sh

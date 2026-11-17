@@ -2,6 +2,7 @@ import { icon, portalIcon } from '@/control-tower/icons.js';
 import { tr, getLang } from '@/control-tower/i18n';
 import { fetchTrash, restoreItem, TRASH_DAYS } from '@/control-tower/store';
 import { todayIso } from '@/control-tower/insights.js';
+import { toCsv } from '@/control-tower/csv.js';
 
 function esc(s) {
   return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -35,14 +36,8 @@ export function createSheet() {
   };
 }
 
-// --- CSV export: ";" separator and a BOM so Excel (pt-BR) opens accents and columns correctly.
-function csvCell(v) {
-  const s = Array.isArray(v) ? v.join(', ') : String(v == null ? '' : v);
-  return /[";\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
-}
-
 function downloadCsv(name, header, rows) {
-  const text = '\uFEFF' + [header].concat(rows).map((r) => r.map(csvCell).join(';')).join('\r\n');
+  const text = toCsv(header, rows);
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([text], { type: 'text/csv;charset=utf-8' }));
   a.download = name + '-' + todayIso() + '.csv';
