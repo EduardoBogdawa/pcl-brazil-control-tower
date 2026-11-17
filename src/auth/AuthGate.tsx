@@ -119,6 +119,14 @@ export function AuthGate({ children }: { children: (session: Session) => ReactNo
   );
 }
 
+export function ConfigNotice({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <AuthScreen>
+      <Alert title={title}>{children}</Alert>
+    </AuthScreen>
+  );
+}
+
 function Alert({ title, icon, children }: { title: string; icon?: ReactNode; children: ReactNode }) {
   return (
     <div className="auth-alert" role="alert">

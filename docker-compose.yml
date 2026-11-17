@@ -1,15 +1,15 @@
-# Compose reads .env from this folder automatically and forwards the values as build args.
+# Local simulation of the Catalyst runtime: the image is built without settings and only the
+# allowlisted public values below are passed in as runtime environment variables (read from .env).
 services:
   control-tower:
-    build:
-      context: .
-      args:
-        VITE_ENTRA_TENANT_ID: ${VITE_ENTRA_TENANT_ID}
-        VITE_ENTRA_CLIENT_ID: ${VITE_ENTRA_CLIENT_ID}
-        VITE_ENTRA_AUTHORITY: ${VITE_ENTRA_AUTHORITY:-}
-        VITE_ENTRA_API_SCOPE: ${VITE_ENTRA_API_SCOPE:-}
-        VITE_SUPABASE_URL: ${VITE_SUPABASE_URL}
-        VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY}
+    build: .
+    environment:
+      VITE_ENTRA_TENANT_ID: ${VITE_ENTRA_TENANT_ID:-}
+      VITE_ENTRA_CLIENT_ID: ${VITE_ENTRA_CLIENT_ID:-}
+      VITE_ENTRA_AUTHORITY: ${VITE_ENTRA_AUTHORITY:-}
+      VITE_ENTRA_API_SCOPE: ${VITE_ENTRA_API_SCOPE:-}
+      VITE_SUPABASE_URL: ${VITE_SUPABASE_URL:-}
+      VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY:-}
     ports:
-      - "8080:80"
+      - "8080:8080"
     restart: unless-stopped

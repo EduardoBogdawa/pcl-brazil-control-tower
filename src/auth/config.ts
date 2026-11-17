@@ -1,17 +1,15 @@
-const env = import.meta.env;
+import { publicConfig } from '@/lib/public-config';
 
-const clean = (value: string | undefined) => (value ?? '').trim();
-
-const tenantId = clean(env.VITE_ENTRA_TENANT_ID);
-const clientId = clean(env.VITE_ENTRA_CLIENT_ID);
-const apiScope = clean(env.VITE_ENTRA_API_SCOPE);
+const tenantId = publicConfig('VITE_ENTRA_TENANT_ID');
+const clientId = publicConfig('VITE_ENTRA_CLIENT_ID');
+const apiScope = publicConfig('VITE_ENTRA_API_SCOPE');
 
 export const authConfig = {
   // Dev mode is honored only by the dev server; a production build always requires Entra sign-in.
-  devMode: env.DEV && clean(env.VITE_DEV_MODE).toLowerCase() === 'true',
+  devMode: import.meta.env.DEV && (import.meta.env.VITE_DEV_MODE ?? '').trim().toLowerCase() === 'true',
   tenantId,
   clientId,
-  authority: clean(env.VITE_ENTRA_AUTHORITY) || `https://login.microsoftonline.com/${tenantId}`,
+  authority: publicConfig('VITE_ENTRA_AUTHORITY') || `https://login.microsoftonline.com/${tenantId}`,
   scopes: ['openid', 'profile', 'email', ...(apiScope ? [apiScope] : [])],
   configured: Boolean(tenantId && clientId),
 };
