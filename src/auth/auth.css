@@ -16,6 +16,9 @@
 .auth-alert svg{flex:0 0 20px;width:20px;height:20px;margin-top:2px}
 .auth-alert b{display:block;color:#FDE68A;font-size:14px}
 .auth-alert p{margin:4px 0 0;color:#E5E7EB;font-size:13px}
+.auth-alert p b{display:inline;color:#fff}
+.auth-code{display:block;margin-top:8px;color:#9CA3AF;font:500 11px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-all}
+.auth-notice{width:100%;margin:0 0 8px;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.06);color:#D1D5DB;font-size:13px}
 .auth-spin{animation:auth-spin .8s linear infinite}
 .auth-dev-banner{position:fixed;left:50%;bottom:16px;z-index:200;display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border:1px solid rgba(245,158,11,.5);border-radius:999px;background:#1F1A0E;color:#FCD34D;font:600 12px/1.4 Inter,sans-serif;transform:translateX(-50%);box-shadow:0 8px 24px -8px rgba(0,0,0,.6);pointer-events:none}
 .auth-dev-banner svg{width:16px;height:16px}

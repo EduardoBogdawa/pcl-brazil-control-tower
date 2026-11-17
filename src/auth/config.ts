@@ -15,3 +15,6 @@ export const authConfig = {
   scopes: ['openid', 'profile', 'email', ...(apiScope ? [apiScope] : [])],
   configured: Boolean(tenantId && clientId),
 };
+
+// Bolt's isolated preview runs in a credentialless iframe: redirects are blocked and popups lose their WindowProxy.
+export const isCredentiallessPreview = () => window.location.hostname.endsWith('.local-credentialless.webcontainer-api.io');
