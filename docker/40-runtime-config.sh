@@ -11,24 +11,28 @@ OUT="${RUNTIME_CONFIG_PATH:-/usr/share/nginx/runtime/runtime-config.js}"
 GUID='[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}'
 HTTPS_URL='https://[A-Za-z0-9.-]+(:[0-9]{1,5})?(/[A-Za-z0-9._~-]+)*/?'
 
-# key|regex (values must match exactly; empty means "not set")
+# key|min length|max length|regex (values must match exactly; empty means "not set").
+# Length limits live outside the regex: musl/BusyBox grep rejects {m,n} above RE_DUP_MAX (255).
 ALLOWLIST="
-VITE_ENTRA_TENANT_ID|($GUID|[A-Za-z0-9][A-Za-z0-9.-]{0,252})
-VITE_ENTRA_CLIENT_ID|$GUID
-VITE_ENTRA_AUTHORITY|$HTTPS_URL
-VITE_ENTRA_API_SCOPE|[A-Za-z0-9:/._~-]{1,256}
-VITE_SUPABASE_URL|$HTTPS_URL
-VITE_SUPABASE_ANON_KEY|[A-Za-z0-9._-]{20,4096}
+VITE_ENTRA_TENANT_ID|1|253|($GUID|[A-Za-z0-9][A-Za-z0-9.-]*)
+VITE_ENTRA_CLIENT_ID|36|36|$GUID
+VITE_ENTRA_AUTHORITY|1|2048|$HTTPS_URL
+VITE_ENTRA_API_SCOPE|1|256|[A-Za-z0-9:/._~-]+
+VITE_SUPABASE_URL|1|2048|$HTTPS_URL
+VITE_SUPABASE_ANON_KEY|20|4096|[A-Za-z0-9._-]+
 "
 
 set --
 invalid=0
 for entry in $ALLOWLIST; do
-  key="${entry%%|*}"
-  pattern="${entry#*|}"
+  key="${entry%%|*}"; rest="${entry#*|}"
+  min="${rest%%|*}"; rest="${rest#*|}"
+  max="${rest%%|*}"; pattern="${rest#*|}"
   value="$(printenv "$key" 2>/dev/null || true)"
   [ -z "$value" ] && continue
-  if printf '%s' "$value" | grep -Eqx "$pattern" && [ "$(printf '%s' "$value" | wc -l)" -eq 0 ]; then
+  len=${#value}
+  if [ "$len" -ge "$min" ] && [ "$len" -le "$max" ] \
+     && printf '%s' "$value" | grep -Eqx "$pattern" && [ "$(printf '%s' "$value" | wc -l)" -eq 0 ]; then
     set -- "$@" --arg "$key" "$value"
   else
     # Never echo the value itself.
