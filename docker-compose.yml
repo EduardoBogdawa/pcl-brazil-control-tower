@@ -1,0 +1,15 @@
+# Compose reads .env from this folder automatically and forwards the values as build args.
+services:
+  control-tower:
+    build:
+      context: .
+      args:
+        VITE_ENTRA_TENANT_ID: ${VITE_ENTRA_TENANT_ID}
+        VITE_ENTRA_CLIENT_ID: ${VITE_ENTRA_CLIENT_ID}
+        VITE_ENTRA_AUTHORITY: ${VITE_ENTRA_AUTHORITY:-}
+        VITE_ENTRA_API_SCOPE: ${VITE_ENTRA_API_SCOPE:-}
+        VITE_SUPABASE_URL: ${VITE_SUPABASE_URL}
+        VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY}
+    ports:
+      - "8080:80"
+    restart: unless-stopped

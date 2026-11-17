@@ -1,0 +1,11 @@
+node_modules
+dist
+.git
+.bolt
+.env
+.env.*
+!.env.example
+Dockerfile
+docker-compose.yml
+supabase
+*.log
