@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1
+# Compatible with the classic Docker builder: no BuildKit-only COPY flags; permissions are set with RUN while root.
 
 # ---- Build stage ----
 # No IDs or secrets are needed here: public settings are read at container start (see docker/40-runtime-config.sh).
@@ -25,7 +25,10 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY docker/security-headers.conf /etc/nginx/snippets/security-headers.conf
 COPY --from=build /app/dist /usr/share/nginx/html
 # The nginx image runs every script in /docker-entrypoint.d before starting the server.
-COPY --chmod=755 docker/40-runtime-config.sh /docker-entrypoint.d/40-runtime-config.sh
+COPY docker/40-runtime-config.sh /docker-entrypoint.d/40-runtime-config.sh
+# Still root here: make the script root-owned and read/execute-only for everyone else.
+RUN chown root:root /docker-entrypoint.d/40-runtime-config.sh \
+ && chmod 0755 /docker-entrypoint.d/40-runtime-config.sh
 # Site files stay root-owned (read-only for nginx); only the runtime settings folder is writable.
 USER 101
 
