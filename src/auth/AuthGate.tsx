@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { AlertTriangle, ExternalLink, Loader2, LogIn, ShieldCheck } from 'lucide-react';
-import { authConfig, isCredentiallessPreview } from '@/auth/config';
+import { authConfig } from '@/auth/config';
+import { isFramedIsolatedPreview } from '@/auth/preview-frame';
 import { restoreSession, signIn, signOut, SignInError, type SignedInUser } from '@/auth/msal';
 import '@/auth/auth.css';
 
@@ -24,7 +25,8 @@ const toErrorState = (error: unknown): GateState =>
 
 export function AuthGate({ children }: { children: (session: Session) => ReactNode }) {
   const [state, setState] = useState<GateState>({ kind: 'loading' });
-  const blocked = isCredentiallessPreview() || !window.isSecureContext;
+  const framedPreview = isFramedIsolatedPreview();
+  const blocked = framedPreview || !window.isSecureContext;
 
   useEffect(() => {
     if (authConfig.devMode || !authConfig.configured || blocked) return;
@@ -70,7 +72,7 @@ export function AuthGate({ children }: { children: (session: Session) => ReactNo
     );
   }
 
-  if (isCredentiallessPreview()) {
+  if (framedPreview) {
     return (
       <AuthScreen>
         <Alert title="Abra a prévia em uma nova janela" icon={<ExternalLink aria-hidden="true" />}>
