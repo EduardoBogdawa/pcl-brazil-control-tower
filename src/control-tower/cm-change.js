@@ -68,6 +68,48 @@ export function cmOf(d) {
   return d.cm || CM_DEFAULTS[d.id] || null;
 }
 
+function daysUntil(isoDate) {
+  const [y, m, d] = String(isoDate || '').split('-').map(Number);
+  if (!y || !m || !d) return null;
+  const now = new Date();
+  return Math.round((Date.UTC(y, m - 1, d) - Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())) / 86400000);
+}
+
+function dateLabel(iso) {
+  const p = String(iso).split('-');
+  return p[2] + '/' + p[1] + '/' + p[0];
+}
+
+function countdownOf(d) {
+  const cm = cmOf(d);
+  const days = cm ? daysUntil(cm.changeDate) : null;
+  if (days === null) return null;
+  const tone = days < 0 ? 'done' : days === 0 ? 'today' : days <= 7 ? 'soon' : days <= 30 ? 'near' : 'far';
+  const text = days < 0 ? tr(days === -1 ? 'Troca realizada há {0} dia' : 'Troca realizada há {0} dias', -days)
+    : days === 0 ? tr('A troca é hoje')
+      : tr(days === 1 ? 'resta {0} dia' : 'restam {0} dias', days);
+  return { days, tone, text, date: dateLabel(cm.changeDate) };
+}
+
+export function cmCountdownHtml(d) {
+  const c = countdownOf(d);
+  if (!c) return '';
+  return '<div class="cm-countdown ' + c.tone + '" role="status"><span class="cm-cd-num">' + (c.days > 0 ? c.days : c.days === 0 ? '0' : '✓') + '</span>'
+    + '<span class="cm-cd-txt"><small>' + esc(tr('Alteração de estrutura')) + '</small><b>' + esc(c.text) + '</b></span><span class="cm-cd-date">' + esc(c.date) + '</span></div>';
+}
+
+// Home-page list: upcoming changes first, plus the ones done in the last 7 days so the team sees them go live.
+export function cmUpcomingHtml(dashboards) {
+  const rows = dashboards.map((d) => ({ d, c: countdownOf(d) })).filter((x) => x.c && x.c.days >= -7).sort((a, b) => {
+    if ((a.c.days < 0) !== (b.c.days < 0)) return a.c.days < 0 ? 1 : -1;
+    return Math.abs(a.c.days) - Math.abs(b.c.days);
+  }).slice(0, 6);
+  if (!rows.length) return '';
+  return '<section class="cm-upcoming" aria-label="' + esc(tr('Próximas alterações de estrutura')) + '"><div class="ov-title"><h3>' + esc(tr('Próximas alterações de estrutura')) + '</h3><small>' + esc(tr('Contagem regressiva das trocas em CM')) + '</small></div><div class="cm-upcoming-list">'
+    + rows.map(({ d, c }, i) => '<button type="button" class="cm-up ' + c.tone + '" data-area="' + esc(CM_CATEGORY) + '" style="--i:' + i + '"><span class="cm-cd-num">' + (c.days > 0 ? c.days : c.days === 0 ? '0' : '✓') + '<small>' + esc(tr(c.days > 0 ? (c.days === 1 ? 'dia' : 'dias') : c.days === 0 ? 'hoje' : 'feito')) + '</small></span><span class="cm-up-txt"><b>' + esc(d.name) + '</b><small>' + esc(c.text) + ' · ' + esc(c.date) + '</small></span></button>').join('')
+    + '</div></section>';
+}
+
 // A leading "Label:" or "Pergunta?" on each line is shown in bold, matching the original hand-made cards.
 function richLines(text) {
   return text.split('\n').map((l) => l.trim()).filter(Boolean).map((l) => {
@@ -110,6 +152,7 @@ export function fillCmFields(d) {
   const pairs = cm.pairs || [];
   const meta = cm.meta || [];
   $('cmHead').value = cm.head || '';
+  $('cmChangeDate').value = cm.changeDate || '';
   [0, 1].forEach((i) => PAIR_FIELDS.forEach((f) => { $('cmPair' + i + '_' + f).value = (pairs[i] && pairs[i][f]) || ''; }));
   [0, 1].forEach((i) => {
     $('cmMeta' + i + '_label').value = (meta[i] && meta[i].label) || '';
@@ -133,6 +176,8 @@ export function readCmFields(prev) {
   }).filter((p) => p.from || p.to);
   const meta = [0, 1].map((i) => ({ label: $('cmMeta' + i + '_label').value.trim().toUpperCase(), value: $('cmMeta' + i + '_value').value.trim() })).filter((m) => m.value);
   const cm = { head: $('cmHead').value.trim().toUpperCase(), pairs, meta, reason: $('cmReason').value.trim(), note: $('cmNote').value.trim() };
+  const changeDate = $('cmChangeDate').value;
+  if (changeDate) cm.changeDate = changeDate;
   if (old.joiner) cm.joiner = old.joiner;
   return cm;
 }
