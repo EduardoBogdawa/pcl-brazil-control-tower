@@ -209,6 +209,55 @@ export async function trackOpen(panelId: string): Promise<void> {
   if (error) throw error;
 }
 
+export interface Attachment {
+  name: string;
+  path: string;
+  size: number;
+  uploadedAt: string;
+}
+
+const ATTACHMENT_BUCKET = 'panel-attachments';
+export const ATTACHMENT_MAX_BYTES = 25 * 1024 * 1024;
+
+// Browsers often report an empty or generic type for Office files, so the type is derived from the extension.
+export const ATTACHMENT_TYPES: Record<string, string> = {
+  ppt: 'application/vnd.ms-powerpoint',
+  pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  ppsx: 'application/vnd.openxmlformats-officedocument.presentationml.slideshow',
+  pdf: 'application/pdf',
+  doc: 'application/msword',
+  docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  xls: 'application/vnd.ms-excel',
+  xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  txt: 'text/plain',
+  csv: 'text/csv',
+  png: 'image/png',
+  jpg: 'image/jpeg',
+  jpeg: 'image/jpeg',
+  gif: 'image/gif',
+  webp: 'image/webp',
+};
+
+export function attachmentExt(name: string): string {
+  const m = /\.([a-z0-9]+)$/i.exec(name);
+  return m ? m[1].toLowerCase() : '';
+}
+
+export async function uploadAttachment(panelId: string, file: File): Promise<Attachment> {
+  const type = ATTACHMENT_TYPES[attachmentExt(file.name)];
+  if (!type) throw new Error('unsupported-type');
+  if (file.size > ATTACHMENT_MAX_BYTES) throw new Error('too-large');
+  const safeName = file.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^\w.-]+/g, '_').slice(-80);
+  const path = `${panelId.replace(/[^\w-]+/g, '_')}/${crypto.randomUUID()}-${safeName}`;
+  const { error } = await supabase.storage.from(ATTACHMENT_BUCKET).upload(path, file, { contentType: type, upsert: false });
+  if (error) throw error;
+  return { name: file.name.slice(0, 160), path, size: file.size, uploadedAt: new Date().toISOString() };
+}
+
+export function attachmentUrl(path: string, name: string): string {
+  return supabase.storage.from(ATTACHMENT_BUCKET).getPublicUrl(path, { download: name }).data.publicUrl;
+}
+
 export type TrashKind = 'panel' | 'task' | 'event' | 'category';
 
 export interface TrashItem {

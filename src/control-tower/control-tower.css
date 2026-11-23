@@ -503,6 +503,35 @@ kbd{display:inline-grid;place-items:center;min-width:22px;height:20px;padding:0 
 .form input:focus,.form select:focus,.form textarea:focus{outline:none;border-color:var(--nx-red);box-shadow:0 0 0 4px rgba(228,0,43,.15)}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .cm-fields{display:flex;flex-direction:column;gap:16px;margin:0;padding:16px;border:1px solid var(--line-2);border-left:3px solid var(--nx-red);border-radius:var(--r-md);background:var(--surface-2);animation:dlg .25s var(--ease) both}
+.attach{display:flex;flex-direction:column;gap:8px;padding:16px;border:1px dashed var(--line-2);border-radius:var(--r-md);background:var(--surface-2)}
+.attach-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.attach-head>div{display:flex;flex-direction:column;gap:4px;min-width:0}
+.attach-head span{font-weight:600;font-size:13px;color:var(--text)}
+.attach-head small{color:var(--text-2);font-size:12px;line-height:1.5}
+.attach-add{display:inline-flex;align-items:center;gap:8px;flex-shrink:0}
+.attach-add svg{width:16px;height:16px}
+.attach-add.busy svg{animation:spin 1s linear infinite}
+.attach-list{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none}
+.attach-item{display:flex;align-items:center;gap:12px;padding:8px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface);animation:rise .35s var(--ease) both;animation-delay:calc(var(--i,0)*40ms);transition:border-color .2s}
+.attach-item:hover{border-color:var(--line-2)}
+.attach-kind{--k:var(--in-500);display:grid;place-items:center;flex-shrink:0;width:40px;height:40px;border-radius:var(--r-sm);background:color-mix(in srgb,var(--k) 18%,transparent);color:var(--text);font:600 10px/1 var(--f-mono);letter-spacing:.04em}
+.attach-kind.k-ppt{--k:#D24726}.attach-kind.k-pdf{--k:var(--er-500)}.attach-kind.k-doc{--k:#2B579A}.attach-kind.k-xls{--k:#217346}
+.attach-name{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0;color:var(--text);text-decoration:none}
+.attach-name b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}
+.attach-name small{color:var(--text-2);font-size:12px}
+.attach-name:hover b,.attach-name:focus-visible b{text-decoration:underline}
+.attach-act{display:grid;place-items:center;flex-shrink:0;width:32px;height:32px;border:1px solid transparent;border-radius:var(--r-sm);background:transparent;color:var(--text-2);cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.attach-act svg{width:16px;height:16px}
+.attach-act:hover,.attach-act:focus-visible{background:var(--surface-2);border-color:var(--line);color:var(--text)}
+.attach-act.danger:hover,.attach-act.danger:focus-visible{color:var(--er-500);border-color:color-mix(in srgb,var(--er-500) 40%,transparent)}
+.attach-empty{padding:8px 0;color:var(--text-2);font-size:12px}
+.attach-status{margin:0;min-height:18px;color:var(--ok-500);font-size:12px}
+.attach-status.error{color:var(--er-500)}
+.attach-chip{display:inline-flex;align-items:center;gap:8px;align-self:flex-start;padding:4px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface-2);color:var(--text);font:600 12px/1.5 var(--f-body);cursor:pointer;transition:border-color .2s,transform .2s var(--ease)}
+.attach-chip svg{width:14px;height:14px}
+.attach-chip:hover{border-color:var(--line-2);transform:translateY(-1px)}
+@media (max-width:560px){.attach-head{flex-direction:column}.attach-add{align-self:stretch;justify-content:center}}
+@media (prefers-reduced-motion:reduce){.attach-item,.attach-add.busy svg{animation:none}}
 .cm-fields[hidden]{display:none}
 .cm-fields legend{padding:0 8px;color:var(--text);font:600 11px/1.2 var(--f-body);letter-spacing:.1em;text-transform:uppercase}
 .cm-fields-pair{display:flex;flex-direction:column;gap:8px}

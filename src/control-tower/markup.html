@@ -56,6 +56,12 @@
   <input type="hidden" id="instructionPanel">
   <div class="note" id="instructionPanelName"></div>
   <label><span id="instructionOnlyLabel">Instrução</span><textarea id="instructionOnly" required maxlength="600" placeholder="Digite a instrução deste painel"></textarea></label>
+  <section class="attach" aria-labelledby="attachTitle">
+   <div class="attach-head"><div><span id="attachTitle">Anexos</span><small>PowerPoint, PDF, Word, Excel ou imagem · até 25 MB. O arquivo é salvo assim que é anexado.</small></div><button class="btn attach-add" type="button" id="attachAdd">Anexar arquivo</button></div>
+   <input type="file" id="attachInput" hidden>
+   <ul class="attach-list" id="attachList"></ul>
+   <p class="attach-status" id="attachStatus" role="status" aria-live="polite"></p>
+  </section>
   <div class="dialog-actions"><button class="btn" type="button" id="instructionCancel">Cancelar</button><button class="btn primary" type="submit" id="instructionSave">Salvar instrução</button></div>
  </form></div>
 </div>
