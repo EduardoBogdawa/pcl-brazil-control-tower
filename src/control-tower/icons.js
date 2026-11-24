@@ -112,12 +112,13 @@ const BRAND = {
   powerpoint: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="14.5" cy="12" r="7.5" fill="#ED6C47"/><path d="M14.5 4.5a7.5 7.5 0 0 1 7.5 7.5h-7.5z" fill="#FF8F6B"/><rect x="3" y="7" width="10" height="10" rx="1.4" fill="#C43E1C"/><path d="M6.4 9.4h2.2c1.3 0 2 .7 2 1.8s-.8 1.8-2 1.8h-.9v1.6H6.4zm1.3 1.1v1.4h.8c.5 0 .8-.3.8-.7s-.3-.7-.8-.7z" fill="#fff"/></svg>',
   word: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h9.5A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5H9z" fill="#2B7CD3"/><path d="M9 4h9.5A1.5 1.5 0 0 1 20 5.5V9H9z" fill="#41A5EE"/><path d="M9 15h11v3.5a1.5 1.5 0 0 1-1.5 1.5H9z" fill="#103F91"/><rect x="3" y="7" width="10" height="10" rx="1.4" fill="#185ABD"/><path d="m5.3 9.4 1 5.2h1.1l.8-3.3.8 3.3h1.1l1-5.2h-1.1l-.5 3.2-.8-3.2H8l-.8 3.2-.5-3.2z" fill="#fff"/></svg>',
   prompt: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4" width="19" height="16" rx="3" fill="#334155"/><rect x="2.5" y="4" width="19" height="4" rx="2" fill="#64748B"/><path d="m6.5 11.5 2.5 2-2.5 2" stroke="#2DD4BF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M11 15.5h6" stroke="#F2F5F8" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  nexteer: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" fill="#E4002B"/><text x="11.6" y="15.6" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-weight="700" font-style="italic" font-size="11" fill="#fff">nx</text><path d="M5 19.2c4.6-1 9.6-4.3 14.5-10.4" stroke="#fff" stroke-width="1.1" stroke-linecap="round" fill="none" opacity=".7"/></svg>',
 };
 
 const BRAND_LABEL = {
   powerbi: 'Power BI', excel: 'Excel', sharepoint: 'SharePoint', powerapps: 'Power Apps', trello: 'Trello',
   copilot: 'Microsoft Copilot', bsc: 'Balanced Scorecard', powerpoint: 'PowerPoint', word: 'Word',
-  prompt: 'Biblioteca de prompts', web: 'Portal',
+  prompt: 'Biblioteca de prompts', nexteer: 'Nexteer', web: 'Portal',
 };
 
 function brandOf(d) {
@@ -133,6 +134,7 @@ function brandOf(d) {
   if (/\.docx?\b|:w:\//.test(u)) return 'word';
   if (u.includes('sharepoint.com')) return 'sharepoint';
   if (u.includes('copilotstudio.microsoft.com') || u.includes('m365.cloud.microsoft') || n.includes('copilot')) return 'copilot';
+  if (/(^|\.)nexteer\.(com|app)$/.test(hostOf(d.url))) return 'nexteer';
   return 'web';
 }
 
@@ -145,11 +147,14 @@ function hostOf(url) {
   }
 }
 
-// Google's favicon service answers unknown sites with a generic 16px globe, so tiny results fall back to our own icon.
+// Tries the site's own icon first (internal sites are reachable from the company network but unknown to Google),
+// then Google's favicon service, whose generic 16px globe for unknown sites is discarded. Small icons are inset, not stretched.
 function faviconImg(host) {
   if (!/^[a-z0-9.-]+$/i.test(host)) return '';
-  return '<img class="portal-fav" src="https://www.google.com/s2/favicons?sz=64&domain=' + host + '" alt="" loading="lazy" referrerpolicy="no-referrer"'
-    + ' onload="if(this.naturalWidth<=16)this.remove();else this.parentNode.classList.add(\'has-fav\')" onerror="this.remove()">';
+  const google = 'https://www.google.com/s2/favicons?sz=64&amp;domain=' + host;
+  return '<img class="portal-fav" src="https://' + host + '/favicon.ico" alt="" loading="lazy" referrerpolicy="no-referrer"'
+    + ' onload="if(this.dataset.g&amp;&amp;this.naturalWidth<=16){this.remove();return;}if(this.naturalWidth<48)this.classList.add(\'small\');this.parentNode.classList.add(\'has-fav\')"'
+    + ' onerror="if(this.dataset.g){this.remove();}else{this.dataset.g=1;this.src=\'' + google + '\';}">';
 }
 
 const MINOR_WORDS = new Set(['de', 'da', 'do', 'das', 'dos', 'e', 'em', 'para', 'the', 'of', 'and']);
@@ -168,7 +173,10 @@ function copilotHost(d) {
 
 export function portalIcon(d) {
   const b = brandOf(d);
+  const hub = b === 'web' && !hostOf(d.url) && Array.isArray(d.links) && d.links.length;
   const label = b === 'web' ? (hostOf(d.url) || BRAND_LABEL.web) : BRAND_LABEL[b];
-  const body = b === 'web' ? monogram(d) + faviconImg(hostOf(d.url)) : BRAND[b] + (b === 'copilot' ? faviconImg(copilotHost(d)) : '');
+  const body = hub ? icon('layers', 'portal-hub')
+    : b === 'web' ? monogram(d) + faviconImg(hostOf(d.url))
+      : BRAND[b] + (b === 'copilot' ? faviconImg(copilotHost(d)) : b === 'nexteer' ? faviconImg(hostOf(d.url)) : '');
   return '<span class="portal-logo ' + b + '" role="img" aria-label="' + label + '" title="' + label + '" style="--mono:' + categoryTint(d.category) + '">' + body + '</span>';
 }

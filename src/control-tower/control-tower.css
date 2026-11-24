@@ -232,6 +232,9 @@ kbd{display:inline-grid;place-items:center;min-width:22px;height:20px;padding:0 
 .portal-logo.has-fav{background:none;box-shadow:none}
 .portal-logo.has-fav>svg{visibility:hidden}
 .portal-logo.has-fav>.portal-mono{visibility:hidden}
+.portal-fav.small{inset:18%;width:64%;height:64%;object-fit:contain;border-radius:4px}
+.portal-logo.has-fav:has(.portal-fav.small){background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--line)}
+.portal-hub{width:55%;height:55%;color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.28))}
 
 /* CM change cards */
 .cm-change-card{border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface-2);overflow:hidden;font-size:12px}
