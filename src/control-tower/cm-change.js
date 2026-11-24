@@ -145,6 +145,7 @@ export function syncCmFields() {
   const on = $('category').value === CM_CATEGORY;
   $('cmFields').hidden = !on;
   $('instructionLabel').textContent = tr(on ? 'Conhecimento' : 'Instrução');
+  $('instruction').closest('label').hidden = on;
 }
 
 export function fillCmFields(d) {
