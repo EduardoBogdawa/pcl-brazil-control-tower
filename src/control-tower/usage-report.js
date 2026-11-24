@@ -2,7 +2,7 @@ import { icon, portalIcon, categoryTint } from '@/control-tower/icons.js';
 import { tr, getLang } from '@/control-tower/i18n';
 import { fetchUsageReport } from '@/control-tower/store';
 
-const PERIODS = [7, 30, 90];
+const PERIODS = [1, 3, 6, 12];
 
 function esc(s) {
   return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -20,10 +20,23 @@ function dayLabel(iso) {
   return new Intl.DateTimeFormat(locale(), { day: '2-digit', month: 'short', timeZone: 'UTC' }).format(parseDay(iso)).replace('.', '');
 }
 
-function periodDays(start, today) {
-  const out = [];
-  for (let t = parseDay(start).getTime(), end = parseDay(today).getTime(); t <= end; t += 86400000) out.push(new Date(t).toISOString().slice(0, 10));
+function monthLabel(iso, withYear) {
+  const opts = withYear ? { month: 'short', year: '2-digit', timeZone: 'UTC' } : { month: 'short', timeZone: 'UTC' };
+  return new Intl.DateTimeFormat(locale(), opts).format(parseDay(iso)).replace(/\./g, '');
+}
+
+function periodMonths(start, today) {
+  const out = [], s = parseDay(start), e = parseDay(today);
+  const d = new Date(Date.UTC(s.getUTCFullYear(), s.getUTCMonth(), 1));
+  while (d <= e) {
+    out.push(d.toISOString().slice(0, 10));
+    d.setUTCMonth(d.getUTCMonth() + 1);
+  }
   return out;
+}
+
+function periodLabel(months) {
+  return months === 1 ? tr('Este mês') : tr('{0} meses', months);
 }
 
 function trendChip(cur, prev) {
@@ -38,16 +51,18 @@ function kpi(value, label, sub, extra) {
 }
 
 function chartHtml(report) {
-  const counts = new Map(report.daily.map((d) => [d.day, d.count]));
-  const days = periodDays(report.start, report.today);
-  const peak = Math.max(0, ...days.map((d) => counts.get(d) || 0)), max = Math.max(1, peak);
-  const bars = days.map((d, i) => {
-    const c = counts.get(d) || 0;
-    return '<i style="--h:' + Math.max(c ? 6 : 2, Math.round((c / max) * 100)) + '%;--i:' + i + '"' + (c ? '' : ' class="zero"') + ' title="' + esc(dayLabel(d) + ': ' + num(c) + ' ' + tr(c === 1 ? 'abertura' : 'aberturas')) + '"></i>';
+  const counts = new Map(report.monthly.map((m) => [String(m.month).slice(0, 10), m.count]));
+  const months = periodMonths(report.start, report.today);
+  const multiYear = months[0].slice(0, 4) !== months[months.length - 1].slice(0, 4);
+  const peak = Math.max(0, ...months.map((m) => counts.get(m) || 0)), max = Math.max(1, peak);
+  const cols = months.map((m, i) => {
+    const c = counts.get(m) || 0, current = i === months.length - 1;
+    return '<li style="--h:' + Math.max(c ? 6 : 2, Math.round((c / max) * 100)) + '%;--i:' + i + '"' + (c ? '' : ' class="zero"') + '>'
+      + '<span class="us-mval">' + num(c) + '</span><span class="us-mcol"><i></i></span>'
+      + '<span class="us-mlbl">' + esc(monthLabel(m, multiYear)) + (current ? '<small>' + tr('em andamento') + '</small>' : '') + '</span></li>';
   }).join('');
-  return '<section class="us-block"><header><b>' + tr('Aberturas por dia') + '</b><small>' + tr('pico de {0}', num(peak)) + '</small></header>'
-    + '<div class="us-chart' + (days.length > 40 ? ' dense' : '') + '" role="img" aria-label="' + esc(tr('Aberturas por dia')) + '">' + bars + '</div>'
-    + '<div class="us-axis"><span>' + esc(dayLabel(report.start)) + '</span><span>' + esc(tr('Hoje')) + '</span></div></section>';
+  return '<section class="us-block"><header><b>' + tr('Aberturas por mês') + '</b><small>' + tr('pico de {0}', num(peak)) + '</small></header>'
+    + '<ol class="us-months" aria-label="' + esc(tr('Aberturas por mês')) + '">' + cols + '</ol></section>';
 }
 
 function rankingHtml(rows, max) {
@@ -83,7 +98,8 @@ function reportHtml(report, dashboards, categoryLabel) {
   const unused = rows.filter((r) => !r.cur).map((r) => r.d).sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
   const cur = rows.reduce((t, r) => t + r.cur, 0), prev = rows.reduce((t, r) => t + r.prev, 0);
   const adoption = dashboards.length ? Math.round((used.length / dashboards.length) * 100) : 0;
-  const prevNote = prev ? trendChip(cur, prev) + ' ' + esc(tr('vs. {0} dias anteriores', report.days)) : esc(tr('sem período anterior para comparar'));
+  const prevLabel = report.months === 1 ? tr('vs. mês anterior') : tr('vs. {0} meses anteriores', report.months);
+  const prevNote = prev ? trendChip(cur, prev) + ' ' + esc(prevLabel) : esc(tr('sem período anterior para comparar'));
   return '<div class="us-kpis">'
     + kpi(num(cur), tr('Aberturas'), prevNote)
     + kpi(adoption + '%', tr('Painéis em uso'), esc(tr('{0} de {1} painéis', used.length, dashboards.length)), '<span class="us-meter" aria-hidden="true"><i style="--w:' + adoption + '%"></i></span>')
@@ -96,18 +112,18 @@ function reportHtml(report, dashboards, categoryLabel) {
 }
 
 export function createUsageReport({ sheet, getDashboards, categoryLabel, openPanel, findPanel }) {
-  let days = 30, seq = 0;
+  let months = 3, seq = 0;
 
   function toolbar(since) {
     return '<div class="us-bar-top"><div class="us-periods" role="group" aria-label="' + esc(tr('Período')) + '">'
-      + PERIODS.map((p) => '<button type="button" data-usage-days="' + p + '" aria-pressed="' + (p === days) + '"' + (p === days ? ' class="on"' : '') + '>' + tr('{0} dias', p) + '</button>').join('')
-      + '</div><p class="us-privacy">' + icon('lock') + '<span>' + tr('Contagem anônima por painel. Não registramos quem abriu.') + (since ? ' ' + tr('Histórico diário desde {0}.', dayLabel(since)) : '') + '</span></p></div>';
+      + PERIODS.map((p) => '<button type="button" data-usage-months="' + p + '" aria-pressed="' + (p === months) + '"' + (p === months ? ' class="on"' : '') + '>' + periodLabel(p) + '</button>').join('')
+      + '</div><p class="us-privacy">' + icon('lock') + '<span>' + tr('Contagem anônima por painel. Não registramos quem abriu.') + (since ? ' ' + tr('Contagem iniciada em {0}.', dayLabel(since)) : '') + '</span></p></div>';
   }
 
   function load() {
     const mine = ++seq;
     sheet.setBody(toolbar(null) + '<div class="sheet-loading"><span class="spin"></span>' + tr('Carregando...') + '</div>');
-    fetchUsageReport(days).then((report) => {
+    fetchUsageReport(months).then((report) => {
       if (mine !== seq) return;
       sheet.setBody(toolbar(report.since) + '<div class="us-report">' + reportHtml(report, getDashboards(), categoryLabel) + '</div>');
     }).catch(() => {
@@ -117,8 +133,8 @@ export function createUsageReport({ sheet, getDashboards, categoryLabel, openPan
   }
 
   function onClick(e) {
-    const period = e.target.closest('[data-usage-days]');
-    if (period) { days = Number(period.getAttribute('data-usage-days')); load(); return; }
+    const period = e.target.closest('[data-usage-months]');
+    if (period) { months = Number(period.getAttribute('data-usage-months')); load(); return; }
     const open = e.target.closest('[data-usage-open]');
     if (open) { const d = findPanel(open.getAttribute('data-usage-open')); if (d) { sheet.close(); openPanel(d); } }
   }

@@ -224,18 +224,18 @@ export async function trackOpen(panelId: string): Promise<void> {
 }
 
 export interface UsageReport {
-  days: number;
+  months: number;
   start: string;
   today: string;
   since: string | null;
   panels: { panel_id: string; cur: number | null; prev: number | null }[];
-  daily: { day: string; count: number }[];
+  monthly: { month: string; count: number }[];
 }
 
-export async function fetchUsageReport(days: number): Promise<UsageReport> {
-  const { data, error } = await supabase.rpc('ct_usage_report', { p_days: days });
+export async function fetchUsageReport(months: number): Promise<UsageReport> {
+  const { data, error } = await supabase.rpc('ct_usage_report_monthly', { p_months: months });
   if (error) throw error;
-  if (!data || typeof data !== 'object' || !Array.isArray(data.panels) || !Array.isArray(data.daily)) {
+  if (!data || typeof data !== 'object' || !Array.isArray(data.panels) || !Array.isArray(data.monthly)) {
     throw new Error('Relatório de uso inválido.');
   }
   return data as UsageReport;
