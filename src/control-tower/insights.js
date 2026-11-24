@@ -61,7 +61,7 @@ export function topUsedHtml(stats, dashboards, categoryLabel) {
     ? '<ol class="top-list">' + rows.map(({ s, d }, i) => '<li style="--accent:' + categoryTint(d.category) + ';--w:' + Math.max(8, Math.round((s.open_count / max) * 100)) + '%;--i:' + i + '"><button type="button" data-top-open="' + esc(d.id) + '"><span class="top-rank">' + String(i + 1).padStart(2, '0') + '</span>' + portalIcon(d)
       + '<span class="top-txt"><b>' + esc(d.name) + '</b><small>' + esc(categoryLabel(d.category)) + '</small></span><span class="top-bar" aria-hidden="true"><i></i></span><span class="top-count">' + s.open_count.toLocaleString(getLang() === 'en' ? 'en-US' : 'pt-BR') + '<small>' + tr(s.open_count === 1 ? 'acesso' : 'acessos') + '</small></span></button></li>').join('') + '</ol>'
     : '<div class="top-empty">' + icon('trend') + '<span>' + tr('O ranking aparece assim que a equipe começar a abrir os painéis.') + '</span></div>';
-  return '<details class="top-used"><summary>' + tr('Mais acessados pela equipe') + '</summary><div class="ov-title"><small>' + tr('Ranking compartilhado de aberturas') + '</small></div>' + body + '</details>';
+  return '<details class="top-used"><summary>' + tr('Mais acessados pela equipe') + '<button type="button" class="top-report" data-usage-report>' + icon('activity') + '<span>' + tr('Relatório de uso') + '</span></button></summary><div class="ov-title"><small>' + tr('Ranking compartilhado de aberturas') + '</small></div>' + body + '</details>';
 }
 
 export function pendingListHtml(pending, categoryLabel) {
