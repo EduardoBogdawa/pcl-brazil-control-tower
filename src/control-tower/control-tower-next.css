@@ -354,6 +354,7 @@ body{font-variant-numeric:tabular-nums}
 .cx-support-body{display:flex;flex-direction:column;gap:16px;padding:0 16px 16px}
 .comex-layout .panel-group-head[data-group=ferramentas]{margin-top:24px;padding-top:24px;border-top:2px solid var(--line-2)}
 .list-view .card:not(.add-card)>.cx-contacts{display:block;grid-column:2;grid-row:3;margin-top:8px;max-width:480px}
+.list-view .card:not(.add-card)>.attach-chip{display:inline-flex;grid-column:2;justify-self:start;margin-top:4px}
 .list-view .card-actions{align-self:start}
 .top-used>summary{padding:16px 0;color:var(--text-2);font-size:14px;font-weight:600;cursor:pointer}
 .pins details>summary{padding:8px 0;color:var(--text-2);font-size:13px;font-weight:600;cursor:pointer}
@@ -367,6 +368,7 @@ body{font-variant-numeric:tabular-nums}
   .tool-btn,.view-toggle button,.fav,.cx-contact-acts a,.contact-remove,.panel-actions-menu>summary{min-width:44px;min-height:44px}
   .top{position:relative;top:auto}.actions,.tools{flex-wrap:wrap}
   .list-view .card:not(.add-card)>.cx-contacts{grid-column:1/-1;grid-row:auto;max-width:none}
+  .list-view .card:not(.add-card)>.attach-chip{grid-column:1}
   .cx-support-summary{font-size:13px;line-height:1.5}.cx-contacts.empty{flex-wrap:wrap}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
