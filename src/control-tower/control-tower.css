@@ -340,6 +340,10 @@ kbd{display:inline-grid;place-items:center;min-width:22px;height:20px;padding:0 
 .task-card footer{display:flex;align-items:center;gap:8px;min-width:0;margin-top:auto}
 .tc-owner{flex:0 0 auto;padding:3px 8px;border-radius:var(--r-sm);background:color-mix(in srgb,var(--c) 12%,transparent);color:var(--c2);font-size:11px;font-weight:600;line-height:1.3;white-space:nowrap}
 .task-card.both .tc-owner{background:var(--surface-3)}
+.tc-time{display:inline-flex;flex:0 0 auto;align-items:center;gap:4px;margin-left:auto;padding:2px 8px;border-radius:999px;background:color-mix(in srgb,var(--c) 14%,transparent);color:var(--text);font:600 11px/1.4 var(--f-mono)}
+.tc-time .ico{width:12px;height:12px;color:var(--c)}
+.tc-time+.tc-day{margin-left:0}
+.task-card footer .tc-owner{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}
 .tc-day{display:inline-flex;align-items:center;gap:4px;min-width:0;margin-left:auto;color:var(--muted);font:400 11px/1.4 var(--f-body)}
 .tc-day>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tc-day .ico{flex:0 0 12px;width:12px;height:12px}

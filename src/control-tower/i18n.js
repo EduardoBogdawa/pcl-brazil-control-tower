@@ -40,7 +40,7 @@ const EN = {
   'Atividade': 'Activity', 'Frequência / dia': 'Frequency / day', 'Responsável': 'Owner', 'Adicionar atividade': 'Add activity',
   'Ex.: Reunião de prioridades': 'E.g.: Priorities meeting', 'Ex.: Amanda e Eduardo': 'E.g.: Amanda and Eduardo',
   'Ex.: Primeira semana do mês': 'E.g.: First week of the month', 'Ex.: Toda segunda-feira': 'E.g.: Every Monday',
-  'Confirmar exclusão': 'Confirm deletion', 'Excluir': 'Delete', 'Excluir atividade': 'Delete activity', 'Editar atividade': 'Edit activity', 'Salvar alterações': 'Save changes', 'Atividade atualizada para todos.': 'Activity updated for everyone.', 'Excluir prompt': 'Delete prompt',
+  'Confirmar exclusão': 'Confirm deletion', 'Excluir': 'Delete', 'Excluir atividade': 'Delete activity', 'Editar atividade': 'Edit activity', 'Salvar alterações': 'Save changes', 'Horário': 'Time', 'Horário (opcional)': 'Time (optional)', 'Atividade atualizada para todos.': 'Activity updated for everyone.', 'Excluir prompt': 'Delete prompt',
   // Overview
   'Abrir área →': 'Open area →', 'acesso': 'item', 'acessos': 'items', 'Painéis e links desta área': 'Panels and links for this area',
   'Nenhuma atividade.': 'No activities.', 'ROTINA OPERACIONAL': 'OPERATING ROUTINE', 'Atividades da equipe': 'Team activities',

@@ -24,10 +24,11 @@ export interface Task {
   owner: string;
   period: 'Semanal' | 'Mensal';
   day: string;
+  time?: string | null;
 }
 
 const CATEGORY_COLUMNS = 'id, name, label, section, description, color, position, show_on_overview';
-const TASK_COLUMNS = 'id, name, owner, period, day';
+const TASK_COLUMNS = 'id, name, owner, period, day, time';
 
 // Deletions only stamp deleted_at, so removed items stay recoverable.
 const deletedNow = () => ({ deleted_at: new Date().toISOString() });
@@ -99,7 +100,7 @@ export async function fetchTasks(): Promise<Task[] | null> {
   if (!data || !data.length) return null;
   return data
     .filter((t) => !t.deleted_at)
-    .map((t) => ({ id: t.id, name: t.name, owner: t.owner, period: t.period, day: t.day }));
+    .map((t) => ({ id: t.id, name: t.name, owner: t.owner, period: t.period, day: t.day, time: t.time }));
 }
 
 export async function createTasks(tasks: Omit<Task, 'id'>[]): Promise<Task[]> {

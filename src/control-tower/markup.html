@@ -81,7 +81,7 @@
  <div class="dialog"><h2 id="taskTitle">Nova atividade</h2><form id="taskForm" class="form" novalidate>
   <input type="hidden" id="taskPeriod">
   <label>Atividade<input id="taskName" required maxlength="100" placeholder="Ex.: Reunião de prioridades"></label>
-  <label>Frequência / dia<input id="taskDay" maxlength="60"></label>
+  <div class="form-row"><label>Frequência / dia<input id="taskDay" maxlength="60"></label><label>Horário (opcional)<input id="taskTime" type="time"></label></div>
   <fieldset class="owner-pick"><legend>Responsável</legend>
    <label class="eduardo"><input type="radio" name="taskOwner" value="Eduardo" required><i class="own-mark"></i><span>Eduardo</span></label>
    <label class="amanda"><input type="radio" name="taskOwner" value="Amanda"><i class="own-mark"></i><span>Amanda</span></label>
