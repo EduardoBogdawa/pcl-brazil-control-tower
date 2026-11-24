@@ -108,6 +108,19 @@ export async function createTasks(tasks: Omit<Task, 'id'>[]): Promise<Task[]> {
   return (data ?? []) as Task[];
 }
 
+export async function updateTask(id: string, changes: Omit<Task, 'id'>): Promise<Task> {
+  const { data, error } = await supabase
+    .from('ct_tasks')
+    .update(changes)
+    .eq('id', id)
+    .is('deleted_at', null)
+    .select(TASK_COLUMNS)
+    .maybeSingle();
+  if (error) throw error;
+  if (!data) throw new Error('Atividade não encontrada.');
+  return data as Task;
+}
+
 export async function deleteTask(id: string): Promise<void> {
   const { error } = await supabase.from('ct_tasks').update(deletedNow()).eq('id', id);
   if (error) throw error;

@@ -345,6 +345,9 @@ kbd{display:inline-grid;place-items:center;min-width:22px;height:20px;padding:0 
 .tc-day .ico{flex:0 0 12px;width:12px;height:12px}
 .task-card .task-del{position:absolute;right:8px;top:8px;display:grid;place-items:center;width:26px;height:26px;border:0;border-radius:var(--r-sm);background:transparent;color:var(--muted);opacity:0;transition:opacity .2s,background .2s,color .2s}
 .task-card .task-del .ico{width:14px;height:14px}
+.task-card .task-edit{right:36px}
+.task-card h4{padding-right:56px}
+.task-card .task-del.task-edit:hover{background:color-mix(in srgb,var(--in-500) 15%,transparent);color:var(--in-500)}
 .task-card:hover .task-del,.task-card .task-del:focus-visible{opacity:1}
 .task-card .task-del:hover{background:rgba(239,68,68,.15);color:var(--er-400)}
 .tb-cards .task-empty{padding:12px;border:1px dashed var(--line-2);border-radius:var(--r-md);color:var(--muted);text-align:center;font-size:12px}
