@@ -22,10 +22,15 @@ function itemHtml(a, i) {
     + '<button type="button" class="attach-act danger" data-attach-remove="' + i + '" aria-label="' + esc(tr('Remover {0}', a.name)) + '" title="' + esc(tr('Remover')) + '">' + icon('x') + '</button></li>';
 }
 
-export function attachmentChipHtml(d) {
+// One badge per card: flags that the panel has an instruction and/or attached files, and opens it on click.
+export function instructionChipHtml(d, label) {
+  const hasText = !!String(d.instruction || '').trim();
   const n = (d.attachments || []).length;
-  if (!n) return '';
-  return '<button type="button" class="attach-chip" data-instruction="' + esc(d.id) + '">' + icon('paperclip') + esc(tr(n === 1 ? '{0} anexo' : '{0} anexos', n)) + '</button>';
+  if (!hasText && !n) return '';
+  const parts = [];
+  if (hasText) parts.push('<span>' + esc(label) + '</span>');
+  if (n) parts.push('<span class="attach-chip-count">' + icon('paperclip') + esc(tr(n === 1 ? '{0} anexo' : '{0} anexos', n)) + '</span>');
+  return '<button type="button" class="attach-chip' + (hasText ? ' has-text' : '') + '" data-instruction="' + esc(d.id) + '" title="' + esc(tr('Ver {0}', label.toLowerCase())) + '">' + (hasText ? icon('book') : '') + parts.join('<i aria-hidden="true">·</i>') + '</button>';
 }
 
 export function createAttachments({ findPanel, persist }) {

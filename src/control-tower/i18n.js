@@ -260,7 +260,7 @@ const EN = {
   'Baixar': 'Download', 'Baixar {0}': 'Download {0}', 'Remover {0}': 'Remove {0}',
   'Remover "{0}" deste painel?': 'Remove "{0}" from this panel?',
   'Anexo removido.': 'Attachment removed.',
-  '{0} anexo': '{0} attachment', '{0} anexos': '{0} attachments',
+  '{0} anexo': '{0} attachment', '{0} anexos': '{0} attachments', 'Ver {0}': 'View {0}',
   'Enviando {0}...': 'Uploading {0}...',
   'Tipo de arquivo não aceito. Use PowerPoint, PDF, Word, Excel ou imagem.': 'File type not accepted. Use PowerPoint, PDF, Word, Excel or an image.',
   'O arquivo passa de 25 MB. Reduza o tamanho e tente novamente.': 'The file is larger than 25 MB. Reduce its size and try again.',

@@ -529,6 +529,10 @@ kbd{display:inline-grid;place-items:center;min-width:22px;height:20px;padding:0 
 .attach-status.error{color:var(--er-500)}
 .attach-chip{display:inline-flex;align-items:center;gap:8px;align-self:flex-start;padding:4px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface-2);color:var(--text);font:600 12px/1.5 var(--f-body);cursor:pointer;transition:border-color .2s,transform .2s var(--ease)}
 .attach-chip svg{width:14px;height:14px}
+.attach-chip span{display:inline-flex;align-items:center;gap:4px}
+.attach-chip i{color:var(--text-2);font-style:normal}
+.attach-chip.has-text{border-color:color-mix(in srgb,var(--accent,var(--in-500)) 45%,var(--line));background:color-mix(in srgb,var(--accent,var(--in-500)) 12%,var(--surface-2))}
+.attach-chip.has-text>svg{color:var(--accent,var(--in-500))}
 .attach-chip:hover{border-color:var(--line-2);transform:translateY(-1px)}
 @media (max-width:560px){.attach-head{flex-direction:column}.attach-add{align-self:stretch;justify-content:center}}
 @media (prefers-reduced-motion:reduce){.attach-item,.attach-add.busy svg{animation:none}}
