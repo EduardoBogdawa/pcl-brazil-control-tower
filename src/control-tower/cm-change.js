@@ -39,13 +39,6 @@ const CM_DEFAULTS = {
     reason: 'Cenário: havia fila de 3 mil peças antes da entrada do novo lote. O material já recebido em Porto Real era o lote WZR151172, diferente do lote BP.',
     note: '⚠ Ponto importante: não há descrição técnica da alteração no chicote. Os registros só indicam que o lote BP deve corrigir o problema.',
   },
-  'cm-upper-bearing-26141865-38280788': {
-    head: 'ALTERAÇÃO DE FORNECEDOR',
-    pairs: [pair('PN atual', '26141865', 'UPPER BEARING · REV. 07', 'Novo PN validado', '38280788', 'UPPER BEARING · REV. 02')],
-    meta: [info('FORNECEDOR', 'Schaeffler → C&U'), info('PLANTAS', '77 · 89')],
-    reason: 'Por quê? Redução de custo / commercial saving.\nCost Study: 3027472005.',
-    note: 'Programas: 332, 1397, 358, 359, 363, 376 e 327. Validação adicional para aplicações Stellantis, incluindo 281.',
-  },
   'cm-spi-form-38297611-38356680': {
     head: 'AÇÃO DE CHANGE MANAGEMENT',
     joiner: '+',
@@ -165,12 +158,16 @@ export function fillCmFields(d) {
 }
 
 // Existing custom box titles (e.g. "LOTE BP") are kept, since the form only edits the values.
+const basePn = (v) => v.replace(/^(\d{6,})_\d+$/, '$1');
+
 export function readCmFields(prev) {
   const old = prev || {};
   const oldPairs = old.pairs || [];
   const pairs = [0, 1].map((i) => {
     const p = {};
     PAIR_FIELDS.forEach((f) => { p[f] = $('cmPair' + i + '_' + f).value.trim(); });
+    p.from = basePn(p.from);
+    p.to = basePn(p.to);
     p.fromLabel = (oldPairs[i] && oldPairs[i].fromLabel) || 'PN ATUAL';
     p.toLabel = (oldPairs[i] && oldPairs[i].toLabel) || 'NOVO PN';
     return p;
